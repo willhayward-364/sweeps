@@ -6,9 +6,10 @@ This project fetches finished football matches from the Football Data API, calcu
 
 - Fetches live match results from the Football Data API
 - Applies the sweepstake scoring rules to each player selection
-- Generates three pages:
+- Generates four pages:
   - standings page at [index.html](index.html)
   - players page at [players.html](players.html)
+  - latest results page at [latest_results.html](latest_results.html)
   - rules page at [rules.html](rules.html)
 - Shows a version banner on every page with:
   - current deployment version

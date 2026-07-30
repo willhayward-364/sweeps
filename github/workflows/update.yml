@@ -37,7 +37,7 @@ jobs:
         run: |
           git config user.name 'Sweepstake Bot'
           git config user.email 'bot@github.com'
-          git add index.html players.html rules.html .version
+          git add index.html players.html latest_results.html rules.html .version
           if git diff --cached --quiet; then
             echo 'No changes to commit.'
           else

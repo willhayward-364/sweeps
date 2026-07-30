@@ -65,6 +65,7 @@ def render_rules_page(output_path: str | None = None) -> None:
         "    <div>",
         "      <a href=\"index.html\">Standings</a>",
         "      <a href=\"players.html\">Players</a>",
+        "      <a href=\"latest_results.html\">Latest Results</a>",
         "      <a href=\"rules.html\">Rules</a>",
         "    </div>",
         "  </div>",

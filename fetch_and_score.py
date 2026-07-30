@@ -40,9 +40,25 @@ PLAYER_NICKNAMES = {
     "Player F": "Daveylad",
 }
 
+NAV_LINKS = """
+      <a href="index.html">Standings</a>
+      <a href="players.html">Players</a>
+      <a href="latest_results.html">Latest Results</a>
+      <a href="rules.html">Rules</a>
+    """
+
 
 def get_player_display_name(player_id: str) -> str:
     return PLAYER_NICKNAMES.get(player_id, player_id)
+
+
+def render_topbar() -> str:
+    return f"""
+  <div class=\"topbar\">
+    <strong>🏆 Sweepstake</strong>
+    <div>{NAV_LINKS}</div>
+  </div>
+"""
 
 
 def fetch_matches(comp_code: str):
@@ -53,19 +69,25 @@ def fetch_matches(comp_code: str):
         response.raise_for_status()
         timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
         write_api_fetch_timestamp(timestamp)
-        return response.json().get("matches", [])
+
+        matches = response.json().get("matches", [])
+        for match in matches:
+            match["competitionCode"] = comp_code
+        return matches
     except requests.RequestException as exc:
         print(f"Error fetching {comp_code}: {exc}")
         return []
+
+
+def load_matches() -> list[dict]:
+    return fetch_matches("PL") + fetch_matches("ELC")
 
 
 def team_is_in_player_selection(team_name: str, selected_teams: list[str]) -> bool:
     return any(team_name == selected_team for selected_team in selected_teams)
 
 
-def calculate_scores():
-    matches = fetch_matches("PL") + fetch_matches("ELC")
-
+def calculate_scores(matches: list[dict]):
     player_scores = {
         player: {"points": 0, "wins": 0, "draws": 0, "clean_sheets": 0, "giant_kills": 0}
         for player in PLAYERS
@@ -175,14 +197,7 @@ def render_html(scores, output_path: str | None = None):
   </style>
 </head>
 <body>
-  <div class=\"topbar\">
-    <strong>🏆 Sweepstake</strong>
-    <div>
-      <a href=\"index.html\">Standings</a>
-      <a href=\"players.html\">Players</a>
-      <a href=\"rules.html\">Rules</a>
-    </div>
-  </div>
+  {render_topbar()}
   <h1>🏆 2026/27 Sweepstake Standings</h1>
   {version_banner}
   {cards_html}
@@ -225,14 +240,7 @@ def render_players_page(output_path: str | None = None):
   </style>
 </head>
 <body>
-  <div class=\"topbar\">
-    <strong>🏆 Sweepstake</strong>
-    <div>
-      <a href=\"index.html\">Standings</a>
-      <a href=\"players.html\">Players</a>
-      <a href=\"rules.html\">Rules</a>
-    </div>
-  </div>
+  {render_topbar()}
   <h1>🏆 Players</h1>
   {version_banner}
   {cards_html}
@@ -243,6 +251,61 @@ def render_players_page(output_path: str | None = None):
     target_path.write_text(html_content, encoding="utf-8")
 
 
+def render_latest_results_page(matches: list[dict], output_path: str | None = None):
+    version_banner = get_version_banner()
+    sorted_matches = sorted(matches, key=lambda match: match.get("utcDate", ""), reverse=True)
+
+    matches_html = ""
+    for match in sorted_matches:
+        competition = match.get("competitionCode", "Unknown")
+        date = match.get("utcDate", "Unknown date")
+        home_team = match.get("homeTeam", {}).get("name", "Unknown")
+        away_team = match.get("awayTeam", {}).get("name", "Unknown")
+        score = match.get("score", {}).get("fullTime", {})
+        home_score = score.get("home")
+        away_score = score.get("away")
+
+        score_display = (
+            f"{home_score} - {away_score}"
+            if home_score is not None and away_score is not None
+            else "TBD"
+        )
+
+        matches_html += f"""
+        <div class=\"match-card\">
+          <div class=\"match-head\">{competition} — {date}</div>
+          <div class=\"match-score\">{home_team} {score_display} {away_team}</div>
+        </div>
+        """
+
+    html_content = f"""<!DOCTYPE html>
+<html lang=\"en\">
+<head>
+  <meta charset=\"UTF-8\">
+  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+  <title>Latest Results</title>
+  <style>
+    body {{ font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif; background: #0b132b; color: #ffffff; padding: 20px; max-width: 700px; margin: 0 auto; }}
+    h1 {{ text-align: center; color: #48cae4; font-size: 1.5rem; margin-bottom: 20px; }}
+    .topbar {{ display: flex; justify-content: space-between; align-items: center; background: #1c2541; border: 1px solid #3a506b; border-radius: 999px; padding: 10px 16px; margin-bottom: 20px; }}
+    .topbar a {{ color: #48cae4; text-decoration: none; font-weight: 600; }}
+    .match-card {{ background: #1c2541; border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #3a506b; }}
+    .match-head {{ color: #ffb703; font-weight: bold; margin-bottom: 8px; }}
+    .match-score {{ color: #cbd5e1; font-size: 0.95rem; }}
+  </style>
+</head>
+<body>
+  {render_topbar()}
+  <h1>🏆 Latest Match Results</h1>
+  {version_banner}
+  {matches_html}
+</body>
+</html>"""
+
+    target_path = Path(output_path) if output_path else Path(__file__).with_name("latest_results.html")
+    target_path.write_text(html_content, encoding="utf-8")
+
+
 if __name__ == "__main__":
     from rules import render_rules_page
 
@@ -250,7 +313,9 @@ if __name__ == "__main__":
     next_version = bump_version(current_version)
     write_version(next_version)
 
-    scores = calculate_scores()
+    matches = load_matches()
+    scores = calculate_scores(matches)
     render_html(scores)
     render_players_page()
+    render_latest_results_page(matches)
     render_rules_page()

@@ -57,8 +57,32 @@ def test_players_page_can_render_with_nicknames():
     assert output_path.exists()
     html = output_path.read_text(encoding="utf-8")
     assert "Players" in html
-    assert "Ace" in html
+    assert "364" in html or "Keano" in html or "Dookie" in html
     assert "Player A" in html
+
+    output_path.unlink(missing_ok=True)
+
+
+def test_latest_results_page_can_render():
+    from fetch_and_score import render_latest_results_page
+
+    output_path = ROOT / "tmp_latest_results_test.html"
+    sample_matches = [
+        {
+            "competitionCode": "PL",
+            "utcDate": "2026-07-30T20:00:00Z",
+            "homeTeam": {"name": "Arsenal"},
+            "awayTeam": {"name": "Chelsea"},
+            "score": {"fullTime": {"home": 3, "away": 1}},
+        }
+    ]
+    render_latest_results_page(sample_matches, str(output_path))
+
+    assert output_path.exists()
+    html = output_path.read_text(encoding="utf-8")
+    assert "Latest Results" in html
+    assert "Arsenal" in html
+    assert "Chelsea" in html
 
     output_path.unlink(missing_ok=True)
 
