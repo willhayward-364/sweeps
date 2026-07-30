@@ -2,7 +2,7 @@ name: Automated Sweepstake Update
 
 on:
   schedule:
-    - cron: '0 23 * * 0'
+    - cron: '0 17,22 * * *'
   workflow_dispatch:
 
 permissions:
@@ -30,13 +30,14 @@ jobs:
       - name: Run calculation script
         env:
           FOOTBALL_DATA_API_KEY: ${{ secrets.FOOTBALL_DATA_API_KEY }}
+          DEPLOYMENT_TIMESTAMP: ${{ github.run_started_at }}
         run: python fetch_and_score.py
 
       - name: Commit and push changes
         run: |
           git config user.name 'Sweepstake Bot'
           git config user.email 'bot@github.com'
-          git add index.html
+          git add index.html players.html rules.html .version
           if git diff --cached --quiet; then
             echo 'No changes to commit.'
           else
