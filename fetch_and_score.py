@@ -55,7 +55,7 @@ def get_player_display_name(player_id: str) -> str:
 
 def render_topbar() -> str:
     return f"""
-  <div class=\"topbar\">
+  <div class="topbar">
     <strong>🏆 Sweepstake</strong>
     <div>{NAV_LINKS}</div>
   </div>
@@ -78,6 +78,7 @@ def fetch_matches(comp_code: str):
     except requests.RequestException as exc:
         print(f"Error fetching {comp_code}: {exc}")
         return []
+
 
 def build_mock_matches():
     raise NotImplementedError
@@ -175,23 +176,23 @@ def render_html(scores, output_path: str | None = None):
         teams_str = ", ".join(PLAYERS[player])
         display_name = get_player_display_name(player)
         cards_html += f"""
-        <div class=\"card\">
-            <span class=\"score\">{data['points']} pts</span>
-            <div class=\"player-name\">#{rank} {display_name}</div>
-            <div class=\"player-id\">{player}</div>
-            <div class=\"teams\">{teams_str}</div>
-            <div class=\"stats\">Wins: {data['wins']} | Draws: {data['draws']} | Clean Sheets: {data['clean_sheets']}</div>
+        <div class="card">
+            <span class="score">{data['points']} pts</span>
+            <div class="player-name">#{rank} {display_name}</div>
+            <div class="player-id">{player}</div>
+            <div class="teams">{teams_str}</div>
+            <div class="stats">Wins: {data['wins']} | Draws: {data['draws']} | Clean Sheets: {data['clean_sheets']}</div>
         </div>
         """
 
     html_content = f"""<!DOCTYPE html>
-<html lang=\"en\">
+<html lang="en">
 <head>
-  <meta charset=\"UTF-8\">
-  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>2026/27 Premier League Sweepstake</title>
   <style>
-    body {{ font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif; background: #0b132b; color: #ffffff; padding: 20px; max-width: 600px; margin: 0 auto; }}
+    body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b132b; color: #ffffff; padding: 20px; max-width: 600px; margin: 0 auto; }}
     h1 {{ text-align: center; color: #48cae4; font-size: 1.5rem; margin-bottom: 20px; }}
     .topbar {{ display: flex; justify-content: space-between; align-items: center; background: #1c2541; border: 1px solid #3a506b; border-radius: 999px; padding: 10px 16px; margin-bottom: 20px; }}
     .topbar a {{ color: #48cae4; text-decoration: none; font-weight: 600; }}
@@ -222,21 +223,21 @@ def render_players_page(output_path: str | None = None):
         display_name = get_player_display_name(player)
         teams_str = ", ".join(teams)
         cards_html += f"""
-        <div class=\"card\">
-            <div class=\"player-name\">{display_name}</div>
-            <div class=\"player-id\">{player}</div>
-            <div class=\"teams\">{teams_str}</div>
+        <div class="card">
+            <div class="player-name">{display_name}</div>
+            <div class="player-id">{player}</div>
+            <div class="teams">{teams_str}</div>
         </div>
         """
 
     html_content = f"""<!DOCTYPE html>
-<html lang=\"en\">
+<html lang="en">
 <head>
-  <meta charset=\"UTF-8\">
-  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Players</title>
   <style>
-    body {{ font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif; background: #0b132b; color: #ffffff; padding: 20px; max-width: 600px; margin: 0 auto; }}
+    body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b132b; color: #ffffff; padding: 20px; max-width: 600px; margin: 0 auto; }}
     h1 {{ text-align: center; color: #48cae4; font-size: 1.5rem; margin-bottom: 20px; }}
     .topbar {{ display: flex; justify-content: space-between; align-items: center; background: #1c2541; border: 1px solid #3a506b; border-radius: 999px; padding: 10px 16px; margin-bottom: 20px; }}
     .topbar a {{ color: #48cae4; text-decoration: none; font-weight: 600; }}
@@ -260,14 +261,29 @@ def render_players_page(output_path: str | None = None):
 
 def render_latest_results_page(matches: list[dict], output_path: str | None = None):
     version_banner = get_version_banner()
-    sorted_matches = sorted(matches, key=lambda match: match.get("utcDate", ""), reverse=True)
+
+    sorted_matches = sorted(
+        matches, key=lambda match: match.get("utcDate", ""), reverse=True
+    )
+    recent_matches = sorted_matches[:25]
 
     matches_html = ""
-    for match in sorted_matches:
-        competition = match.get("competitionCode", "Unknown")
-        date = match.get("utcDate", "Unknown date")
-        home_team = match.get("homeTeam", {}).get("name", "Unknown")
-        away_team = match.get("awayTeam", {}).get("name", "Unknown")
+    for match in recent_matches:
+        comp = match.get("competitionCode", "Unknown")
+        raw_date = match.get("utcDate", "")
+        date_str = (
+            raw_date.replace("T", " ")[:16] if raw_date else "Unknown Date"
+        )
+
+        home_team = (
+            match.get("homeTeam", {}).get("shortName")
+            or match.get("homeTeam", {}).get("name", "Unknown")
+        )
+        away_team = (
+            match.get("awayTeam", {}).get("shortName")
+            or match.get("awayTeam", {}).get("name", "Unknown")
+        )
+
         score = match.get("score", {}).get("fullTime", {})
         home_score = score.get("home")
         away_score = score.get("away")
@@ -279,37 +295,52 @@ def render_latest_results_page(matches: list[dict], output_path: str | None = No
         )
 
         matches_html += f"""
-        <div class=\"match-card\">
-          <div class=\"match-head\">{competition} — {date}</div>
-          <div class=\"match-score\">{home_team} {score_display} {away_team}</div>
+        <div class="card">
+          <div class="match-meta">
+            <span>{comp}</span>
+            <span>{date_str} UTC</span>
+          </div>
+          <div class="match-teams">
+            <span class="team home">{home_team}</span>
+            <span class="score-badge">{score_display}</span>
+            <span class="team away">{away_team}</span>
+          </div>
         </div>
         """
 
     html_content = f"""<!DOCTYPE html>
-<html lang=\"en\">
+<html lang="en">
 <head>
-  <meta charset=\"UTF-8\">
-  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Latest Results</title>
   <style>
-    body {{ font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif; background: #0b132b; color: #ffffff; padding: 20px; max-width: 700px; margin: 0 auto; }}
+    body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b132b; color: #ffffff; padding: 20px; max-width: 600px; margin: 0 auto; }}
     h1 {{ text-align: center; color: #48cae4; font-size: 1.5rem; margin-bottom: 20px; }}
     .topbar {{ display: flex; justify-content: space-between; align-items: center; background: #1c2541; border: 1px solid #3a506b; border-radius: 999px; padding: 10px 16px; margin-bottom: 20px; }}
-    .topbar a {{ color: #48cae4; text-decoration: none; font-weight: 600; }}
-    .match-card {{ background: #1c2541; border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #3a506b; }}
-    .match-head {{ color: #ffb703; font-weight: bold; margin-bottom: 8px; }}
-    .match-score {{ color: #cbd5e1; font-size: 0.95rem; }}
+    .topbar a {{ color: #48cae4; text-decoration: none; font-weight: 600; font-size: 0.9rem; margin-left: 6px; }}
+    .card {{ background: #1c2541; border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #3a506b; }}
+    .match-meta {{ font-size: 0.8rem; color: #a0aec0; display: flex; justify-content: space-between; margin-bottom: 10px; }}
+    .match-teams {{ display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; font-weight: bold; }}
+    .team {{ width: 38%; color: #ffffff; }}
+    .team.home {{ text-align: right; }}
+    .team.away {{ text-align: left; }}
+    .score-badge {{ color: #ffb703; font-size: 1.1rem; font-weight: 800; background: #0f1c33; padding: 4px 10px; border-radius: 6px; border: 1px solid #3a506b; text-align: center; white-space: nowrap; }}
   </style>
 </head>
 <body>
   {render_topbar()}
-  <h1>🏆 Latest Match Results</h1>
+  <h1>⚽ Latest Results</h1>
   {version_banner}
   {matches_html}
 </body>
 </html>"""
 
-    target_path = Path(output_path) if output_path else Path(__file__).with_name("latest_results.html")
+    target_path = (
+        Path(output_path)
+        if output_path
+        else Path(__file__).with_name("latest_results.html")
+    )
     target_path.write_text(html_content, encoding="utf-8")
 
 
