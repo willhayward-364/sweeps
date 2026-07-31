@@ -1,4 +1,5 @@
 import os
+import random
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -78,8 +79,14 @@ def fetch_matches(comp_code: str):
         print(f"Error fetching {comp_code}: {exc}")
         return []
 
+def build_mock_matches():
+    raise NotImplementedError
+
 
 def load_matches() -> list[dict]:
+    if USE_MOCK_DATA:
+        return build_mock_matches()
+
     return fetch_matches("PL") + fetch_matches("ELC")
 
 
