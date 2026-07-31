@@ -98,7 +98,7 @@ def load_matches() -> list[dict]:
     if USE_MOCK_DATA:
         return build_mock_matches()
 
-    matches = fetch_matches("PL") + fetch_matches("ELC") + fetch_matches("BSA")
+    matches = fetch_matches("PL") + fetch_matches("ELC") + fetch_matches("BSA") + fetch_matches("CL")
     return matches if matches else build_mock_matches()
 
 
