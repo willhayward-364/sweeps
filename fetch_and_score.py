@@ -200,18 +200,7 @@ def render_html(scores, output_path: str | None = None):
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>2026/27 Premier League Sweepstake</title>
-  <style>
-    body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b132b; color: #ffffff; padding: 20px; max-width: 600px; margin: 0 auto; }}
-    h1 {{ text-align: center; color: #48cae4; font-size: 1.5rem; margin-bottom: 20px; }}
-    .topbar {{ display: flex; justify-content: space-between; align-items: center; background: #1c2541; border: 1px solid #3a506b; border-radius: 999px; padding: 10px 16px; margin-bottom: 20px; }}
-    .topbar a {{ color: #48cae4; text-decoration: none; font-weight: 600; }}
-    .card {{ background: #1c2541; border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #3a506b; }}
-    .player-name {{ font-weight: bold; font-size: 1.2rem; color: #ffb703; }}
-    .player-id {{ font-size: 0.8rem; color: #a0aec0; margin-top: 2px; }}
-    .teams {{ font-size: 0.9rem; color: #cbd5e1; margin-top: 6px; }}
-    .stats {{ font-size: 0.8rem; color: #a0aec0; margin-top: 8px; border-top: 1px solid #2d3748; padding-top: 6px; }}
-    .score {{ font-size: 1.4rem; font-weight: bold; float: right; color: #48cae4; }}
-  </style>
+ <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   {render_topbar()}
