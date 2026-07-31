@@ -234,16 +234,7 @@ def render_players_page(output_path: str | None = None):
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Players</title>
-  <style>
-    body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b132b; color: #ffffff; padding: 20px; max-width: 600px; margin: 0 auto; }}
-    h1 {{ text-align: center; color: #48cae4; font-size: 1.5rem; margin-bottom: 20px; }}
-    .topbar {{ display: flex; justify-content: space-between; align-items: center; background: #1c2541; border: 1px solid #3a506b; border-radius: 999px; padding: 10px 16px; margin-bottom: 20px; }}
-    .topbar a {{ color: #48cae4; text-decoration: none; font-weight: 600; }}
-    .card {{ background: #1c2541; border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #3a506b; }}
-    .player-name {{ font-weight: bold; font-size: 1.2rem; color: #ffb703; }}
-    .player-id {{ font-size: 0.8rem; color: #a0aec0; margin-top: 2px; }}
-    .teams {{ font-size: 0.9rem; color: #cbd5e1; margin-top: 6px; }}
-  </style>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
   {render_topbar()}
@@ -312,19 +303,7 @@ def render_latest_results_page(matches: list[dict], output_path: str | None = No
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Latest Results</title>
-  <style>
-    body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b132b; color: #ffffff; padding: 20px; max-width: 600px; margin: 0 auto; }}
-    h1 {{ text-align: center; color: #48cae4; font-size: 1.5rem; margin-bottom: 20px; }}
-    .topbar {{ display: flex; justify-content: space-between; align-items: center; background: #1c2541; border: 1px solid #3a506b; border-radius: 999px; padding: 10px 16px; margin-bottom: 20px; }}
-    .topbar a {{ color: #48cae4; text-decoration: none; font-weight: 600; font-size: 0.9rem; margin-left: 6px; }}
-    .card {{ background: #1c2541; border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #3a506b; }}
-    .match-meta {{ font-size: 0.8rem; color: #a0aec0; display: flex; justify-content: space-between; margin-bottom: 10px; }}
-    .match-teams {{ display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; font-weight: bold; }}
-    .team {{ width: 38%; color: #ffffff; }}
-    .team.home {{ text-align: right; }}
-    .team.away {{ text-align: left; }}
-    .score-badge {{ color: #ffb703; font-size: 1.1rem; font-weight: 800; background: #0f1c33; padding: 4px 10px; border-radius: 6px; border: 1px solid #3a506b; text-align: center; white-space: nowrap; }}
-  </style>
+ <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   {render_topbar()}
