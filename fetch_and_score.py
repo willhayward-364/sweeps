@@ -14,7 +14,7 @@ from version import (
 )
 
 # Configuration & Flags
-USE_MOCK_DATA = os.getenv("USE_MOCK_DATA", "false").lower() == "true"
+USE_MOCK_DATA = False
 API_KEY = os.getenv("FOOTBALL_DATA_API_KEY", "").strip()
 HEADERS = {"X-Auth-Token": API_KEY} if API_KEY else {}
 
@@ -64,7 +64,6 @@ def render_topbar() -> str:
 
 
 def fetch_matches(comp_code: str):
-    # Updated to season=2026 for the 2026/27 campaign
     url = f"https://api.football-data.org/v4/competitions/{comp_code}/matches?status=FINISHED&season=2026"
 
     try:
@@ -82,24 +81,13 @@ def fetch_matches(comp_code: str):
         return []
 
 
-def build_mock_matches():
-    return [
-        {
-            "competitionCode": "PL",
-            "utcDate": "2026-08-15T14:00:00Z",
-            "homeTeam": {"name": "Arsenal FC", "shortName": "Arsenal"},
-            "awayTeam": {"name": "Chelsea FC", "shortName": "Chelsea"},
-            "score": {"fullTime": {"home": 3, "away": 0}},
-        }
-    ]
-
-
 def load_matches() -> list[dict]:
-    if USE_MOCK_DATA:
-        return build_mock_matches()
-
-    matches = fetch_matches("PL") + fetch_matches("ELC") + fetch_matches("BSA") + fetch_matches("CL")
-    return matches if matches else build_mock_matches()
+    return (
+        fetch_matches("PL")
+        + fetch_matches("ELC")
+        + fetch_matches("BSA")
+        + fetch_matches("CL")
+    )
 
 
 def team_is_in_player_selection(team_name: str, selected_teams: list[str]) -> bool:

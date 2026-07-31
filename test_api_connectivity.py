@@ -1,7 +1,8 @@
 import importlib.util
+import os
 from pathlib import Path
-
 import sys
+import requests
 
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
@@ -40,7 +41,7 @@ def test_rules_page_can_render():
     from rules import render_rules_page
 
     output_path = ROOT / "tmp_rules_test.html"
-    render_rules_page(str(output_path))
+    render_rules_page(output_path=str(output_path))
 
     assert output_path.exists()
     assert "Rules" in output_path.read_text(encoding="utf-8")
@@ -52,7 +53,7 @@ def test_players_page_can_render_with_nicknames():
     from fetch_and_score import render_players_page
 
     output_path = ROOT / "tmp_players_test.html"
-    render_players_page(str(output_path))
+    render_players_page(output_path=str(output_path))
 
     assert output_path.exists()
     html = output_path.read_text(encoding="utf-8")
@@ -76,7 +77,7 @@ def test_latest_results_page_can_render():
             "score": {"fullTime": {"home": 3, "away": 1}},
         }
     ]
-    render_latest_results_page(sample_matches, str(output_path))
+    render_latest_results_page(sample_matches, output_path=str(output_path))
 
     assert output_path.exists()
     html = output_path.read_text(encoding="utf-8")
@@ -98,9 +99,12 @@ def test_version_banner_is_rendered_on_pages():
         ROOT / "tmp_index_test.html",
     ]
 
-    render_rules_page(str(output_paths[0]))
-    render_players_page(str(output_paths[1]))
-    render_html({"Player A": {"points": 0, "wins": 0, "draws": 0, "clean_sheets": 0, "giant_kills": 0}}, str(output_paths[2]))
+    render_rules_page(output_path=str(output_paths[0]))
+    render_players_page(output_path=str(output_paths[1]))
+    render_html(
+        {"Player A": {"points": 0, "wins": 0, "draws": 0, "clean_sheets": 0, "giant_kills": 0}},
+        output_path=str(output_paths[2]),
+    )
 
     for output_path in output_paths:
         assert output_path.exists()
@@ -114,8 +118,32 @@ def test_version_banner_is_rendered_on_pages():
         output_path.unlink(missing_ok=True)
 
 
+def test_api_connectivity():
+    """Validates live connectivity with Football-Data API."""
+    api_key = os.getenv("FOOTBALL_DATA_API_KEY", "").strip()
+    headers = {"X-Auth-Token": api_key} if api_key else {}
+    url = "https://api.football-data.org/v4/competitions/PL"
+
+    print("\n📡 Testing API Connectivity...")
+    if not api_key:
+        print("  ⚠️ Warning: FOOTBALL_DATA_API_KEY environment variable is missing.")
+
+    try:
+        response = requests.get(url, headers=headers, timeout=10)
+        assert response.status_code in (200, 429), f"API returned error status code: {response.status_code}"
+        if response.status_code == 200:
+            print("  ✅ Live API connection successful!")
+        elif response.status_code == 429:
+            print("  ⚠️ API rate limit reached (status 429). Server responded.")
+    except requests.RequestException as exc:
+        assert False, f"API Connection failed completely: {exc}"
+
+
 if __name__ == "__main__":
     test_rule_points_are_applied()
     test_rules_page_can_render()
+    test_players_page_can_render_with_nicknames()
+    test_latest_results_page_can_render()
     test_version_banner_is_rendered_on_pages()
-    print("All tests passed")
+    test_api_connectivity()
+    print("\n🎉 All tests passed successfully!")
