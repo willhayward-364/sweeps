@@ -42,11 +42,20 @@ PLAYER_NICKNAMES = {
 }
 
 NAV_LINKS = """
-      <a href="index.html">Standings</a>
-      <a href="players.html">Players</a>
-      <a href="latest_results.html">Latest Results</a>
-      <a href="rules.html">Rules</a>
+      <a href="index.html" class="nav-btn">Standings</a>
+      <a href="players.html" class="nav-btn">Players</a>
+      <a href="latest_results.html" class="nav-btn">Latest Results</a>
+      <a href="rules.html" class="nav-btn">Rules</a>
     """
+
+
+def render_topbar() -> str:
+    return f"""
+  <div class="topbar">
+    <strong>🏆 Sweepstake</strong>
+    <div class="nav-links">{NAV_LINKS}</div>
+  </div>
+"""
 
 
 def get_player_display_name(player_id: str) -> str:
