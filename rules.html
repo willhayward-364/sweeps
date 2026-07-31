@@ -8,6 +8,9 @@
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0b132b; color: #ffffff; padding: 20px; max-width: 700px; margin: 0 auto; }
     .topbar { display: flex; justify-content: space-between; align-items: center; background: #1c2541; border: 1px solid #3a506b; border-radius: 999px; padding: 10px 16px; margin-bottom: 20px; }
     .topbar a { color: #48cae4; text-decoration: none; font-weight: 600; }
+    .nav-links { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+    .nav-btn { color: #48cae4; background: #0f1c33; border: 1px solid #3a506b; border-radius: 999px; padding: 6px 12px; text-decoration: none; font-weight: 600; font-size: 0.8rem; white-space: nowrap; transition: background 0.2s, color 0.2s; }
+    .nav-btn:hover { background: #48cae4; color: #0b132b; }
     .rule-card { background: #1c2541; border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid #3a506b; }
     .rule-ref { color: #48cae4; font-weight: bold; margin-bottom: 6px; }
     .rule-title { color: #ffb703; font-weight: bold; margin-bottom: 6px; }
@@ -18,10 +21,10 @@
   <div class="topbar">
     <strong>🏆 Sweepstake</strong>
     <div>
-      <a href="index.html">Standings</a>
-      <a href="players.html">Players</a>
-      <a href="rules.html">Rules</a>
-      <a href="latest_results.html">Latest Results</a>
+      <a href="index.html" class="nav-btn">Standings</a>
+      <a href="players.html" class="nav-btn">Players</a>
+      <a href="latest_results.html" class="nav-btn">Latest Results</a>
+      <a href="rules.html" class="nav-btn">Rules</a>
 
     </div>
   </div>

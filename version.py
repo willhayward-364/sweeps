@@ -10,10 +10,17 @@ DEFAULT_VERSION = "v0.01"
 
 
 def read_version() -> str:
+    # 1. Check if running inside GitHub Actions (uses build number automatically, e.g., v0.12)
+    run_number = os.getenv("GITHUB_RUN_NUMBER")
+    if run_number:
+        return f"v0.{int(run_number):02d}"
+
+    # 2. Fallback for local testing: read from .version file
     if VERSION_FILE.exists():
         version = VERSION_FILE.read_text(encoding="utf-8").strip()
         if version:
             return version
+            
     return DEFAULT_VERSION
 
 
@@ -58,10 +65,9 @@ def get_version_banner(version: str | None = None, deployed_at: str | None = Non
     current_version = format_version(version or read_version())
     deployed = deployed_at or get_deployment_timestamp()
     api_fetch = read_api_fetch_timestamp()
+    
     return (
-        f'<div style="margin-bottom: 12px; padding: 8px 12px; border: 1px solid #3a506b; '
-        f'background: #0f1c33; color: #8ecae6; border-radius: 999px; font-size: 0.85rem; '
-        f'text-align: center;">'
+        f'<div class="version-banner">'
         f'Version <strong>{current_version}</strong> &nbsp;•&nbsp; Last deployed <strong>{deployed}</strong> '
         f'&nbsp;•&nbsp; API last fetched <strong>{api_fetch}</strong>'
         f'</div>'
