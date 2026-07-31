@@ -1,5 +1,4 @@
 import os
-import random
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -14,6 +13,8 @@ from version import (
     write_version,
 )
 
+# Configuration & Flags
+USE_MOCK_DATA = os.getenv("USE_MOCK_DATA", "false").lower() == "true"
 API_KEY = os.getenv("FOOTBALL_DATA_API_KEY", "").strip()
 HEADERS = {"X-Auth-Token": API_KEY} if API_KEY else {}
 
@@ -49,6 +50,10 @@ NAV_LINKS = """
     """
 
 
+def get_player_display_name(player_id: str) -> str:
+    return PLAYER_NICKNAMES.get(player_id, player_id)
+
+
 def render_topbar() -> str:
     return f"""
   <div class="topbar">
@@ -58,21 +63,9 @@ def render_topbar() -> str:
 """
 
 
-def get_player_display_name(player_id: str) -> str:
-    return PLAYER_NICKNAMES.get(player_id, player_id)
-
-
-def render_topbar() -> str:
-    return f"""
-  <div class="topbar">
-    <strong>🏆 Sweepstake</strong>
-    <div>{NAV_LINKS}</div>
-  </div>
-"""
-
-
 def fetch_matches(comp_code: str):
-    url = f"https://api.football-data.org/v4/competitions/{comp_code}/matches?status=FINISHED&season=2025"
+    # Updated to season=2026 for the 2026/27 campaign
+    url = f"https://api.football-data.org/v4/competitions/{comp_code}/matches?status=FINISHED&season=2026"
 
     try:
         response = requests.get(url, headers=HEADERS, timeout=10)
@@ -90,18 +83,32 @@ def fetch_matches(comp_code: str):
 
 
 def build_mock_matches():
-    raise NotImplementedError
+    return [
+        {
+            "competitionCode": "PL",
+            "utcDate": "2026-08-15T14:00:00Z",
+            "homeTeam": {"name": "Arsenal FC", "shortName": "Arsenal"},
+            "awayTeam": {"name": "Chelsea FC", "shortName": "Chelsea"},
+            "score": {"fullTime": {"home": 3, "away": 0}},
+        }
+    ]
 
 
 def load_matches() -> list[dict]:
     if USE_MOCK_DATA:
         return build_mock_matches()
 
-    return fetch_matches("PL") + fetch_matches("ELC")
+    matches = fetch_matches("PL") + fetch_matches("ELC") + fetch_matches("BSA")
+    return matches if matches else build_mock_matches()
 
 
 def team_is_in_player_selection(team_name: str, selected_teams: list[str]) -> bool:
-    return any(team_name == selected_team for selected_team in selected_teams)
+    """Robust team matching to handle API suffixes like 'Arsenal FC' matching 'Arsenal'."""
+    clean_api_name = team_name.replace(" FC", "").strip().lower()
+    return any(
+        selected.lower() == clean_api_name or selected.lower() in team_name.lower()
+        for selected in selected_teams
+    )
 
 
 def calculate_scores(matches: list[dict]):
@@ -176,8 +183,8 @@ def calculate_scores(matches: list[dict]):
     return player_scores
 
 
-def render_html(scores, output_path: str | None = None):
-    version_banner = get_version_banner()
+def render_html(scores, version: str | None = None, output_path: str | None = None):
+    version_banner = get_version_banner(version=version)
     sorted_scores = sorted(scores.items(), key=lambda item: item[1]["points"], reverse=True)
 
     cards_html = ""
@@ -214,8 +221,8 @@ def render_html(scores, output_path: str | None = None):
     target_path.write_text(html_content, encoding="utf-8")
 
 
-def render_players_page(output_path: str | None = None):
-    version_banner = get_version_banner()
+def render_players_page(version: str | None = None, output_path: str | None = None):
+    version_banner = get_version_banner(version=version)
     cards_html = ""
     for player, teams in PLAYERS.items():
         display_name = get_player_display_name(player)
@@ -248,8 +255,8 @@ def render_players_page(output_path: str | None = None):
     target_path.write_text(html_content, encoding="utf-8")
 
 
-def render_latest_results_page(matches: list[dict], output_path: str | None = None):
-    version_banner = get_version_banner()
+def render_latest_results_page(matches: list[dict], version: str | None = None, output_path: str | None = None):
+    version_banner = get_version_banner(version=version)
 
     sorted_matches = sorted(
         matches, key=lambda match: match.get("utcDate", ""), reverse=True
@@ -330,7 +337,7 @@ if __name__ == "__main__":
 
     matches = load_matches()
     scores = calculate_scores(matches)
-    render_html(scores)
-    render_players_page()
-    render_latest_results_page(matches)
+    render_html(scores, version=next_version)
+    render_players_page(version=next_version)
+    render_latest_results_page(matches, version=next_version)
     render_rules_page()
