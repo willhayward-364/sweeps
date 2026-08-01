@@ -1,6 +1,6 @@
 # Sweeps
 
-This project fetches finished football matches from the Football Data API, calculates sweepstake scores for a set of selected teams, and publishes a simple HTML site with standings, player selections, and rules.
+This project fetches finished football matches from the Football Data API, calculates sweepstake scores for a set of selected teams, and publishes a simple HTML site with standings, player selections, latest results, and rules.
 
 ## What it does
 
@@ -15,6 +15,8 @@ This project fetches finished football matches from the Football Data API, calcu
   - current deployment version
   - last deployment timestamp
   - last successful API fetch timestamp
+- Renders a per-match points breakdown on the latest results page, including a clear fallback when no sweepstake players are affected
+- Displays local team crests using SVG assets from [images/crests](images/crests) with graceful text fallback if an asset is missing
 - Supports mock match data for scoring tests
 - Includes a helper script to verify official team names from the API
 

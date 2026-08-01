@@ -66,12 +66,52 @@ h1 {
 /* ==========================================
    3. Player Cards & Standings Layout
    ========================================== */
-.card { 
+.card, .points-breakdown { 
   background: #1c2541; 
   border-radius: 12px; 
   padding: 15px; 
   margin-bottom: 15px; 
   border: 1px solid #3a506b; 
+}
+
+.team-label,
+.team-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.team-crest {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.06);
+  padding: 2px;
+}
+
+.team-name-text {
+  white-space: nowrap;
+}
+
+.points-breakdown {
+  margin-top: 10px;
+  padding-top: 12px;
+}
+
+.points-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #cbd5e1;
+  margin-bottom: 6px;
+}
+
+.points-row strong {
+  color: #48cae4;
 }
 
 .player-name { 

@@ -88,6 +88,51 @@ def test_latest_results_page_can_render():
     output_path.unlink(missing_ok=True)
 
 
+def test_latest_results_page_shows_player_point_breakdown():
+    from fetch_and_score import render_latest_results_page
+
+    output_path = ROOT / "tmp_latest_results_breakdown_test.html"
+    sample_matches = [
+        {
+            "competitionCode": "PL",
+            "utcDate": "2026-07-30T20:00:00Z",
+            "homeTeam": {"name": "Arsenal"},
+            "awayTeam": {"name": "Chelsea"},
+            "score": {"fullTime": {"home": 3, "away": 0}},
+        }
+    ]
+    render_latest_results_page(sample_matches, output_path=str(output_path))
+
+    html = output_path.read_text(encoding="utf-8")
+    assert "Player A" in html
+    assert "+5 pts" in html
+    assert "win" in html
+
+    output_path.unlink(missing_ok=True)
+
+
+def test_latest_results_page_renders_team_crests():
+    from fetch_and_score import render_latest_results_page
+
+    output_path = ROOT / "tmp_latest_results_crests_test.html"
+    sample_matches = [
+        {
+            "competitionCode": "PL",
+            "utcDate": "2026-07-30T20:00:00Z",
+            "homeTeam": {"name": "Arsenal"},
+            "awayTeam": {"name": "Chelsea"},
+            "score": {"fullTime": {"home": 3, "away": 0}},
+        }
+    ]
+    render_latest_results_page(sample_matches, output_path=str(output_path))
+
+    html = output_path.read_text(encoding="utf-8")
+    assert 'class="team-crest"' in html
+    assert 'images/crests/england_arsenal.football-logos.cc.svg' in html
+
+    output_path.unlink(missing_ok=True)
+
+
 def test_version_banner_is_rendered_on_pages():
     import version
     from fetch_and_score import render_html, render_players_page

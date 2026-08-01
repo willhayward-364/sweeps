@@ -1,4 +1,5 @@
 import os
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -52,6 +53,70 @@ NAV_LINKS = """
 
 def get_player_display_name(player_id: str) -> str:
     return PLAYER_NICKNAMES.get(player_id, player_id)
+
+
+TEAM_CREST_LOOKUP = {
+    "arsenal": "england_arsenal.football-logos.cc.svg",
+    "chelsea": "england_chelsea.football-logos.cc.svg",
+    "everton": "england_everton.football-logos.cc.svg",
+    "west-ham-united": "england_west-ham.football-logos.cc.svg",
+    "manchester-city": "england_manchester-city.football-logos.cc.svg",
+    "newcastle-united": "england_newcastle.football-logos.cc.svg",
+    "leeds-united": "england_leeds-united.football-logos.cc.svg",
+    "burnley": "england_burnley.football-logos.cc.svg",
+    "manchester-united": "england_manchester-united.football-logos.cc.svg",
+    "brentford": "england_brentford.football-logos.cc.svg",
+    "crystal-palace": "england_crystal-palace.football-logos.cc.svg",
+    "wolverhampton-wanderers": "england_wolves.football-logos.cc.svg",
+    "aston-villa": "england_aston-villa.football-logos.cc.svg",
+    "brighton-hove-albion": "england_brighton.football-logos.cc.svg",
+    "brighton-and-hove-albion": "england_brighton.football-logos.cc.svg",
+    "tottenham-hotspur": "england_tottenham.football-logos.cc.svg",
+    "ipswich-town": "england_ipswich.football-logos.cc.svg",
+    "afc-bournemouth": "england_bournemouth.football-logos.cc.svg",
+    "bournemouth": "england_bournemouth.football-logos.cc.svg",
+    "fulham": "england_fulham.football-logos.cc.svg",
+    "coventry-city": "england_coventry-city.football-logos.cc.svg",
+}
+
+
+def normalize_team_name(team_name: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", team_name.lower()).strip("-")
+
+
+def get_team_crest_path(team_name: str) -> str | None:
+    slug = normalize_team_name(team_name)
+    mapped_name = TEAM_CREST_LOOKUP.get(slug)
+    if mapped_name:
+        crest_path = Path(__file__).with_name("images") / "crests" / mapped_name
+        if crest_path.exists():
+            return f"images/crests/{mapped_name}"
+
+    fallback_path = Path(__file__).with_name("images") / "crests" / f"{slug}.svg"
+    if fallback_path.exists():
+        return f"images/crests/{slug}.svg"
+
+    placeholder_path = Path(__file__).with_name("images") / "crests" / "placeholder.svg"
+    if placeholder_path.exists():
+        return "images/crests/placeholder.svg"
+
+    return None
+
+
+def render_team_label(team_name: str, css_class: str = "team-label") -> str:
+    crest_path = get_team_crest_path(team_name)
+    crest_html = (
+        f'<img class="team-crest" src="{crest_path}" alt="{team_name} crest" loading="lazy">'
+        if crest_path
+        else ""
+    )
+    return f'<span class="{css_class}">{crest_html}<span class="team-name-text">{team_name}</span></span>'
+
+
+def render_team_chip_list(team_names: list[str]) -> str:
+    return " ".join(
+        render_team_label(team_name, css_class="team-chip") for team_name in team_names
+    )
 
 
 def render_topbar() -> str:
@@ -191,20 +256,87 @@ def calculate_scores(matches: list[dict]):
     return player_scores
 
 
+def calculate_match_breakdown(match: dict) -> list[dict]:
+    home_team = match.get("homeTeam", {}).get("name", "")
+    away_team = match.get("awayTeam", {}).get("name", "")
+
+    score = match.get("score", {}).get("fullTime", {})
+    home_score = score.get("home")
+    away_score = score.get("away")
+
+    if home_score is None or away_score is None:
+        return []
+
+    breakdown = []
+    for player, teams in PLAYERS.items():
+        points = 0
+        reasons: list[str] = []
+
+        home_selected = team_is_in_player_selection(home_team, teams)
+        away_selected = team_is_in_player_selection(away_team, teams)
+
+        if home_selected:
+            if home_score > away_score:
+                points += 3
+                reasons.append("win")
+            elif home_score == away_score:
+                points += 1
+                reasons.append("draw")
+
+            if away_score == 0:
+                points += 1
+                reasons.append("clean sheet")
+
+            if home_score >= 3:
+                points += 1
+                reasons.append("goal feast")
+
+        if away_selected:
+            if away_score > home_score:
+                points += 3
+                reasons.append("win")
+            elif home_score == away_score:
+                points += 1
+                reasons.append("draw")
+
+            if home_score == 0:
+                points += 1
+                reasons.append("clean sheet")
+
+            if away_score >= 3:
+                points += 1
+                reasons.append("goal feast")
+
+        if points:
+            nickname = get_player_display_name(player)
+            display_label = f"{player} ({nickname})" if nickname and nickname != player else player
+            breakdown.append(
+                {
+                    "player": player,
+                    "display_name": nickname,
+                    "display_label": display_label,
+                    "points": points,
+                    "reasons": reasons,
+                }
+            )
+
+    return breakdown
+
+
 def render_html(scores, version: str | None = None, output_path: str | None = None):
     version_banner = get_version_banner(version=version)
     sorted_scores = sorted(scores.items(), key=lambda item: item[1]["points"], reverse=True)
 
     cards_html = ""
     for rank, (player, data) in enumerate(sorted_scores, 1):
-        teams_str = ", ".join(PLAYERS[player])
+        teams_html = render_team_chip_list(PLAYERS[player])
         display_name = get_player_display_name(player)
         cards_html += f"""
         <div class="card">
             <span class="score">{data['points']} pts</span>
             <div class="player-name">#{rank} {display_name}</div>
             <div class="player-id">{player}</div>
-            <div class="teams">{teams_str}</div>
+            <div class="teams">{teams_html}</div>
             <div class="stats">Wins: {data['wins']} | Draws: {data['draws']} | Clean Sheets: {data['clean_sheets']}</div>
         </div>
         """
@@ -298,6 +430,23 @@ def render_latest_results_page(matches: list[dict], version: str | None = None, 
             else "TBD"
         )
 
+        breakdown = calculate_match_breakdown(match)
+        if breakdown:
+            breakdown_html = "".join(
+                f"""
+                <div class="points-row">
+                  <span>{item['display_label']}</span>
+                  <span><strong>+{item['points']} pts</strong> ({', '.join(item['reasons'])})</span>
+                </div>
+                """
+                for item in breakdown
+            )
+        else:
+            breakdown_html = '<div class="points-row"><span>No sweepstake players affected by this result</span></div>'
+
+        home_team_display = render_team_label(home_team, css_class="team-label")
+        away_team_display = render_team_label(away_team, css_class="team-label")
+
         matches_html += f"""
         <div class="card">
           <div class="match-meta">
@@ -305,9 +454,12 @@ def render_latest_results_page(matches: list[dict], version: str | None = None, 
             <span>{date_str} UTC</span>
           </div>
           <div class="match-teams">
-            <span class="team home">{home_team}</span>
+            <span class="team home">{home_team_display}</span>
             <span class="score-badge">{score_display}</span>
-            <span class="team away">{away_team}</span>
+            <span class="team away">{away_team_display}</span>
+          </div>
+          <div class="points-breakdown">
+            {breakdown_html}
           </div>
         </div>
         """

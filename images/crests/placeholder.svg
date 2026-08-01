@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Placeholder crest">
+  <rect width="64" height="64" rx="12" fill="#243b53"/>
+  <circle cx="32" cy="32" r="18" fill="#f7fafc" opacity="0.95"/>
+  <path d="M32 12l6 12 13 2-10 9 3 13-12-6-12 6 3-13-10-9 13-2 6-12z" fill="#f59e0b"/>
+</svg>
