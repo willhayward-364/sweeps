@@ -4,25 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Latest Results</title>
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b132b; color: #ffffff; padding: 20px; max-width: 600px; margin: 0 auto; }
-    h1 { text-align: center; color: #48cae4; font-size: 1.5rem; margin-bottom: 20px; }
-    .topbar { display: flex; justify-content: space-between; align-items: center; background: #1c2541; border: 1px solid #3a506b; border-radius: 999px; padding: 10px 16px; margin-bottom: 20px; }
-    .topbar a { color: #48cae4; text-decoration: none; font-weight: 600; font-size: 0.9rem; margin-left: 8px; }
-    .card { background: #1c2541; border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #3a506b; }
-    .nav-links { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
-    .nav-btn { color: #48cae4; background: #0f1c33; border: 1px solid #3a506b; border-radius: 999px; padding: 6px 12px; text-decoration: none; font-weight: 600; font-size: 0.8rem; white-space: nowrap; transition: background 0.2s, color 0.2s; }
-    .nav-btn:hover { background: #48cae4; color: #0b132b; }
-    /* Result card specific styles */
-    .match-meta { font-size: 0.8rem; color: #a0aec0; display: flex; justify-content: space-between; margin-bottom: 8px; }
-    .match-teams { display: flex; justify-content: space-between; align-items: center; font-size: 1.05rem; font-weight: bold; }
-    .team { width: 40%; text-align: center; color: #ffffff; }
-    .team.home { text-align: right; }
-    .team.away { text-align: left; }
-    .score { color: #ffb703; font-size: 1.2rem; font-weight: 800; background: #0f1c33; padding: 4px 12px; border-radius: 6px; border: 1px solid #3a506b; }
-  </style>
+ <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  
   <div class="topbar">
     <strong>🏆 Sweepstake</strong>
     <div class="nav-links">
@@ -34,9 +19,307 @@
   </div>
 
   <h1>⚽ Latest Results</h1>
-
-  <div style="margin-bottom: 12px; padding: 8px 12px; border: 1px solid #3a506b; background: #0f1c33; color: #8ecae6; border-radius: 999px; font-size: 0.85rem; text-align: center;">
-    Version <strong>v0.02</strong> &nbsp;•&nbsp; Last deployed <strong>2026-07-30 21:26:01 UTC</strong> &nbsp;•&nbsp; API last fetched <strong>2026-07-31 12:00:00 UTC</strong>
-  </div>
+  <div class="version-banner">Version <strong>v0.09</strong> &nbsp;•&nbsp; Last deployed <strong>2026-08-01 11:44:28 UTC</strong> &nbsp;•&nbsp; API last fetched <strong>2026-08-01 11:44:28 UTC</strong></div>
+  
+        <div class="card">
+          <div class="match-meta">
+            <span>BSA</span>
+            <span>2026-07-31 00:30 UTC</span>
+          </div>
+          <div class="match-teams">
+            <span class="team home">Coritiba</span>
+            <span class="score-badge">0 - 1</span>
+            <span class="team away">Cruzeiro</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="match-meta">
+            <span>BSA</span>
+            <span>2026-07-30 22:30 UTC</span>
+          </div>
+          <div class="match-teams">
+            <span class="team home">Corinthians</span>
+            <span class="score-badge">0 - 0</span>
+            <span class="team away">Paranaense</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="match-meta">
+            <span>BSA</span>
+            <span>2026-07-30 00:30 UTC</span>
+          </div>
+          <div class="match-teams">
+            <span class="team home">Fluminense</span>
+            <span class="score-badge">0 - 0</span>
+            <span class="team away">Bahia</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="match-meta">
+            <span>BSA</span>
+            <span>2026-07-30 00:30 UTC</span>
+          </div>
+          <div class="match-teams">
+            <span class="team home">Vitória</span>
+            <span class="score-badge">0 - 4</span>
+            <span class="team away">Palmeiras</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="match-meta">
+            <span>BSA</span>
+            <span>2026-07-29 22:30 UTC</span>
+          </div>
+          <div class="match-teams">
+            <span class="team home">Internacional</span>
+            <span class="score-badge">1 - 1</span>
+            <span class="team away">Flamengo</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="match-meta">
+            <span>BSA</span>
+            <span>2026-07-29 22:30 UTC</span>
+          </div>
+          <div class="match-teams">
+            <span class="team home">Mirassol</span>
+            <span class="score-badge">2 - 1</span>
+            <span class="team away">Clube do Remo</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="match-meta">
+            <span>BSA</span>
+            <span>2026-07-26 22:30 UTC</span>
+          </div>
+          <div class="match-teams">
+            <span class="team home">Palmeiras</span>
+            <span class="score-badge">1 - 2</span>
+            <span class="team away">Mineiro</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="match-meta">
+            <span>BSA</span>
+            <span>2026-07-26 22:30 UTC</span>
+          </div>
+          <div class="match-teams">
+            <span class="team home">Clube do Remo</span>
+            <span class="score-badge">2 - 0</span>
+            <span class="team away">Vitória</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="match-meta">
+            <span>BSA</span>
+            <span>2026-07-26 21:30 UTC</span>
+          </div>
+          <div class="match-teams">
+            <span class="team home">Bragantino</span>
+            <span class="score-badge">0 - 0</span>
+            <span class="team away">Coritiba</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="match-meta">
+            <span>BSA</span>
+            <span>2026-07-26 21:30 UTC</span>
+          </div>
+          <div class="match-teams">
+            <span class="team home">Flamengo</span>
+            <span class="score-badge">1 - 1</span>
+            <span class="team away">São Paulo</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="match-meta">
+            <span>BSA</span>
+            <span>2026-07-26 21:30 UTC</span>
+          </div>
+          <div class="match-teams">
+            <span class="team home">Grêmio</span>
+            <span class="score-badge">1 - 1</span>
+            <span class="team away">Fluminense</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="match-meta">
+            <span>BSA</span>
+            <span>2026-07-26 19:00 UTC</span>
+          </div>
+          <div class="match-teams">
+            <span class="team home">Bahia</span>
+            <span class="score-badge">1 - 1</span>
+            <span class="team away">Corinthians</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="match-meta">
+            <span>BSA</span>
+            <span>2026-07-26 19:00 UTC</span>
+          </div>
+          <div class="match-teams">
+            <span class="team home">Cruzeiro</span>
+            <span class="score-badge">0 - 1</span>
+            <span class="team away">Botafogo</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="match-meta">
+            <span>BSA</span>
+            <span>2026-07-25 23:30 UTC</span>
+          </div>
+          <div class="match-teams">
+            <span class="team home">Vasco da Gama</span>
+            <span class="score-badge">1 - 1</span>
+            <span class="team away">Mirassol</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="match-meta">
+            <span>BSA</span>
+            <span>2026-07-25 21:30 UTC</span>
+          </div>
+          <div class="match-teams">
+            <span class="team home">Paranaense</span>
+            <span class="score-badge">2 - 0</span>
+            <span class="team away">Internacional</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="match-meta">
+            <span>BSA</span>
+            <span>2026-07-25 21:30 UTC</span>
+          </div>
+          <div class="match-teams">
+            <span class="team home">Santos</span>
+            <span class="score-badge">2 - 2</span>
+            <span class="team away">Chapecoense</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="match-meta">
+            <span>BSA</span>
+            <span>2026-07-23 22:30 UTC</span>
+          </div>
+          <div class="match-teams">
+            <span class="team home">Botafogo</span>
+            <span class="score-badge">0 - 0</span>
+            <span class="team away">Vitória</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="match-meta">
+            <span>BSA</span>
+            <span>2026-07-23 22:30 UTC</span>
+          </div>
+          <div class="match-teams">
+            <span class="team home">Corinthians</span>
+            <span class="score-badge">3 - 0</span>
+            <span class="team away">Clube do Remo</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="match-meta">
+            <span>BSA</span>
+            <span>2026-07-23 00:30 UTC</span>
+          </div>
+          <div class="match-teams">
+            <span class="team home">Chapecoense</span>
+            <span class="score-badge">0 - 4</span>
+            <span class="team away">Flamengo</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="match-meta">
+            <span>BSA</span>
+            <span>2026-07-23 00:30 UTC</span>
+          </div>
+          <div class="match-teams">
+            <span class="team home">Internacional</span>
+            <span class="score-badge">1 - 2</span>
+            <span class="team away">Cruzeiro</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="match-meta">
+            <span>BSA</span>
+            <span>2026-07-23 00:30 UTC</span>
+          </div>
+          <div class="match-teams">
+            <span class="team home">São Paulo</span>
+            <span class="score-badge">1 - 2</span>
+            <span class="team away">Paranaense</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="match-meta">
+            <span>BSA</span>
+            <span>2026-07-22 22:30 UTC</span>
+          </div>
+          <div class="match-teams">
+            <span class="team home">Coritiba</span>
+            <span class="score-badge">1 - 3</span>
+            <span class="team away">Palmeiras</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="match-meta">
+            <span>BSA</span>
+            <span>2026-07-21 22:30 UTC</span>
+          </div>
+          <div class="match-teams">
+            <span class="team home">Mineiro</span>
+            <span class="score-badge">1 - 1</span>
+            <span class="team away">Bahia</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="match-meta">
+            <span>BSA</span>
+            <span>2026-07-17 23:00 UTC</span>
+          </div>
+          <div class="match-teams">
+            <span class="team home">Fluminense</span>
+            <span class="score-badge">1 - 1</span>
+            <span class="team away">Bragantino</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="match-meta">
+            <span>BSA</span>
+            <span>2026-07-17 23:00 UTC</span>
+          </div>
+          <div class="match-teams">
+            <span class="team home">Mirassol</span>
+            <span class="score-badge">2 - 1</span>
+            <span class="team away">Grêmio</span>
+          </div>
+        </div>
+        
 </body>
 </html>

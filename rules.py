@@ -49,7 +49,7 @@ def render_rules_page(output_path: str | None = None) -> None:
         "  <meta charset=\"UTF-8\">",
         "  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">",
         "  <title>Sweepstake Rules</title>",
-        "  <link rel=\"stylesheet\" href=\"styles.css\">",
+        "  <link rel=\"stylesheet\" href=\"style.css\">",
         "</head>",
         "<body>",
         "  <div class=\"topbar\">",

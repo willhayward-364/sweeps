@@ -53,6 +53,8 @@ This will regenerate:
 - [players.html](players.html)
 - [rules.html](rules.html)
 
+When fetching live API data, the script first queries the competition endpoint to determine the current season dates, then requests finished matches for that season.
+
 It also updates the version tracking files:
 
 - [.version](.version)

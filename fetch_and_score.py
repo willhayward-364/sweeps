@@ -64,11 +64,29 @@ def render_topbar() -> str:
 
 
 def fetch_matches(comp_code: str):
-    url = f"https://api.football-data.org/v4/competitions/{comp_code}/matches?status=FINISHED&season=2026"
+    competition_url = f"https://api.football-data.org/v4/competitions/{comp_code}"
 
     try:
-        response = requests.get(url, headers=HEADERS, timeout=10)
+        competition_response = requests.get(competition_url, headers=HEADERS, timeout=10)
+        competition_response.raise_for_status()
+        competition_data = competition_response.json()
+
+        current_season = competition_data.get("currentSeason", {})
+        start_date = current_season.get("startDate")
+        end_date = current_season.get("endDate")
+
+        if not start_date or not end_date:
+            raise ValueError(
+                f"Current season dates not available for competition {comp_code}"
+            )
+
+        matches_url = (
+            f"https://api.football-data.org/v4/competitions/{comp_code}/matches"
+            f"?status=FINISHED&dateFrom={start_date}&dateTo={end_date}"
+        )
+        response = requests.get(matches_url, headers=HEADERS, timeout=10)
         response.raise_for_status()
+
         timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
         write_api_fetch_timestamp(timestamp)
 
@@ -79,6 +97,9 @@ def fetch_matches(comp_code: str):
     except requests.RequestException as exc:
         print(f"Error fetching {comp_code}: {exc}")
         return []
+    except ValueError as exc:
+        print(f"Error fetching {comp_code}: {exc}")
+        return []
 
 
 def load_matches() -> list[dict]:
@@ -86,7 +107,6 @@ def load_matches() -> list[dict]:
         fetch_matches("PL")
         + fetch_matches("ELC")
         + fetch_matches("BSA")
-        + fetch_matches("CL")
     )
 
 
@@ -195,7 +215,7 @@ def render_html(scores, version: str | None = None, output_path: str | None = No
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>2026/27 Premier League Sweepstake</title>
- <link rel="stylesheet" href="styles.css">
+ <link rel="stylesheet" href="style.css">
 </head>
 <body>
   {render_topbar()}
@@ -229,7 +249,7 @@ def render_players_page(version: str | None = None, output_path: str | None = No
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Players</title>
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
   {render_topbar()}
@@ -298,7 +318,7 @@ def render_latest_results_page(matches: list[dict], version: str | None = None, 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Latest Results</title>
- <link rel="stylesheet" href="styles.css">
+ <link rel="stylesheet" href="style.css">
 </head>
 <body>
   {render_topbar()}
