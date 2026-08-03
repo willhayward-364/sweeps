@@ -152,9 +152,6 @@ def fetch_matches(comp_code: str):
         response = requests.get(matches_url, headers=HEADERS, timeout=10)
         response.raise_for_status()
 
-        timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
-        write_api_fetch_timestamp(timestamp)
-
         matches = response.json().get("matches", [])
         for match in matches:
             match["competitionCode"] = comp_code
@@ -494,6 +491,9 @@ if __name__ == "__main__":
     current_version = read_version()
     next_version = bump_version(current_version)
     write_version(next_version)
+
+    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+        write_api_fetch_timestamp(timestamp)
 
     matches = load_matches()
     scores = calculate_scores(matches)
