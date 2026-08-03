@@ -487,14 +487,16 @@ def render_latest_results_page(matches: list[dict], version: str | None = None, 
 
 if __name__ == "__main__":
     from rules import render_rules_page
+# 1. Grab deployment timestamp or generate fallback
+    timestamp = os.getenv("DEPLOYMENT_TIMESTAMP") or datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+    write_api_fetch_timestamp(timestamp)
 
+    # 2. Version management
     current_version = read_version()
     next_version = bump_version(current_version)
     write_version(next_version)
 
-    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
-        write_api_fetch_timestamp(timestamp)
-
+    # 3. Data processing and page generation
     matches = load_matches()
     scores = calculate_scores(matches)
     render_html(scores, version=next_version)
