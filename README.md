@@ -95,6 +95,15 @@ python3 test_api_connectivity.py
 
 ## GitHub Actions
 
+See yaml file update.yml
+
+- cron: '0 17,22 * * *'
+#        │  │     │ │ └── Day of week (0 - 6)  -> * = Every day
+#        │  │     │ └──── Month (1 - 12)       -> * = Every month
+#        │  │     └────── Day of month (1 - 31)-> * = Every day
+#        │  └──────────── Hour (0 - 23)        -> 17 and 22 (5 PM & 10 PM)
+#        └─────────────── Minute (0 - 59)      -> 0 (top of the hour)
+
 The workflow is configured to:
 
 - run on a schedule at 17:00 and 22:00 UTC
