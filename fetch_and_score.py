@@ -15,7 +15,69 @@ from version import (
 )
 
 # Configuration & Flags
-USE_MOCK_DATA = False
+USE_MOCK_DATA = false  # 👈 Set to True for testing, False for production
+
+MOCK_MATCHES = [
+    # Match 1: Player A (Arsenal) -> Win + Clean Sheet + Goal Feast (Home)
+    {
+        "competitionCode": "PL",
+        "utcDate": "2026-08-15T14:00:00Z",
+        "homeTeam": {"name": "Arsenal FC"},        # Player A (Pot 1)
+        "awayTeam": {"name": "Newcastle United"},  # Player B (Pot 1)
+        "score": {"fullTime": {"home": 3, "away": 0}},
+    },
+    # Match 2: Player A (Everton) -> Away Giant Kill + Clean Sheet + Goal Feast (Pot 3 vs Pot 1)
+    {
+        "competitionCode": "PL",
+        "utcDate": "2026-08-22T16:30:00Z",
+        "homeTeam": {"name": "Manchester City FC"}, # Player B (Pot 1)
+        "awayTeam": {"name": "Everton FC"},         # Player A (Pot 3) -> Giant Kill!
+        "score": {"fullTime": {"home": 0, "away": 3}},
+    },
+    # Match 3: Player C (Man Utd) vs Player E (Liverpool) -> 0-0 Draw (Draw + Clean Sheet for both)
+    {
+        "competitionCode": "PL",
+        "utcDate": "2026-08-29T11:30:00Z",
+        "homeTeam": {"name": "Manchester United FC"}, # Player C
+        "awayTeam": {"name": "Liverpool FC"},          # Player E
+        "score": {"fullTime": {"home": 0, "away": 0}},
+    },
+    # Match 4: Player D (Aston Villa) vs Player F (Bournemouth) -> High-scoring loss (Goal Feast for loser)
+    {
+        "competitionCode": "PL",
+        "utcDate": "2026-09-05T14:00:00Z",
+        "homeTeam": {"name": "Aston Villa FC"},       # Player D (Pot 1)
+        "awayTeam": {"name": "AFC Bournemouth"},      # Player F (Pot 1)
+        "score": {"fullTime": {"home": 4, "away": 3}},
+    },
+    # Match 5: Player D (Hull City) -> Home Giant Kill (Pot 4 vs Pot 1)
+    {
+        "competitionCode": "ELC",
+        "utcDate": "2026-09-12T18:00:00Z",
+        "homeTeam": {"name": "Hull City AFC"},        # Player D (Pot 4) -> Giant Kill!
+        "awayTeam": {"name": "Tottenham Hotspur"},    # Player E (Pot 3)
+        "score": {"fullTime": {"home": 1, "away": 0}},
+    },
+    # Match 6: Player F (Coventry) vs Player B (Burnley) -> Regular Win
+    {
+        "competitionCode": "ELC",
+        "utcDate": "2026-09-19T14:00:00Z",
+        "homeTeam": {"name": "Coventry City"},        # Player F (Pot 3)
+        "awayTeam": {"name": "Burnley FC"},           # Player B (Pot 4)
+        "score": {"fullTime": {"home": 2, "away": 1}},
+    },
+]
+
+
+def load_matches() -> list[dict]:
+    if USE_MOCK_DATA:
+        print("🧪 RUNNING IN MOCK DATA MODE - Skipping Football-Data API calls...")
+        return MOCK_MATCHES
+
+    return (
+        fetch_matches("PL")
+        + fetch_matches("ELC")
+    )
 API_KEY = os.getenv("FOOTBALL_DATA_API_KEY", "").strip()
 HEADERS = {"X-Auth-Token": API_KEY} if API_KEY else {}
 
@@ -168,7 +230,6 @@ def load_matches() -> list[dict]:
     return (
         fetch_matches("PL")
         + fetch_matches("ELC")
-        + fetch_matches("CL")
     )
 
 
