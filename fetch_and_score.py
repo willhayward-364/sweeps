@@ -171,7 +171,7 @@ def load_matches() -> list[dict]:
     return (
         fetch_matches("PL")
         + fetch_matches("ELC")
-        + fetch_matches("BSA")
+        + fetch_matches("CL")
     )
 
 
