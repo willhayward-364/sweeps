@@ -41,38 +41,50 @@ RULES = [
 ]
 
 
-def render_rules_page(output_path: str | None = None) -> None:
+def render_rules_page(output_path: str | None = None, pots_html: str = "") -> None:
     html_lines = [
         "<!DOCTYPE html>",
-        "<html lang=\"en\">",
+        '<html lang="en">',
         "<head>",
-        "  <meta charset=\"UTF-8\">",
-        "  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">",
+        '  <meta charset="UTF-8">',
+        '  <meta name="viewport" content="width=device-width, initial-scale=1.0">',
         "  <title>Sweepstake Rules</title>",
-        "  <link rel=\"stylesheet\" href=\"style.css\">",
+        '  <link rel="stylesheet" href="style.css">',
         "</head>",
         "<body>",
-        "  <div class=\"topbar\">",
+        '  <div class="topbar">',
         "    <strong>🏆 Sweepstake</strong>",
-        "    <div class=\"nav-links\">",
-        "      <a href=\"index.html\" class=\"nav-btn\">Standings</a>",
-        "      <a href=\"players.html\" class=\"nav-btn\">Players</a>",
-        "      <a href=\"latest_results.html\" class=\"nav-btn\">Latest Results</a>",
-        "      <a href=\"rules.html\" class=\"nav-btn\">Rules</a>",
+        '    <div class="nav-links">',
+        '      <a href="index.html" class="nav-btn">Standings</a>',
+        '      <a href="players.html" class="nav-btn">Players</a>',
+        '      <a href="latest_results.html" class="nav-btn">Latest Results</a>',
+        '      <a href="rules.html" class="nav-btn">Rules</a>',
         "    </div>",
         "  </div>",
         "  <h1>Rules</h1>",
         f"  {get_version_banner()}",
         "  <p>Points are awarded to each player based on the outcomes of the matches involving their selected teams.</p>",
+                """  <p><strong>💡 Christopher F Keane:</strong> "I literally don’t know how many times I have to step in and up here…"<br>
+        - 20 PL Teams ranked in order of odds<br>
+        - Top 18 split into 3 pots<br>
+        - 3 teams each drawn by a fucking wheel which will probably give me Italy again<br>
+        - bottom 2 split 3 and 3</p>""",
     ]
 
     for rule in RULES:
         html_lines.extend([
-            "  <div class=\"rule-card\">",
-            f"    <div class=\"rule-ref\">{rule['ref']}</div>",
-            f"    <div class=\"rule-title\">{rule['title']} ({rule['points']} point{'s' if rule['points'] != 1 else ''})</div>",
-            f"    <div class=\"rule-desc\">{rule['description']}</div>",
+            '  <div class="rule-card">',
+            f'    <div class="rule-ref">{rule["ref"]}</div>',
+            f'    <div class="rule-title">{rule["title"]} ({rule["points"]} point{"s" if rule["points"] != 1 else ""})</div>',
+            f'    <div class="rule-desc">{rule["description"]}</div>',
             "  </div>",
+        ])
+
+    # 🏆 Appends the Pots Grid
+    if pots_html:
+        html_lines.extend([
+            "  <h2>🏆 Competition Pots</h2>",
+            f"  {pots_html}",
         ])
 
     html_lines.extend(["</body>", "</html>"])

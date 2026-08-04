@@ -91,9 +91,10 @@ PLAYERS = {
 }
 
 POTS = {
-    "pot1": ["Arsenal", "Manchester City", "Manchester United", "Aston Villa", "Liverpool", "AFC Bournemouth"],
-    "pot3": ["Everton", "Leeds United", "Crystal Palace", "Nottingham Forest", "Tottenham Hotspur", "Coventry City"],
-    "pot4": ["Hull City", "Ipswich Town", "West Ham United", "Burnley", "Wolverhampton Wanderers", "Southampton"],
+    "pot1": ["Arsenal", "Manchester City", "Manchester United", "Tottenham Hotspur", "Liverpool", "Chelsea"],
+    "pot2": ["AFC Bournemouth", "Newcastle United", "Brighton & Hove Albion", "Fulham", "Brentford", "Aston Villa"],  
+    "pot3": ["Everton", "Leeds United", "Crystal Palace", "Nottingham Forest", "Sunderland", "Coventry City"],
+    "pot4": ["Hull City", "Ipswich Town"],
 }
 
 PLAYER_NICKNAMES = {
@@ -173,6 +174,45 @@ def render_team_label(team_name: str, css_class: str = "team-label") -> str:
         else ""
     )
     return f'<span class="{css_class}">{crest_html}<span class="team-name-text">{team_name}</span></span>'
+
+
+def get_team_slug(team_name: str) -> str:
+    """Converts a team name like 'Aston Villa' to 'aston-villa' for the SVG filename."""
+    return team_name.lower().replace(" ", "-").replace("&", "and")
+
+
+def render_pots_quadrant() -> str:
+    """Generates the 4-quadrant HTML grid populated with teams and SVG icons."""
+    pot_labels = {
+        "pot1": "Pot 1 (Top Tier)",
+        "pot2": "Pot 2 (Upper Tier)",
+        "pot3": "Pot 3 (Mid Tier)",
+        "pot4": "Pot 4 (Challengers)",
+    }
+
+    quadrant_cards = []
+
+    for pot_key, title in pot_labels.items():
+        teams = POTS.get(pot_key, [])
+
+        team_items = []
+        for team in teams:
+            # 💡 Uses standard render_team_label so .team-label & .team-name-text keep their styling
+            label_html = render_team_label(team)
+            team_items.append(f'          <div class="pot-team-item">{label_html}</div>')
+
+        teams_block = "\n".join(team_items)
+        
+        # 💡 Adding "card" ensures it inherits the site's exact card background and borders!
+        card_html = f"""      <div class="card pot-card">
+        <h3>{title}</h3>
+        <div class="pot-team-list">
+{teams_block}
+        </div>
+      </div>"""
+        quadrant_cards.append(card_html)
+
+    return '<div class="pots-grid">\n' + "\n".join(quadrant_cards) + "\n</div>"
 
 
 def render_team_chip_list(team_names: list[str]) -> str:
@@ -563,4 +603,4 @@ if __name__ == "__main__":
     render_html(scores, version=next_version)
     render_players_page(version=next_version)
     render_latest_results_page(matches, version=next_version)
-    render_rules_page()
+    render_rules_page(pots_html=render_pots_quadrant())

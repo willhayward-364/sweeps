@@ -280,7 +280,7 @@ h1 {
   .pots-grid {
     grid-template-columns: 1fr;
   }
-  
+
 /* Rule Quote / Callout Block */
 .rule-quote-block {
   margin: 1.5rem 0;
@@ -303,4 +303,67 @@ h1 {
   font-size: 0.85rem;
   color: #666;
   font-style: italic;
+}
+/* ==========================================
+   Seeded Pots 4-Quadrant Grid Styling
+   ========================================== */
+.pots-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  margin: 1.5rem 0;
+}
+
+.pots-grid .pot-card {
+  background-color: #1c2541;
+  border: 1px solid #3a506b;
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.pots-grid .pot-card h3 {
+  margin-top: 0;
+  margin-bottom: 0.8rem;
+  font-size: 1.1rem;
+  color: #48cae4;
+  border-bottom: 1px solid #3a506b;
+  padding-bottom: 0.4rem;
+}
+
+.pots-grid .pot-team-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.pots-grid .pot-team-item {
+  display: flex;
+  align-items: center;
+}
+
+.pots-grid .team-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pots-grid .team-crest {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+/* Explicit white text color (#ffffff) via proper selector specificity */
+.pots-grid .team-name-text {
+  display: inline-block;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+@media (max-width: 600px) {
+  .pots-grid {
+    grid-template-columns: 1fr;
+  }
 }
