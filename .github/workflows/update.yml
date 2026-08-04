@@ -46,7 +46,7 @@ jobs:
         run: |
           echo "${{ env.FETCH_TIMESTAMP }}" > .version
 
-      - name: - name: Commit and Push Updated Site safely
+      - name: Commit and Push Updated Site safely
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
