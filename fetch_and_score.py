@@ -15,7 +15,7 @@ from version import (
 )
 
 # Configuration & Flags
-USE_MOCK_DATA = True  # 👈 Set to True for testing, False for production
+USE_MOCK_DATA = False  # 👈 Set to True for testing, False for production
 
 MOCK_MATCHES = [
     # Match 1: Player A (Arsenal) -> Win + Clean Sheet + Goal Feast (Home)
