@@ -280,4 +280,27 @@ h1 {
   .pots-grid {
     grid-template-columns: 1fr;
   }
+  
+/* Rule Quote / Callout Block */
+.rule-quote-block {
+  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  background-color: rgba(56, 0, 60, 0.04); /* Subtle tint */
+  border-left: 4px solid #38003c; /* PL Purple theme accent */
+  border-radius: 0 8px 8px 0;
+  font-style: normal;
+}
+
+.rule-quote-block p {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #111;
+}
+
+.rule-quote-block cite {
+  display: block;
+  font-size: 0.85rem;
+  color: #666;
+  font-style: italic;
 }
