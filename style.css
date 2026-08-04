@@ -197,7 +197,6 @@ h1 {
     justify-content: space-between; 
     border-radius: 999px; 
   }
-}
 /* ==========================================
    6. Version Banner & Rules Page Layout
    ========================================== */
@@ -218,7 +217,6 @@ h1 {
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 12px;
-  
 }
 
 .rule-ref {
@@ -244,5 +242,42 @@ h1 {
   font-size: 0.9rem;
   color: #cbd5e1;
   line-height: 1.4;
+} /* 👈 FIXED: Added missing closing brace */
 
+/* 4-Quadrant Pots Layout */
+.pots-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  margin: 1.5rem 0;
+}
+
+.pot-card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 1.25rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eaeaea;
+}
+
+.pot-card h3 {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  font-size: 1.1rem;
+  color: #38003c;
+  border-bottom: 2px solid #00ff85;
+  padding-bottom: 0.4rem;
+}
+
+.pot-team-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Responsive adjustment for mobile screens */
+@media (max-width: 600px) {
+  .pots-grid {
+    grid-template-columns: 1fr;
+  }
 }
