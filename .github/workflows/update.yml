@@ -51,7 +51,7 @@ jobs:
           git config user.name 'Sweepstake Bot'
           git config user.email 'bot@github.com'
 
-          git add index.html players.html latest_results.html rules.html .version style.css styles.css images/
+          git add index.html players.html latest_results.html rules.html .version style.css style.css images/
 
           git commit -m "API Fetch Heartbeat: ${{ env.FETCH_TIMESTAMP }} [skip ci]"
           git pull --rebase origin main
