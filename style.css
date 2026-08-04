@@ -249,24 +249,12 @@ h1 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1.25rem;
-  margin: 1.5rem 0;
+  border: 1px solid #3a506b;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
 }
 
-.pot-card {
-  background: #ffffff;
-  border-radius: 10px;
-  padding: 1.25rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  border: 1px solid #eaeaea;
-}
-
-.pot-card h3 {
-  margin-top: 0;
-  margin-bottom: 0.75rem;
-  font-size: 1.1rem;
-  color: #38003c;
-  border-bottom: 2px solid #00ff85;
-  padding-bottom: 0.4rem;
 }
 
 .pot-team-list {
@@ -325,7 +313,7 @@ h1 {
   margin-top: 0;
   margin-bottom: 0.8rem;
   font-size: 1.1rem;
-  color: #48cae4;
+  color: #ffffff;
   border-bottom: 1px solid #3a506b;
   padding-bottom: 0.4rem;
 }
