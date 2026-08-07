@@ -81,19 +81,19 @@ API_KEY = os.getenv("FOOTBALL_DATA_API_KEY", "").strip()
 HEADERS = {"X-Auth-Token": API_KEY} if API_KEY else {}
 
 PLAYERS = {
-    "Player A": ["Arsenal", "Chelsea", "Everton", "Coventry"],
-    "Player B": ["Manchester City", "Newcastle United", "Leeds United", "Coventry"],
-    "Player C": ["Manchester United", "Brentford", "Crystal Palace", "Coventry"],
-    "Player D": ["Aston Villa", "Brighton & Hove Albion", "Nottingham Forest", "Hull City"],
-    "Player E": ["Liverpool", "Sunderland", "Tottenham Hotspur", "Ipswich Town"],
-    "Player F": ["AFC Bournemouth", "Fulham", "Coventry City", "Southampton"],
+"Player A": ["Liverpool", "AFC Bournemouth", "Leeds United", "Ipswich Town"],
+"Player B": ["Manchester City", "Aston Villa", "Sunderland", "Ipswich Town"],
+"Player C": ["Manchester United", "Newcastle United", "Crystal Palace", "Hull City"],
+"Player D": ["Tottenham Hotspur", "Brentford", "Coventry City", "Ipswich Town"],
+"Player E": ["Arsenal", "Fulham", "Nottingham Forest", "Hull City"],
+"Player F": ["Chelsea", "Brighton & Hove Albion", "Everton", "Hull City"],
 }
 
 POTS = {
-    "pot1": ["Arsenal", "Manchester City", "Manchester United", "Tottenham Hotspur", "Liverpool", "Chelsea"],
-    "pot2": ["AFC Bournemouth", "Newcastle United", "Brighton & Hove Albion", "Fulham", "Brentford", "Aston Villa"],  
-    "pot3": ["Everton", "Leeds United", "Crystal Palace", "Nottingham Forest", "Sunderland", "Ipswich Town"],
-    "pot4": ["Hull City", "Coventry"],
+"pot1": ["Arsenal", "Manchester City", "Manchester United", "Tottenham Hotspur", "Liverpool", "Chelsea"],
+"pot2": ["AFC Bournemouth", "Newcastle United", "Brighton & Hove Albion", "Fulham", "Brentford", "Aston Villa"],
+"pot3": ["Everton", "Leeds United", "Crystal Palace", "Nottingham Forest", "Sunderland", "Coventry"],
+"pot4": ["Hull City", "Ipswich Town"],
 }
 
 PLAYER_NICKNAMES = {
