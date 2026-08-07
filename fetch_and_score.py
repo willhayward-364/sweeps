@@ -55,7 +55,7 @@ MOCK_MATCHES = [
         "competitionCode": "ELC",
         "utcDate": "2026-09-12T18:00:00Z",
         "homeTeam": {"name": "Hull City AFC"},        # Player D (Pot 4) -> Giant Kill!
-        "awayTeam": {"name": "Tottenham Hotspur"},    # Player E (Pot 3)
+        "awayTeam": {"name": "Tottenham Hotspur"},    # Player E (Pot 1)
         "score": {"fullTime": {"home": 1, "away": 0}},
     },
     # Match 6: Player F (Coventry) vs Player B (Burnley) -> Regular Win
@@ -76,15 +76,14 @@ def load_matches() -> list[dict]:
 
     return (
         fetch_matches("PL")
-        + fetch_matches("ELC")
     )
 API_KEY = os.getenv("FOOTBALL_DATA_API_KEY", "").strip()
 HEADERS = {"X-Auth-Token": API_KEY} if API_KEY else {}
 
 PLAYERS = {
-    "Player A": ["Arsenal", "Chelsea", "Everton", "West Ham United"],
-    "Player B": ["Manchester City", "Newcastle United", "Leeds United", "Burnley"],
-    "Player C": ["Manchester United", "Brentford", "Crystal Palace", "Wolverhampton Wanderers"],
+    "Player A": ["Arsenal", "Chelsea", "Everton", "Coventry"],
+    "Player B": ["Manchester City", "Newcastle United", "Leeds United", "Coventry"],
+    "Player C": ["Manchester United", "Brentford", "Crystal Palace", "Coventry"],
     "Player D": ["Aston Villa", "Brighton & Hove Albion", "Nottingham Forest", "Hull City"],
     "Player E": ["Liverpool", "Sunderland", "Tottenham Hotspur", "Ipswich Town"],
     "Player F": ["AFC Bournemouth", "Fulham", "Coventry City", "Southampton"],
@@ -93,8 +92,8 @@ PLAYERS = {
 POTS = {
     "pot1": ["Arsenal", "Manchester City", "Manchester United", "Tottenham Hotspur", "Liverpool", "Chelsea"],
     "pot2": ["AFC Bournemouth", "Newcastle United", "Brighton & Hove Albion", "Fulham", "Brentford", "Aston Villa"],  
-    "pot3": ["Everton", "Leeds United", "Crystal Palace", "Nottingham Forest", "Sunderland", "Coventry City"],
-    "pot4": ["Hull City", "Ipswich Town"],
+    "pot3": ["Everton", "Leeds United", "Crystal Palace", "Nottingham Forest", "Sunderland", "Ipswich Town"],
+    "pot4": ["Hull City", "Coventry"],
 }
 
 PLAYER_NICKNAMES = {
@@ -117,6 +116,25 @@ NAV_LINKS = """
 def get_player_display_name(player_id: str) -> str:
     return PLAYER_NICKNAMES.get(player_id, player_id)
 
+# ==========================================
+# Team Crest Lookup & Normalization Logic
+# ==========================================
+
+COMMON_ALIASES = {
+    "man-city": "manchester-city",
+    "man-utd": "manchester-united",
+    "west-ham": "west-ham-united",
+    "brighton": "brighton-hove-albion",
+    "brighton-and-hove-albion": "brighton-hove-albion",
+    "wolves": "wolverhampton-wanderers",
+    "spurs": "tottenham-hotspur",
+    "tottenham": "tottenham-hotspur",
+    "newcastle": "newcastle-united",
+    "leeds": "leeds-united",
+    "ipswich": "ipswich-town",
+    "coventry": "coventry-city",
+    "hull": "hull-city",
+}
 
 TEAM_CREST_LOOKUP = {
     "arsenal": "england_arsenal.football-logos.cc.svg",
@@ -128,6 +146,7 @@ TEAM_CREST_LOOKUP = {
     "brighton-and-hove-albion": "england_brighton.football-logos.cc.svg",
     "burnley": "england_burnley.football-logos.cc.svg",
     "chelsea": "england_chelsea.football-logos.cc.svg",
+    "coventry": "england_coventry-city.football-logos.cc.svg",
     "coventry-city": "england_coventry-city.football-logos.cc.svg",
     "crystal-palace": "england_crystal-palace.football-logos.cc.svg",
     "everton": "england_everton.football-logos.cc.svg",
@@ -148,8 +167,12 @@ TEAM_CREST_LOOKUP = {
 }
 
 
+
 def normalize_team_name(team_name: str) -> str:
-    return re.sub(r"[^a-z0-9]+", "-", team_name.lower()).strip("-")
+    """Strips noise words (FC, AFC, Club) and converts short-names to standard slugs."""
+    clean = re.sub(r"\b(fc|afc|club)\b", "", team_name, flags=re.IGNORECASE)
+    slug = re.sub(r"[^a-z0-9]+", "-", clean.lower()).strip("-")
+    return COMMON_ALIASES.get(slug, slug)
 
 
 def get_team_crest_path(team_name: str) -> str | None:
@@ -269,13 +292,7 @@ def fetch_matches(comp_code: str):
     except ValueError as exc:
         print(f"Error fetching {comp_code}: {exc}")
         return []
-
-
-def load_matches() -> list[dict]:
-    return (
-        fetch_matches("PL")
-        + fetch_matches("ELC")
-    )
+    
 
 
 def team_is_in_player_selection(team_name: str, selected_teams: list[str]) -> bool:
@@ -289,7 +306,7 @@ def team_is_in_player_selection(team_name: str, selected_teams: list[str]) -> bo
 
 def calculate_scores(matches: list[dict]):
     player_scores = {
-        player: {"points": 0, "wins": 0, "draws": 0, "clean_sheets": 0, "giant_kills": 0}
+        player: {"points": 0, "wins": 0, "draws": 0, "clean_sheets": 0,"goal_feasts": 0, "giant_kills": 0}
         for player in PLAYERS
     }
 
@@ -324,7 +341,7 @@ def calculate_scores(matches: list[dict]):
 
                 if home_score >= 3:
                     player_scores[player]["points"] += rule_points["R4"]
-
+                    player_scores[player]["goal_feasts"] += 1
                 if (
                     home_score > away_score
                     and team_is_in_player_selection(home_team, POTS["pot3"] + POTS["pot4"])
@@ -347,7 +364,7 @@ def calculate_scores(matches: list[dict]):
 
                 if away_score >= 3:
                     player_scores[player]["points"] += rule_points["R4"]
-
+                    player_scores[player]["goal_feasts"] += 1
                 if (
                     away_score > home_score
                     and team_is_in_player_selection(away_team, POTS["pot3"] + POTS["pot4"])
@@ -369,6 +386,10 @@ def calculate_match_breakdown(match: dict) -> list[dict]:
 
     if home_score is None or away_score is None:
         return []
+
+# Precompute pot lists
+    pot1_teams = POTS.get("pot1", [])
+    pot3_4_teams = POTS.get("pot3", []) + POTS.get("pot4", [])
 
     breakdown = []
     for player, teams in PLAYERS.items():
@@ -393,6 +414,14 @@ def calculate_match_breakdown(match: dict) -> list[dict]:
             if home_score >= 3:
                 points += 1
                 reasons.append("goal feast")
+            
+            if (home_score > away_score
+                and team_is_in_player_selection(home_team, POTS["pot3"] + POTS["pot4"])
+                and team_is_in_player_selection(away_team, POTS["pot1"])
+            ):
+                points += 3
+                reasons.append("giant kill")
+                
 
         if away_selected:
             if away_score > home_score:
@@ -409,6 +438,13 @@ def calculate_match_breakdown(match: dict) -> list[dict]:
             if away_score >= 3:
                 points += 1
                 reasons.append("goal feast")
+
+            if (away_score > home_score
+                and team_is_in_player_selection(away_team, POTS["pot3"] + POTS["pot4"])
+                and team_is_in_player_selection(home_team, POTS["pot1"])
+            ):
+                points += 3
+                reasons.append("giant kill")
 
         if points:
             nickname = get_player_display_name(player)
@@ -440,7 +476,7 @@ def render_html(scores, version: str | None = None, output_path: str | None = No
             <div class="player-name">#{rank} {display_name}</div>
             <div class="player-id">{player}</div>
             <div class="teams">{teams_html}</div>
-            <div class="stats">Wins: {data['wins']} | Draws: {data['draws']} | Clean Sheets: {data['clean_sheets']}</div>
+            <div class="stats">Wins: {data['wins']} | Draws: {data['draws']} | Clean Sheets: {data['clean_sheets']}| Goal Feasts: {data['goal_feasts']}| Giant Kills: {data['giant_kills']}</div>
         </div>
         """
 
