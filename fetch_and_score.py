@@ -535,9 +535,17 @@ def render_players_page(version: str | None = None, output_path: str | None = No
     for player, teams in PLAYERS.items():
         display_name = get_player_display_name(player)
         teams_str = ", ".join(teams)
+
+        # 1. Resolve avatar path & build tag
+        avatar_path = get_player_avatar_path(player)
+        avatar_html = f'<img class="player-avatar" src="{avatar_path}" alt="{display_name} avatar" width="150" height="150" loading="lazy">'
+
         cards_html += f"""
         <div class="card">
-            <div class="player-name">{display_name}</div>
+            <div class="player-name-wrapper">
+                {avatar_html}
+                <span class="player-name">{display_name}</span>
+            </div>
             <div class="player-id">{player}</div>
             <div class="teams">{teams_str}</div>
         </div>
