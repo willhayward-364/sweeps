@@ -1,6 +1,6 @@
 import os
 import re
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import requests
@@ -17,11 +17,21 @@ from version import (
 # Configuration & Flags
 USE_MOCK_DATA = False  # 👈 Set to True for testing, False for production
 
+# Dynamic date helpers (spread across the last 6 days) so mock matches stay inside the 7-day weekly window
+_now = datetime.now(timezone.utc)
+_day1 = (_now - timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
+_day2 = (_now - timedelta(days=2)).strftime("%Y-%m-%dT%H:%M:%SZ")
+_day3 = (_now - timedelta(days=3)).strftime("%Y-%m-%dT%H:%M:%SZ")
+_day4 = (_now - timedelta(days=4)).strftime("%Y-%m-%dT%H:%M:%SZ")
+_day5 = (_now - timedelta(days=5)).strftime("%Y-%m-%dT%H:%M:%SZ")
+_day6 = (_now - timedelta(days=6)).strftime("%Y-%m-%dT%H:%M:%SZ")
+
 MOCK_MATCHES = [
     # Match 1: Player A (Arsenal) -> Win + Clean Sheet + Goal Feast (Home)
     {
         "competitionCode": "PL",
-        "utcDate": "2026-08-15T14:00:00Z",
+        "utcDate": _day1,
+        "status": "FINISHED",
         "homeTeam": {"name": "Arsenal FC"},        # Player A (Pot 1)
         "awayTeam": {"name": "Newcastle United"},  # Player B (Pot 1)
         "score": {"fullTime": {"home": 3, "away": 0}},
@@ -29,7 +39,8 @@ MOCK_MATCHES = [
     # Match 2: Player A (Everton) -> Away Giant Kill + Clean Sheet + Goal Feast (Pot 3 vs Pot 1)
     {
         "competitionCode": "PL",
-        "utcDate": "2026-08-22T16:30:00Z",
+        "utcDate": _day2,
+        "status": "FINISHED",
         "homeTeam": {"name": "Manchester City FC"}, # Player B (Pot 1)
         "awayTeam": {"name": "Everton FC"},         # Player A (Pot 3) -> Giant Kill!
         "score": {"fullTime": {"home": 0, "away": 3}},
@@ -37,7 +48,8 @@ MOCK_MATCHES = [
     # Match 3: Player C (Man Utd) vs Player E (Liverpool) -> 0-0 Draw (Draw + Clean Sheet for both)
     {
         "competitionCode": "PL",
-        "utcDate": "2026-08-29T11:30:00Z",
+        "utcDate": _day3,
+        "status": "FINISHED",
         "homeTeam": {"name": "Manchester United FC"}, # Player C
         "awayTeam": {"name": "Liverpool FC"},          # Player E
         "score": {"fullTime": {"home": 0, "away": 0}},
@@ -45,7 +57,8 @@ MOCK_MATCHES = [
     # Match 4: Player D (Aston Villa) vs Player F (Bournemouth) -> High-scoring loss (Goal Feast for loser)
     {
         "competitionCode": "PL",
-        "utcDate": "2026-09-05T14:00:00Z",
+        "utcDate": _day4,
+        "status": "FINISHED",
         "homeTeam": {"name": "Aston Villa FC"},       # Player D (Pot 1)
         "awayTeam": {"name": "AFC Bournemouth"},      # Player F (Pot 1)
         "score": {"fullTime": {"home": 4, "away": 3}},
@@ -53,7 +66,8 @@ MOCK_MATCHES = [
     # Match 5: Player D (Hull City) -> Home Giant Kill (Pot 4 vs Pot 1)
     {
         "competitionCode": "ELC",
-        "utcDate": "2026-09-12T18:00:00Z",
+        "utcDate": _day5,
+        "status": "FINISHED",
         "homeTeam": {"name": "Hull City AFC"},        # Player D (Pot 4) -> Giant Kill!
         "awayTeam": {"name": "Tottenham Hotspur"},    # Player E (Pot 1)
         "score": {"fullTime": {"home": 1, "away": 0}},
@@ -61,7 +75,8 @@ MOCK_MATCHES = [
     # Match 6: Player F (Coventry) vs Player B (Burnley) -> Regular Win
     {
         "competitionCode": "ELC",
-        "utcDate": "2026-09-19T14:00:00Z",
+        "utcDate": _day6,
+        "status": "FINISHED",
         "homeTeam": {"name": "Coventry City"},        # Player F (Pot 3)
         "awayTeam": {"name": "Burnley FC"},           # Player B (Pot 4)
         "score": {"fullTime": {"home": 2, "away": 1}},
@@ -482,23 +497,60 @@ def calculate_match_breakdown(match: dict) -> list[dict]:
     return breakdown
 
 
-def render_html(scores, version: str | None = None, output_path: str | None = None):
-    version_banner = get_version_banner(version=version)
-    sorted_scores = sorted(scores.items(), key=lambda item: item[1]["points"], reverse=True)
+# ==========================================
+# Weekly Card Component Generator
+# ==========================================
+def render_weekly_card(weekly_scores: dict) -> str:
+    """Generates the HTML card for the weekly form guide."""
+    sorted_weekly = sorted(weekly_scores.items(), key=lambda item: item[1]["points"], reverse=True)
+    
+    rows_html = ""
+    for rank, (player, data) in enumerate(sorted_weekly, 1):
+        display_name = get_player_display_name(player)
+        avatar_path = get_player_avatar_path(player)
+        avatar_html = f'<img class="player-avatar" src="{avatar_path}" alt="{display_name}" width="22" height="22" loading="lazy">'
+        
+        rows_html += f"""
+        <div class="points-row">
+            <span style="display: flex; align-items: center; gap: 8px;">
+                {avatar_html} <strong>#{rank} {display_name}</strong>
+            </span>
+            <strong>{data['points']} pts</strong>
+        </div>
+        """
 
+    return f"""
+    <div class="card">
+        <h2 style="color: #ffb703; font-size: 1.1rem; margin-top: 0; margin-bottom: 12px; border-bottom: 1px solid #3a506b; padding-bottom: 8px;">
+            ⚡ Weekly Form Guide (Last 7 Days)
+        </h2>
+        {rows_html}
+    </div>
+    """
+
+# ==========================================
+# Main Standings Page HTML Generator
+# ==========================================
+def render_html(scores: dict, matches: list[dict], version: str | None = None, output_path: str | None = None):
+    version_banner = get_version_banner(version=version)
+    
+    # 🟢 1. Calculate 7-day scores and build the weekly card HTML
+    weekly_scores = calculate_weekly_scores(matches)
+    weekly_card_html = render_weekly_card(weekly_scores)
+
+    # 🟢 2. Build standard player cards
+    sorted_scores = sorted(scores.items(), key=lambda item: item[1]["points"], reverse=True)
     cards_html = ""
     for rank, (player, data) in enumerate(sorted_scores, 1):
         teams_html = render_team_chip_list(PLAYERS[player])
         display_name = get_player_display_name(player)
         
-        # ⬇️ 1. Resolve avatar path and generate img tag
         avatar_path = get_player_avatar_path(player)
         avatar_html = f'<img class="player-avatar" src="{avatar_path}" alt="{display_name} avatar" loading="lazy">'
 
         cards_html += f"""
         <div class="card">
             <span class="score">{data['points']} pts</span>
-            <!-- ⬇️ 2. Wrapped avatar and name together for clean flex alignment -->
             <div class="player-name-wrapper">
                 {avatar_html}
                 <span class="player-name">#{rank} {display_name}</span>
@@ -509,6 +561,7 @@ def render_html(scores, version: str | None = None, output_path: str | None = No
         </div>
         """
 
+    # 🟢 3. Inject {weekly_card_html} right above {cards_html}
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -521,12 +574,30 @@ def render_html(scores, version: str | None = None, output_path: str | None = No
   {render_topbar()}
   <h1>🏆 2026/27 Sweepstake Standings</h1>
   {version_banner}
+  
+  {weekly_card_html}
+
   {cards_html}
 </body>
 </html>"""
 
     target_path = Path(output_path) if output_path else Path(__file__).with_name("index.html")
     target_path.write_text(html_content, encoding="utf-8")
+
+def calculate_weekly_scores(matches: list[dict]) -> dict:
+    """Filters matches completed in the last 7 days and calculates weekly points."""
+    now = datetime.now(timezone.utc)
+    seven_days_ago = now - timedelta(days=7)
+
+    recent_matches = []
+    for match in matches:
+        utc_date_str = match.get("utcDate")
+        if utc_date_str and match.get("status") == "FINISHED":
+            match_time = datetime.fromisoformat(utc_date_str.replace("Z", "+00:00"))
+            if match_time >= seven_days_ago:
+                recent_matches.append(match)
+
+    return calculate_scores(recent_matches)
 
 
 def render_players_page(version: str | None = None, output_path: str | None = None):
@@ -678,7 +749,7 @@ if __name__ == "__main__":
     # 3. Data processing and page generation
     matches = load_matches()
     scores = calculate_scores(matches)
-    render_html(scores, version=next_version)
+    render_html(scores, matches, version=next_version)
     render_players_page(version=next_version)
     render_latest_results_page(matches, version=next_version)
     render_rules_page(pots_html=render_pots_quadrant())
