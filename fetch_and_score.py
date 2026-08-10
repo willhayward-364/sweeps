@@ -75,25 +75,26 @@ def load_matches() -> list[dict]:
         return MOCK_MATCHES
 
     return (
-        fetch_matches("PL")
+    fetch_matches("ELC") + fetch_matches("PL")
     )
 API_KEY = os.getenv("FOOTBALL_DATA_API_KEY", "").strip()
 HEADERS = {"X-Auth-Token": API_KEY} if API_KEY else {}
 
 PLAYERS = {
-"Player A": ["Liverpool", "AFC Bournemouth", "Leeds United", "Ipswich Town"],
-"Player B": ["Manchester City", "Aston Villa", "Sunderland", "Ipswich Town"],
-"Player C": ["Manchester United", "Newcastle United", "Crystal Palace", "Hull City"],
-"Player D": ["Tottenham Hotspur", "Brentford", "Coventry City", "Ipswich Town"],
-"Player E": ["Arsenal", "Fulham", "Nottingham Forest", "Hull City"],
-"Player F": ["Chelsea", "Brighton & Hove Albion", "Everton", "Hull City"],
+"Player A": ["Liverpool", "AFC Bournemouth", "Leeds United", "Ipswich Town", "Wolverhampton Wanderers"],
+"Player B": ["Manchester City", "Aston Villa", "Sunderland", "Ipswich Town", "Blackburn Rovers"],
+"Player C": ["Manchester United", "Newcastle United", "Crystal Palace", "Hull City", "Bolton Wanderers"],
+"Player D": ["Tottenham Hotspur", "Brentford", "Coventry City", "Ipswich Town", "Preston North End"],
+"Player E": ["Arsenal", "Fulham", "Nottingham Forest", "Hull City", "Bristol City"],
+"Player F": ["Chelsea", "Brighton & Hove Albion", "Everton", "Hull City", "Millwall"],
 }
 
 POTS = {
-"pot1": ["Arsenal", "Manchester City", "Manchester United", "Tottenham Hotspur", "Liverpool", "Chelsea"],
-"pot2": ["AFC Bournemouth", "Newcastle United", "Brighton & Hove Albion", "Fulham", "Brentford", "Aston Villa"],
-"pot3": ["Everton", "Leeds United", "Crystal Palace", "Nottingham Forest", "Sunderland", "Coventry"],
-"pot4": ["Hull City", "Ipswich Town"],
+    "pot1": ["Arsenal", "Manchester City", "Manchester United", "Tottenham Hotspur", "Liverpool", "Chelsea"],
+    "pot2": ["AFC Bournemouth", "Newcastle United", "Brighton & Hove Albion", "Fulham", "Brentford", "Aston Villa"],  
+    "pot3": ["Everton", "Leeds United", "Crystal Palace", "Nottingham Forest", "Sunderland", "Coventry"],
+    "pot4": ["Hull City", "Ipswich Town"],
+    "pot5": ["Wolverhampton Wanderers", "Blackburn Rovers", "Bolton Wanderers", "Preston North End", "Bristol City", "Millwall"],
 }
 
 PLAYER_NICKNAMES = {
