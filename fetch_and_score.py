@@ -106,6 +106,15 @@ PLAYER_NICKNAMES = {
     "Player F": "Daveylad",
 }
 
+PLAYER_AVATARS = {
+    "Player A": "images/player_avatars/364_avatar.jpg",
+    "Player B": "images/player_avatars/keano_avatar.jpg",
+    "Player C": "images/player_avatars/dookie_avatar.jpg",
+    "Player D": "images/player_avatars/Rich_avatar.jpg",
+    "Player E": "images/player_avatars/Robin_avatar.jpg",
+    "Player F": "images/player_avatars/Daveylad_avatar.jpg",
+}
+
 NAV_LINKS = """
       <a href="index.html" class="nav-btn">Standings</a>
       <a href="players.html" class="nav-btn">Players</a>
@@ -175,6 +184,16 @@ def normalize_team_name(team_name: str) -> str:
     slug = re.sub(r"[^a-z0-9]+", "-", clean.lower()).strip("-")
     return COMMON_ALIASES.get(slug, slug)
 
+def get_player_avatar_path(player_id: str) -> str:
+    """Resolves the relative path for a player's avatar image, falling back to placeholder.png if missing."""
+    avatar_rel_path = PLAYER_AVATARS.get(player_id)
+
+    if avatar_rel_path:
+        full_path = Path(__file__).resolve().parent / avatar_rel_path
+        if full_path.exists():
+            return avatar_rel_path
+
+    return "images/avatars/placeholder.png"
 
 def get_team_crest_path(team_name: str) -> str | None:
     slug = normalize_team_name(team_name)
@@ -471,10 +490,19 @@ def render_html(scores, version: str | None = None, output_path: str | None = No
     for rank, (player, data) in enumerate(sorted_scores, 1):
         teams_html = render_team_chip_list(PLAYERS[player])
         display_name = get_player_display_name(player)
+        
+        # ⬇️ 1. Resolve avatar path and generate img tag
+        avatar_path = get_player_avatar_path(player)
+        avatar_html = f'<img class="player-avatar" src="{avatar_path}" alt="{display_name} avatar" loading="lazy">'
+
         cards_html += f"""
         <div class="card">
             <span class="score">{data['points']} pts</span>
-            <div class="player-name">#{rank} {display_name}</div>
+            <!-- ⬇️ 2. Wrapped avatar and name together for clean flex alignment -->
+            <div class="player-name-wrapper">
+                {avatar_html}
+                <span class="player-name">#{rank} {display_name}</span>
+            </div>
             <div class="player-id">{player}</div>
             <div class="teams">{teams_html}</div>
             <div class="stats">Wins: {data['wins']} | Draws: {data['draws']} | Clean Sheets: {data['clean_sheets']}| Goal Feasts: {data['goal_feasts']}| Giant Kills: {data['giant_kills']}</div>
@@ -487,7 +515,7 @@ def render_html(scores, version: str | None = None, output_path: str | None = No
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>2026/27 Premier League Sweepstake</title>
- <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   {render_topbar()}

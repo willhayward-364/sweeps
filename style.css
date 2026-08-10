@@ -149,6 +149,26 @@ h1 {
 }
 
 /* ==========================================
+   Player Avatar & Header Alignment
+   ========================================== */
+.player-name-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.player-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #3a506b;
+  background-color: #0f1c33;
+  flex-shrink: 0;
+}
+
+/* ==========================================
    4. Latest Results Specific Layout
    ========================================== */
 .match-meta { 
@@ -189,16 +209,7 @@ h1 {
 }
 
 /* ==========================================
-   5. Responsive Adjustments
-   ========================================== */
-@media (min-width: 520px) {
-  .topbar { 
-    flex-direction: row; 
-    justify-content: space-between; 
-    border-radius: 999px; 
-  }
-/* ==========================================
-   6. Version Banner & Rules Page Layout
+   5. Version Banner & Rules Page Layout
    ========================================== */
 .version-banner {
   background: #1c2541;
@@ -242,58 +253,33 @@ h1 {
   font-size: 0.9rem;
   color: #cbd5e1;
   line-height: 1.4;
-} /* 👈 FIXED: Added missing closing brace */
-
-/* 4-Quadrant Pots Layout */
-.pots-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.25rem;
-  border: 1px solid #3a506b;
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 12px;
 }
-
-}
-
-.pot-team-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-/* Responsive adjustment for mobile screens */
-@media (max-width: 600px) {
-  .pots-grid {
-    grid-template-columns: 1fr;
-  }
 
 /* Rule Quote / Callout Block */
 .rule-quote-block {
   margin: 1.5rem 0;
   padding: 1rem 1.25rem;
-  background-color: rgba(56, 0, 60, 0.04); /* Subtle tint */
-  border-left: 4px solid #38003c; /* PL Purple theme accent */
+  background-color: #1c2541;
+  border-left: 4px solid #48cae4;
   border-radius: 0 8px 8px 0;
-  font-style: normal;
 }
 
 .rule-quote-block p {
   margin: 0 0 0.5rem 0;
   font-size: 0.95rem;
   line-height: 1.5;
-  color: #111;
+  color: #ffffff; /* Fixed: High contrast white text */
 }
 
 .rule-quote-block cite {
   display: block;
   font-size: 0.85rem;
-  color: #666;
+  color: #a0aec0; /* Fixed: Muted light gray text */
   font-style: italic;
 }
+
 /* ==========================================
-   Seeded Pots 4-Quadrant Grid Styling
+   6. Seeded Pots 4-Quadrant Grid Styling
    ========================================== */
 .pots-grid {
   display: grid;
@@ -342,12 +328,22 @@ h1 {
   flex-shrink: 0;
 }
 
-/* Explicit white text color (#ffffff) via proper selector specificity */
 .pots-grid .team-name-text {
   display: inline-block;
   color: #ffffff;
   font-size: 0.95rem;
   font-weight: 500;
+}
+
+/* ==========================================
+   7. Responsive Adjustments
+   ========================================== */
+@media (min-width: 520px) {
+  .topbar { 
+    flex-direction: row; 
+    justify-content: space-between; 
+    border-radius: 999px; 
+  }
 }
 
 @media (max-width: 600px) {
