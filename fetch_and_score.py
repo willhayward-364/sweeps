@@ -83,6 +83,42 @@ MOCK_MATCHES = [
     },
 ]
 
+def load_upcoming_matches() -> list[dict]:
+    if USE_MOCK_DATA:
+        _next1 = (_now + timedelta(days=2)).strftime("%Y-%m-%dT15:00:00Z")
+        _next2 = (_now + timedelta(days=3)).strftime("%Y-%m-%dT17:30:00Z")
+        return [
+            {
+                "competitionCode": "PL",
+                "utcDate": _next1,
+                "status": "SCHEDULED",
+                "homeTeam": {"name": "Arsenal FC"},
+                "awayTeam": {"name": "Liverpool FC"},
+            },
+            {
+                "competitionCode": "PL",
+                "utcDate": _next2,
+                "status": "SCHEDULED",
+                "homeTeam": {"name": "Manchester City FC"},
+                "awayTeam": {"name": "Everton FC"},
+            },
+        ]
+
+    return fetch_upcoming_matches("PL")
+
+
+def fetch_upcoming_matches(comp_code: str) -> list[dict]:
+    url = f"https://api.football-data.org/v4/competitions/{comp_code}/matches?status=SCHEDULED"
+    try:
+        response = requests.get(url, headers=HEADERS, timeout=10)
+        response.raise_for_status()
+        matches = response.json().get("matches", [])
+        for match in matches:
+            match["competitionCode"] = comp_code
+        return matches
+    except requests.RequestException as exc:
+        print(f"Error fetching upcoming {comp_code}: {exc}")
+        return []
 
 def load_matches() -> list[dict]:
     if USE_MOCK_DATA:
@@ -90,7 +126,7 @@ def load_matches() -> list[dict]:
         return MOCK_MATCHES
 
     return (
-    fetch_matches("ELC") + fetch_matches("PL")
+    fetch_matches("PL")
     )
 API_KEY = os.getenv("FOOTBALL_DATA_API_KEY", "").strip()
 HEADERS = {"X-Auth-Token": API_KEY} if API_KEY else {}
@@ -133,6 +169,7 @@ NAV_LINKS = """
       <a href="index.html" class="nav-btn">Standings</a>
       <a href="players.html" class="nav-btn">Players</a>
       <a href="latest_results.html" class="nav-btn">Latest Results</a>
+      <a href="upcoming_fixtures.html" class="nav-btn">Upcoming Fixtures</a>
       <a href="rules.html" class="nav-btn">Rules</a>
     """
 
@@ -598,6 +635,107 @@ def calculate_weekly_scores(matches: list[dict]) -> dict:
 
     return calculate_scores(recent_matches)
 
+def get_players_for_team(team_name: str) -> list[dict]:
+    """Finds all players who have selected a given team."""
+    matched = []
+    for player_id, teams in PLAYERS.items():
+        if team_is_in_player_selection(team_name, teams):
+            matched.append({
+                "player_id": player_id,
+                "display_name": get_player_display_name(player_id),
+                "avatar_path": get_player_avatar_path(player_id),
+            })
+    return matched
+
+
+def render_team_player_badges(team_name: str) -> str:
+    """Renders player avatar and nickname badges underneath the team label."""
+    players = get_players_for_team(team_name)
+    if not players:
+        return ""
+
+    badges_html = ""
+    for p in players:
+        badges_html += f"""
+        <div class="owner-badge" style="display: inline-flex; align-items: center; gap: 6px; margin-top: 6px;">
+            <img class="player-avatar" src="{p['avatar_path']}" alt="{p['display_name']}" width="20" height="20" style="border-radius: 50%; object-fit: cover;" loading="lazy">
+            <span style="font-size: 0.85rem; font-weight: 600; color: #ffb703;">{p['display_name']}</span>
+        </div>
+        """
+    return f'<div class="team-owners" style="display: flex; flex-wrap: wrap; gap: 8px;">{badges_html}</div>'
+
+def render_upcoming_fixtures_page(version: str | None = None, output_path: str | None = None):
+    version_banner = get_version_banner(version=version)
+    matches = load_upcoming_matches()
+
+    sorted_matches = sorted(
+        matches, key=lambda match: match.get("utcDate", "")
+    )[:25]
+
+    matches_html = ""
+    for match in sorted_matches:
+        comp = match.get("competitionCode", "Unknown")
+        raw_date = match.get("utcDate", "")
+        date_str = raw_date.replace("T", " ")[:16] if raw_date else "TBD"
+
+        home_team = (
+            match.get("homeTeam", {}).get("shortName")
+            or match.get("homeTeam", {}).get("name", "Unknown")
+        )
+        away_team = (
+            match.get("awayTeam", {}).get("shortName")
+            or match.get("awayTeam", {}).get("name", "Unknown")
+        )
+
+        home_team_display = render_team_label(home_team, css_class="team-label")
+        away_team_display = render_team_label(away_team, css_class="team-label")
+
+        home_owners_html = render_team_player_badges(home_team)
+        away_owners_html = render_team_player_badges(away_team)
+
+        matches_html += f"""
+        <div class="card">
+          <div class="match-meta">
+            <span>{comp}</span>
+            <span>{date_str} UTC</span>
+          </div>
+          <div class="match-teams" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
+            <div class="team-column home" style="flex: 1;">
+              {home_team_display}
+              {home_owners_html}
+            </div>
+            <span class="score-badge" style="align-self: center;">VS</span>
+            <div class="team-column away" style="flex: 1; text-align: right;">
+              {away_team_display}
+              <div style="display: flex; justify-content: flex-end;">
+                {away_owners_html}
+              </div>
+            </div>
+          </div>
+        </div>
+        """
+
+    if not matches_html:
+        matches_html = '<div class="card"><p>No upcoming fixtures scheduled at this time.</p></div>'
+
+    html_content = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upcoming Fixtures</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  {render_topbar()}
+  <h1>📅 Upcoming Fixtures</h1>
+  {version_banner}
+  {matches_html}
+</body>
+</html>"""
+
+    target_path = Path(output_path) if output_path else Path(__file__).with_name("upcoming_fixtures.html")
+    target_path.write_text(html_content, encoding="utf-8")
 
 def render_players_page(version: str | None = None, output_path: str | None = None):
     version_banner = get_version_banner(version=version)
@@ -751,4 +889,5 @@ if __name__ == "__main__":
     render_html(scores, matches, version=next_version)
     render_players_page(version=next_version)
     render_latest_results_page(matches, version=next_version)
+    render_upcoming_fixtures_page(version=next_version)
     render_rules_page(pots_html=render_pots_quadrant())
