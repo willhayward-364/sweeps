@@ -331,10 +331,12 @@ def render_team_chip_list(team_names: list[str]) -> str:
 def render_topbar() -> str:
     return f"""
   <div class="topbar">
-    <strong>🏆 Sweepstake</strong>
+    <div class="topbar-brand">
+      <img src="images/crests/LSB_crest.PNG" alt="Sweepstake Logo" class="topbar-logo">
+      <strong>LSB Official Agreed Sweepstake</strong>
+    </div>
     <div class="nav-links">{NAV_LINKS}</div>
-  </div>
-"""
+  </div>"""
 
 
 def fetch_matches(comp_code: str):
