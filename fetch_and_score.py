@@ -188,13 +188,17 @@ def get_player_display_name(player_id: str) -> str:
 COMMON_ALIASES = {
     "man-city": "manchester-city",
     "man-utd": "manchester-united",
+    "man-united": "manchester-united",
     "west-ham": "west-ham-united",
     "brighton": "brighton-hove-albion",
     "brighton-and-hove-albion": "brighton-hove-albion",
+    "brighton-hove": "brighton-hove-albion",
     "wolves": "wolverhampton-wanderers",
     "spurs": "tottenham-hotspur",
     "tottenham": "tottenham-hotspur",
     "newcastle": "newcastle-united",
+    "newcastle-united-fc": "newcastle",
+    "nottingham": "nottingham-forest",
     "leeds": "leeds-united",
     "ipswich": "ipswich-town",
     "coventry": "coventry-city",
@@ -371,12 +375,9 @@ def fetch_matches(comp_code: str):
 
 
 def team_is_in_player_selection(team_name: str, selected_teams: list[str]) -> bool:
-    """Robust team matching to handle API suffixes like 'Arsenal FC' matching 'Arsenal'."""
-    clean_api_name = team_name.replace(" FC", "").strip().lower()
-    return any(
-        selected.lower() == clean_api_name or selected.lower() in team_name.lower()
-        for selected in selected_teams
-    )
+    """Checks if an API team matches any team in a player's selection list using normalized slugs."""
+    target_slug = normalize_team_name(team_name)
+    return any(normalize_team_name(selected) == target_slug for selected in selected_teams)
 
 
 def calculate_scores(matches: list[dict]):
