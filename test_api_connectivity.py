@@ -183,6 +183,49 @@ def test_api_connectivity():
     except requests.RequestException as exc:
         assert False, f"API Connection failed completely: {exc}"
 
+import re
+from pathlib import Path
+from fetch_and_score import calculate_scores, load_matches
+
+
+def extract_scores_from_html(filepath: Path) -> dict[str, int]:
+    """Parses player IDs and their current total points from an existing index.html file."""
+    if not filepath.exists():
+        return {}
+
+    content = filepath.read_text(encoding="utf-8")
+    # Matches <span class="score">X pts</span> ... <div class="player-id">Player X</div>
+    pattern = r'<span class="score">(\d+)\s*pts</span>[\s\S]*?<div class="player-id">(.*?)</div>'
+    matches = re.findall(pattern, content)
+
+    return {player.strip(): int(points) for points, player in matches}
+
+
+def test_player_points_do_not_decrease():
+    """Ensures that newly fetched/calculated scores never regress below previously released totals."""
+    index_path = Path(__file__).parent / "index.html"
+    previous_scores = extract_scores_from_html(index_path)
+
+    # Skip test on initial setup if index.html doesn't exist yet
+    if not previous_scores:
+        print("Notice: No existing index.html found to compare scores against.")
+        return
+
+    # Calculate new scores from live match data
+    matches = load_matches()
+    new_scores = calculate_scores(matches)
+
+    # Assert no player's score dropped
+    for player, old_points in previous_scores.items():
+        new_points = new_scores.get(player, {}).get("points", 0)
+        assert new_points >= old_points, (
+            f"❌ Point regression detected for {player}! "
+            f"Previous released score was {old_points} pts, but new score calculated is {new_points} pts."
+        )
+
+if __name__ == "__main__":
+    test_player_points_do_not_decrease()
+    print("✅ Score regression check passed!")
 
 if __name__ == "__main__":
     test_rule_points_are_applied()
