@@ -792,7 +792,7 @@ def render_latest_results_page(matches: list[dict], version: str | None = None, 
     sorted_matches = sorted(
         matches, key=lambda match: match.get("utcDate", ""), reverse=True
     )
-    recent_matches = sorted_matches[:25]
+    recent_matches = sorted_matches[:380]  # Limit to the most recent 380 matches
 
     matches_html = ""
     for match in recent_matches:
