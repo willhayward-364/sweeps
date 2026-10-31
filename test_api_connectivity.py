@@ -160,6 +160,18 @@ def test_breakdown_splits_points_by_team_when_player_owns_both():
     assert item["points"] == 6
 
 
+def test_kickoff_times_shown_in_uk_time():
+    from fetch_and_score import format_kickoff_time
+
+    # Winter (GMT = UTC) and summer (BST = UTC+1)
+    assert format_kickoff_time("2026-11-07T15:00:00Z", "TBD") == "2026-11-07 15:00 GMT"
+    assert format_kickoff_time("2026-08-22T14:00:00Z", "TBD") == "2026-08-22 15:00 BST"
+    # Clocks went back at 01:00 UTC on 25 Oct 2026
+    assert format_kickoff_time("2026-10-25T00:30:00Z", "TBD") == "2026-10-25 01:30 BST"
+    assert format_kickoff_time("2026-10-25T01:30:00Z", "TBD") == "2026-10-25 01:30 GMT"
+    assert format_kickoff_time("", "TBD") == "TBD"
+
+
 def test_latest_results_page_renders_team_crests():
     from fetch_and_score import render_latest_results_page
 

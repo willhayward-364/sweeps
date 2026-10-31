@@ -2,6 +2,7 @@ import os
 import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import requests
 
@@ -178,6 +179,20 @@ NAV_LINKS = """
 
 def get_player_display_name(player_id: str) -> str:
     return PLAYER_NICKNAMES.get(player_id, player_id)
+
+
+UK_TIMEZONE = ZoneInfo("Europe/London")
+
+
+def format_kickoff_time(utc_date: str, fallback: str) -> str:
+    """Converts an API UTC kick-off time to UK time, e.g. '2026-10-25 16:30 GMT' / '... BST'."""
+    if not utc_date:
+        return fallback
+    try:
+        kickoff = datetime.fromisoformat(utc_date.replace("Z", "+00:00"))
+    except ValueError:
+        return fallback
+    return kickoff.astimezone(UK_TIMEZONE).strftime("%Y-%m-%d %H:%M %Z")
 
 # ==========================================
 # Team Crest Lookup & Normalization Logic
@@ -720,7 +735,7 @@ def render_upcoming_fixtures_page(version: str | None = None, output_path: str |
     for match in sorted_matches:
         comp = match.get("competitionCode", "Unknown")
         raw_date = match.get("utcDate", "")
-        date_str = raw_date.replace("T", " ")[:16] if raw_date else "TBD"
+        date_str = format_kickoff_time(raw_date, "TBD")
 
         home_team = (
             match.get("homeTeam", {}).get("shortName")
@@ -741,7 +756,7 @@ def render_upcoming_fixtures_page(version: str | None = None, output_path: str |
         <div class="card">
           <div class="match-meta">
             <span>{comp}</span>
-            <span>{date_str} UTC</span>
+            <span>{date_str}</span>
           </div>
           <div class="match-teams" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
             <div class="team-column home" style="flex: 1;">
@@ -834,9 +849,7 @@ def render_latest_results_page(matches: list[dict], version: str | None = None, 
     for match in recent_matches:
         comp = match.get("competitionCode", "Unknown")
         raw_date = match.get("utcDate", "")
-        date_str = (
-            raw_date.replace("T", " ")[:16] if raw_date else "Unknown Date"
-        )
+        date_str = format_kickoff_time(raw_date, "Unknown Date")
 
         home_team = (
             match.get("homeTeam", {}).get("shortName")
@@ -866,7 +879,7 @@ def render_latest_results_page(matches: list[dict], version: str | None = None, 
         <div class="card">
           <div class="match-meta">
             <span>{comp}</span>
-            <span>{date_str} UTC</span>
+            <span>{date_str}</span>
           </div>
           <div class="match-teams">
             <span class="team home">{home_team_display}</span>
