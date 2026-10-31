@@ -9,10 +9,10 @@
 <body>
   
   <div class="topbar">
-    <a href="index.html" class="topbar-brand">
-      <img src="images/crests/LSB_crest.PNG" alt="Sweepstake Logo" class="topbar-logo">
+    <div class="topbar-brand">
+      <img src="images/crests/LSB_crest.PNG" alt="Sweepstake Logo" class="topbar-logo" id="site-logo">
       <strong>LSB Official Agreed Sweepstake</strong>
-    </a>
+    </div>
     <div class="nav-links">
       <a href="index.html" class="nav-btn">Standings</a>
       <a href="form.html" class="nav-btn">Form</a>
@@ -22,8 +22,41 @@
       <a href="rules.html" class="nav-btn">Rules</a>
     </div>
   </div>
+  <script>
+    (function () {
+      var logo = document.getElementById("site-logo");
+      if (!logo) return;
+      var original = logo.getAttribute("src");
+      var egg = "images/crests/england_tottenham.football-logos.cc.svg";
+      var taps = 0, timer = null;
+      function show(on, animate) {
+        logo.src = on ? egg : original;
+        logo.alt = on ? "Tottenham Hotspur crest" : "Sweepstake Logo";
+        logo.classList.toggle("logo-egg", on);
+        if (animate) {
+          logo.classList.remove("logo-spin");
+          void logo.offsetWidth;
+          logo.classList.add("logo-spin");
+        }
+      }
+      var active = false;
+      try { active = sessionStorage.getItem("spursLogo") === "1"; } catch (e) {}
+      if (active) show(true, false);
+      logo.addEventListener("click", function () {
+        taps += 1;
+        clearTimeout(timer);
+        timer = setTimeout(function () { taps = 0; }, 1500);
+        if (taps >= 10) {
+          taps = 0;
+          active = !active;
+          show(active, true);
+          try { sessionStorage.setItem("spursLogo", active ? "1" : "0"); } catch (e) {}
+        }
+      });
+    })();
+  </script>
   <h1>🏆 Players</h1>
-  <div class="version-banner">Version <strong>v2.3.1</strong> &nbsp;•&nbsp; Run <strong>#194</strong> &nbsp;•&nbsp; Last deployed <strong>2026-10-31 20:06:29 UTC</strong> &nbsp;•&nbsp; API last fetched <strong>2026-10-31 20:06:29 UTC</strong></div>
+  <div class="version-banner">Version <strong>v2.3.2</strong> &nbsp;•&nbsp; Run <strong>#195</strong> &nbsp;•&nbsp; Last deployed <strong>2026-10-31 20:07:49 UTC</strong> &nbsp;•&nbsp; API last fetched <strong>2026-10-31 20:07:49 UTC</strong></div>
   
         <div class="card">
             <div class="player-name-wrapper">
