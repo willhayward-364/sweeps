@@ -256,7 +256,13 @@ def extract_scores_from_html(filepath: Path) -> dict[str, int]:
         return {}
 
     content = filepath.read_text(encoding="utf-8")
-    # Current format: <div class="card" data-player="Player X"> <span class="score">N pts</span>
+    # League table format: <tr data-player="Player X"> ... <td class="lt-pts">N</td>
+    pattern = r'<tr data-player="(.*?)">[\s\S]*?<td class="lt-pts">(\d+)</td>'
+    matches = re.findall(pattern, content)
+    if matches:
+        return {player.strip(): int(points) for player, points in matches}
+
+    # Card format: <div class="card" data-player="Player X"> <span class="score">N pts</span>
     pattern = r'data-player="(.*?)">\s*<span class="score">(\d+)\s*pts</span>'
     matches = re.findall(pattern, content)
     if matches:

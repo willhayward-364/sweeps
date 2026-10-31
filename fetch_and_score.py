@@ -170,6 +170,7 @@ PLAYER_AVATARS = {
 
 NAV_LINKS = """
       <a href="index.html" class="nav-btn">Standings</a>
+      <a href="form.html" class="nav-btn">Form</a>
       <a href="players.html" class="nav-btn">Players</a>
       <a href="latest_results.html" class="nav-btn">Latest Results</a>
       <a href="upcoming_fixtures.html" class="nav-btn">Upcoming Fixtures</a>
@@ -597,66 +598,115 @@ def render_match_breakdown(breakdown: list[dict]) -> str:
 # Weekly Card Component Generator
 # ==========================================
 def render_weekly_card(weekly_scores: dict) -> str:
-    """Generates the HTML card for the weekly form guide."""
+    """Compact table of points scored in the last 7 days."""
     sorted_weekly = sorted(weekly_scores.items(), key=lambda item: item[1]["points"], reverse=True)
-    
-    rows_html = ""
-    for rank, (player, data) in enumerate(sorted_weekly, 1):
+
+    rows = []
+    for player, data in sorted_weekly:
+        rank = 1 + sum(1 for other in weekly_scores.values() if other["points"] > data["points"])
         display_name = get_player_display_name(player)
         avatar_path = get_player_avatar_path(player)
-        avatar_html = f'<img class="player-avatar" src="{avatar_path}" alt="{display_name}" width="22" height="22" loading="lazy">'
-        
-        rows_html += f"""
-        <div class="points-row">
-            <span style="display: flex; align-items: center; gap: 8px;">
-                {avatar_html} <strong>#{rank} {display_name}</strong>
-            </span>
-            <strong>{data['points']} pts</strong>
-        </div>
-        """
+        rows.append(
+            f"""
+      <tr>
+        <td class="lt-rank">{rank}</td>
+        <td class="lt-player"><img class="lt-avatar" src="{avatar_path}" alt="" loading="lazy"><span>{display_name}</span></td>
+        <td class="lt-stat">{data['wins']}</td>
+        <td class="lt-stat">{data['draws']}</td>
+        <td class="lt-stat">{data['clean_sheets']}</td>
+        <td class="lt-stat">{data['goal_feasts']}</td>
+        <td class="lt-stat">{data['giant_kills']}</td>
+        <td class="lt-pts">{data['points']}</td>
+      </tr>"""
+        )
 
     return f"""
-    <div class="card">
-        <h2 style="color: #ffb703; font-size: 1.1rem; margin-top: 0; margin-bottom: 12px; border-bottom: 1px solid #3a506b; padding-bottom: 8px;">
-            ⚡ Weekly Form Guide (Last 7 Days)
-        </h2>
-        {rows_html}
-    </div>
-    """
+  <div class="card league-card">
+    <div class="lt-title">Points scored in the last 7 days</div>
+    <table class="league-table">
+      <thead>
+        <tr>
+          <th class="lt-rank">#</th>
+          <th class="lt-player">Player</th>
+          <th class="lt-stat" title="Wins">W</th>
+          <th class="lt-stat" title="Draws">D</th>
+          <th class="lt-stat" title="Clean sheets">CS</th>
+          <th class="lt-stat" title="Goal feasts">GF</th>
+          <th class="lt-stat" title="Giant kills">GK</th>
+          <th class="lt-pts">Pts</th>
+        </tr>
+      </thead>
+      <tbody>{''.join(rows)}
+      </tbody>
+    </table>
+    <div class="lt-key">W wins · D draws · CS clean sheets · GF goal feasts · GK giant kills</div>
+  </div>
+"""
 
 # ==========================================
-# Main Standings Page HTML Generator
+# Standings Page (league table)
 # ==========================================
-def render_html(scores: dict, matches: list[dict], version: str | None = None, output_path: str | None = None):
-    version_banner = get_version_banner(version=version)
-    
-    # 🟢 1. Calculate 7-day scores and build the weekly card HTML
-    weekly_scores = calculate_weekly_scores(matches)
-    weekly_card_html = render_weekly_card(weekly_scores)
-
-    # 🟢 2. Build standard player cards
+def render_league_table(scores: dict) -> str:
+    """Compact league table: rank, player, team crests, stats and points."""
     sorted_scores = sorted(scores.items(), key=lambda item: item[1]["points"], reverse=True)
-    cards_html = ""
-    for rank, (player, data) in enumerate(sorted_scores, 1):
-        teams_html = render_team_chip_list(PLAYERS[player])
+
+    rows = []
+    for player, data in sorted_scores:
+        # Players level on points share a rank (e.g. 2, 2, 4)
+        rank = 1 + sum(1 for other in scores.values() if other["points"] > data["points"])
         display_name = get_player_display_name(player)
-        
         avatar_path = get_player_avatar_path(player)
-        avatar_html = f'<img class="player-avatar" src="{avatar_path}" alt="{display_name} avatar" loading="lazy">'
 
-        cards_html += f"""
-        <div class="card" data-player="{player}">
-            <span class="score">{data['points']} pts</span>
-            <div class="player-name-wrapper">
-                {avatar_html}
-                <span class="player-name">#{rank} {display_name}</span>
-            </div>
-            <div class="teams">{teams_html}</div>
-            <div class="stats">Wins: {data['wins']} | Draws: {data['draws']} | Clean Sheets: {data['clean_sheets']}| Goal Feasts: {data['goal_feasts']}| Giant Kills: {data['giant_kills']}</div>
-        </div>
-        """
+        crests = []
+        for team in PLAYERS[player]:
+            crest_path = get_team_crest_path(team)
+            if crest_path:
+                crests.append(
+                    f'<img class="lt-crest" src="{crest_path}" alt="{team}" title="{team}" loading="lazy">'
+                )
 
-    # 🟢 3. Inject {weekly_card_html} right above {cards_html}
+        rows.append(
+            f"""
+      <tr data-player="{player}">
+        <td class="lt-rank">{rank}</td>
+        <td class="lt-player"><img class="lt-avatar" src="{avatar_path}" alt="" loading="lazy"><span>{display_name}</span></td>
+        <td class="lt-teams">{''.join(crests)}</td>
+        <td class="lt-stat">{data['wins']}</td>
+        <td class="lt-stat">{data['draws']}</td>
+        <td class="lt-stat">{data['clean_sheets']}</td>
+        <td class="lt-stat">{data['goal_feasts']}</td>
+        <td class="lt-stat">{data['giant_kills']}</td>
+        <td class="lt-pts">{data['points']}</td>
+      </tr>"""
+        )
+
+    return f"""
+  <div class="card league-card">
+    <table class="league-table">
+      <thead>
+        <tr>
+          <th class="lt-rank">#</th>
+          <th class="lt-player">Player</th>
+          <th class="lt-teams">Teams</th>
+          <th class="lt-stat" title="Wins">W</th>
+          <th class="lt-stat" title="Draws">D</th>
+          <th class="lt-stat" title="Clean sheets">CS</th>
+          <th class="lt-stat" title="Goal feasts">GF</th>
+          <th class="lt-stat" title="Giant kills">GK</th>
+          <th class="lt-pts">Pts</th>
+        </tr>
+      </thead>
+      <tbody>{''.join(rows)}
+      </tbody>
+    </table>
+    <div class="lt-key">W wins · D draws · CS clean sheets · GF goal feasts · GK giant kills</div>
+  </div>"""
+
+
+def render_html(scores: dict, matches: list[dict] | None = None, version: str | None = None, output_path: str | None = None):
+    """Standings page (index.html): the full league table."""
+    version_banner = get_version_banner(version=version)
+
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -669,14 +719,39 @@ def render_html(scores: dict, matches: list[dict], version: str | None = None, o
   {render_topbar()}
   <h1>🏆 2026/27 Sweepstake Standings</h1>
   {version_banner}
-  
-  {weekly_card_html}
-
-  {cards_html}
+  {render_league_table(scores)}
 </body>
 </html>"""
 
     target_path = Path(output_path) if output_path else Path(__file__).with_name("index.html")
+    target_path.write_text(html_content, encoding="utf-8")
+
+
+# ==========================================
+# Form Page (last 7 days)
+# ==========================================
+def render_form_page(matches: list[dict], version: str | None = None, output_path: str | None = None):
+    """Form page (form.html): points scored in the last 7 days."""
+    version_banner = get_version_banner(version=version)
+    weekly_card_html = render_weekly_card(calculate_weekly_scores(matches))
+
+    html_content = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Guide</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  {render_topbar()}
+  <h1>⚡ Form Guide</h1>
+  {version_banner}
+  {weekly_card_html}
+</body>
+</html>"""
+
+    target_path = Path(output_path) if output_path else Path(__file__).with_name("form.html")
     target_path.write_text(html_content, encoding="utf-8")
 
 def calculate_weekly_scores(matches: list[dict]) -> dict:
@@ -940,7 +1015,8 @@ if __name__ == "__main__":
     # 4. Scoring and page generation
     scores = calculate_scores(matches)
     render_html(scores, matches, version=next_version)
+    render_form_page(matches, version=next_version)
     render_players_page(version=next_version)
     render_latest_results_page(matches, version=next_version)
     render_upcoming_fixtures_page(version=next_version)
-    render_rules_page(pots_html=render_pots_quadrant())
+    render_rules_page(pots_html=render_pots_quadrant(), topbar_html=render_topbar())

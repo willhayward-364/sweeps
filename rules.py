@@ -41,7 +41,7 @@ RULES = [
 ]
 
 
-def render_rules_page(output_path: str | None = None, pots_html: str = "") -> None:
+def render_rules_page(output_path: str | None = None, pots_html: str = "", topbar_html: str = "") -> None:
     html_lines = [
         "<!DOCTYPE html>",
         '<html lang="en">',
@@ -52,15 +52,13 @@ def render_rules_page(output_path: str | None = None, pots_html: str = "") -> No
         '  <link rel="stylesheet" href="style.css">',
         "</head>",
         "<body>",
-        '  <div class="topbar">',
-        "    <strong>🏆 Sweepstake</strong>",
-        '    <div class="nav-links">',
-        '      <a href="index.html" class="nav-btn">Standings</a>',
-        '      <a href="players.html" class="nav-btn">Players</a>',
-        '      <a href="latest_results.html" class="nav-btn">Latest Results</a>',
-        '      <a href="rules.html" class="nav-btn">Rules</a>',
-        "    </div>",
-        "  </div>",
+        # The site-wide top bar is passed in by fetch_and_score.py; this is a fallback.
+        topbar_html or (
+            '  <div class="topbar"><div class="nav-links">'
+            '<a href="index.html" class="nav-btn">Standings</a>'
+            '<a href="rules.html" class="nav-btn">Rules</a>'
+            "</div></div>"
+        ),
         "  <h1>Rules</h1>",
         f"  {get_version_banner()}",
         "  <p>Points are awarded to each player based on the outcomes of the matches involving their selected teams.</p>",
