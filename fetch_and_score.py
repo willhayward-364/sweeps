@@ -339,6 +339,10 @@ def render_topbar() -> str:
   </div>"""
 
 
+class MatchFetchError(Exception):
+    """Raised when finished matches could not be fetched from the API."""
+
+
 def fetch_matches(comp_code: str):
     competition_url = f"https://api.football-data.org/v4/competitions/{comp_code}"
 
@@ -367,12 +371,10 @@ def fetch_matches(comp_code: str):
         for match in matches:
             match["competitionCode"] = comp_code
         return matches
-    except requests.RequestException as exc:
-        print(f"Error fetching {comp_code}: {exc}")
-        return []
-    except ValueError as exc:
-        print(f"Error fetching {comp_code}: {exc}")
-        return []
+    except (requests.RequestException, ValueError) as exc:
+        # Raise rather than returning [] so a failed fetch can't be mistaken for
+        # "no matches" and publish a site with everyone on 0 points.
+        raise MatchFetchError(f"Error fetching {comp_code}: {exc}") from exc
     
 
 
@@ -904,18 +906,29 @@ def render_latest_results_page(matches: list[dict], version: str | None = None, 
 
 
 if __name__ == "__main__":
+    import sys
+
     from rules import render_rules_page
-# 1. Grab deployment timestamp or generate fallback
+
+    # 1. Fetch results first. If the API fails, stop before writing anything so
+    #    the published site keeps its last good results.
+    try:
+        matches = load_matches()
+    except MatchFetchError as exc:
+        print(f"❌ {exc}")
+        print("Aborting without updating any pages.")
+        sys.exit(1)
+
+    # 2. Record when the API was successfully fetched
     timestamp = os.getenv("DEPLOYMENT_TIMESTAMP") or datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
     write_api_fetch_timestamp(timestamp)
 
-    # 2. Version management
+    # 3. Version management
     current_version = read_version()
     next_version = bump_version(current_version)
     write_version(next_version)
 
-    # 3. Data processing and page generation
-    matches = load_matches()
+    # 4. Scoring and page generation
     scores = calculate_scores(matches)
     render_html(scores, matches, version=next_version)
     render_players_page(version=next_version)
