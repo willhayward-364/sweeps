@@ -122,12 +122,101 @@ h1 {
   color: #48cae4;
 }
 
+/* ---------- Latest results: per-player points breakdown ---------- */
+.pb-player {
+  padding: 8px 0;
+  border-bottom: 1px solid #2c3e5c;
+}
+
+.pb-player:first-child { padding-top: 0; }
+.pb-player:last-child { border-bottom: none; padding-bottom: 0; }
+
+.pb-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.pb-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: #ffb703;
+}
+
+.pb-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.pb-total {
+  font-weight: 700;
+  color: #48cae4;
+  white-space: nowrap;
+}
+
+.pb-team {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 6px 0 0 30px;
+  font-size: 0.82rem;
+  color: #cbd5e1;
+}
+
+.pb-team-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  line-height: 20px;
+}
+
+.pb-crest {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+.pb-tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.pb-tag {
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: #24365a;
+  border: 1px solid #3a506b;
+  color: #90e0ef;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.pb-tag-loss {
+  color: #94a3b8;
+}
+
 /* Players involved in the match who earned no points (shown as a reminder) */
-.points-row-zero {
+.pb-player-zero {
   opacity: 0.55;
 }
 
-.points-row-zero strong {
+.pb-player-zero .pb-name,
+.pb-player-zero .pb-total {
+  color: #94a3b8;
+}
+
+.pb-empty {
+  font-size: 0.85rem;
   color: #94a3b8;
 }
 

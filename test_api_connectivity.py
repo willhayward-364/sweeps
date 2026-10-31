@@ -107,7 +107,9 @@ def test_latest_results_page_shows_player_point_breakdown():
     assert "Robin" in html          # Arsenal owner, shown by nickname
     assert "Player E" not in html
     assert "+5 pts" in html
-    assert "win" in html
+    assert "Win +3" in html
+    assert "Clean sheet +1" in html
+    assert "Goal feast +1" in html
 
     output_path.unlink(missing_ok=True)
 
@@ -128,16 +130,34 @@ def test_latest_results_page_shows_zero_point_players_last():
     assert by_player["Player E"]["points"] == 3          # Arsenal win
     assert by_player["Player F"]["points"] == 0          # Chelsea loss still listed
     assert by_player["Player F"]["reasons"] == ["loss"]
+    assert by_player["Player E"]["teams"][0]["team"] == "Arsenal"
+    assert by_player["Player E"]["teams"][0]["items"] == [("win", 3)]
     assert breakdown[-1]["player"] == "Player F"         # zero-point rows at the bottom
     assert "Player A" not in by_player                   # uninvolved players not listed
 
     output_path = ROOT / "tmp_latest_results_zero_points_test.html"
     render_latest_results_page([match], output_path=str(output_path))
     html = output_path.read_text(encoding="utf-8")
-    assert "points-row-zero" in html
-    assert "0 pts</strong> (loss)" in html
+    assert "pb-player-zero" in html
+    assert ">Loss<" in html
     assert "+0 pts" not in html
     output_path.unlink(missing_ok=True)
+
+
+def test_breakdown_splits_points_by_team_when_player_owns_both():
+    from fetch_and_score import calculate_match_breakdown
+
+    # Daveylad (Player F) owns both Hull City and Chelsea
+    match = {
+        "homeTeam": {"name": "Hull City AFC"},
+        "awayTeam": {"name": "Chelsea FC"},
+        "score": {"fullTime": {"home": 2, "away": 1}},
+    }
+    item = {i["player"]: i for i in calculate_match_breakdown(match)}["Player F"]
+    teams = {t["team"]: t for t in item["teams"]}
+    assert teams["Hull City"]["items"] == [("win", 3), ("giant kill", 3)]
+    assert teams["Chelsea"]["items"] == []
+    assert item["points"] == 6
 
 
 def test_latest_results_page_renders_team_crests():

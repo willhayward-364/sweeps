@@ -454,7 +454,39 @@ def calculate_scores(matches: list[dict]):
     return player_scores
 
 
+def _score_team_in_match(team: str, opponent: str, scored: int, conceded: int) -> list[tuple[str, int]]:
+    """Returns the (reason, points) items one selected team earned in a match."""
+    rule_points = {rule["ref"]: rule["points"] for rule in RULES}
+    items: list[tuple[str, int]] = []
+    if scored > conceded:
+        items.append(("win", rule_points["R1"]))
+    elif scored == conceded:
+        items.append(("draw", rule_points["R2"]))
+    if conceded == 0:
+        items.append(("clean sheet", rule_points["R3"]))
+    if scored >= 3:
+        items.append(("goal feast", rule_points["R4"]))
+    if (
+        scored > conceded
+        and team_is_in_player_selection(team, POTS["pot3"] + POTS["pot4"])
+        and team_is_in_player_selection(opponent, POTS["pot1"])
+    ):
+        items.append(("giant kill", rule_points["R5"]))
+    return items
+
+
+def _selected_team_name(api_team: str, selected_teams: list[str]) -> str:
+    """Returns the player's own name for a team (e.g. 'Liverpool' for 'Liverpool FC')."""
+    slug = normalize_team_name(api_team)
+    return next((t for t in selected_teams if normalize_team_name(t) == slug), api_team)
+
+
 def calculate_match_breakdown(match: dict) -> list[dict]:
+    """Per-player points for one match, split by each of the player's teams involved.
+
+    Every player with a team in the match is included (zero-point players too),
+    sorted with the highest scorers first.
+    """
     home_team = match.get("homeTeam", {}).get("name", "")
     away_team = match.get("awayTeam", {}).get("name", "")
 
@@ -465,85 +497,85 @@ def calculate_match_breakdown(match: dict) -> list[dict]:
     if home_score is None or away_score is None:
         return []
 
-# Precompute pot lists
-    pot1_teams = POTS.get("pot1", [])
-    pot3_4_teams = POTS.get("pot3", []) + POTS.get("pot4", [])
+    sides = [
+        (home_team, away_team, home_score, away_score),
+        (away_team, home_team, away_score, home_score),
+    ]
 
     breakdown = []
     for player, teams in PLAYERS.items():
-        points = 0
-        reasons: list[str] = []
-
-        home_selected = team_is_in_player_selection(home_team, teams)
-        away_selected = team_is_in_player_selection(away_team, teams)
-
-        if home_selected:
-            if home_score > away_score:
-                points += 3
-                reasons.append("win")
-            elif home_score == away_score:
-                points += 1
-                reasons.append("draw")
-
-            if away_score == 0:
-                points += 1
-                reasons.append("clean sheet")
-
-            if home_score >= 3:
-                points += 1
-                reasons.append("goal feast")
-            
-            if (home_score > away_score
-                and team_is_in_player_selection(home_team, POTS["pot3"] + POTS["pot4"])
-                and team_is_in_player_selection(away_team, POTS["pot1"])
-            ):
-                points += 3
-                reasons.append("giant kill")
-                
-
-        if away_selected:
-            if away_score > home_score:
-                points += 3
-                reasons.append("win")
-            elif home_score == away_score:
-                points += 1
-                reasons.append("draw")
-
-            if home_score == 0:
-                points += 1
-                reasons.append("clean sheet")
-
-            if away_score >= 3:
-                points += 1
-                reasons.append("goal feast")
-
-            if (away_score > home_score
-                and team_is_in_player_selection(away_team, POTS["pot3"] + POTS["pot4"])
-                and team_is_in_player_selection(home_team, POTS["pot1"])
-            ):
-                points += 3
-                reasons.append("giant kill")
-
-        # Include players whose team was involved but earned nothing (e.g. a loss),
-        # so the breakdown shows everyone with a stake in the match.
-        if home_selected or away_selected:
-            if not reasons:
-                reasons.append("loss")
-            nickname = get_player_display_name(player)
-            display_label = nickname
-            breakdown.append(
+        team_entries = []
+        for team, opponent, scored, conceded in sides:
+            if not team_is_in_player_selection(team, teams):
+                continue
+            items = _score_team_in_match(team, opponent, scored, conceded)
+            team_entries.append(
                 {
-                    "player": player,
-                    "display_name": nickname,
-                    "display_label": display_label,
-                    "points": points,
-                    "reasons": reasons,
+                    "team": _selected_team_name(team, teams),
+                    "points": sum(pts for _, pts in items),
+                    "items": items,
                 }
             )
 
-    # Point scorers first (highest first); zero-point players at the bottom.
+        if not team_entries:
+            continue
+
+        breakdown.append(
+            {
+                "player": player,
+                "display_name": get_player_display_name(player),
+                "points": sum(entry["points"] for entry in team_entries),
+                "teams": team_entries,
+                "reasons": [reason for entry in team_entries for reason, _ in entry["items"]] or ["loss"],
+            }
+        )
+
     breakdown.sort(key=lambda item: item["points"], reverse=True)
     return breakdown
+
+
+def render_match_breakdown(breakdown: list[dict]) -> str:
+    """HTML for the per-player points breakdown under a result."""
+    if not breakdown:
+        return '<div class="pb-empty">No sweepstake players affected by this result</div>'
+
+    blocks = []
+    for item in breakdown:
+        avatar_path = get_player_avatar_path(item["player"])
+        total = item["points"]
+        total_text = f"+{total} pts" if total else "0 pts"
+
+        team_lines = []
+        for entry in item["teams"]:
+            crest_path = get_team_crest_path(entry["team"])
+            crest_html = (
+                f'<img class="pb-crest" src="{crest_path}" alt="" loading="lazy">' if crest_path else ""
+            )
+            if entry["items"]:
+                tags = "".join(
+                    f'<span class="pb-tag">{reason.capitalize()} +{pts}</span>'
+                    for reason, pts in entry["items"]
+                )
+            else:
+                tags = '<span class="pb-tag pb-tag-loss">Loss</span>'
+            team_lines.append(
+                f"""
+              <div class="pb-team">
+                <span class="pb-team-name">{crest_html}{entry['team']}</span>
+                <span class="pb-tags">{tags}</span>
+              </div>"""
+            )
+
+        blocks.append(
+            f"""
+            <div class="pb-player{' pb-player-zero' if not total else ''}">
+              <div class="pb-head">
+                <span class="pb-name"><img class="pb-avatar" src="{avatar_path}" alt="" loading="lazy">{item['display_name']}</span>
+                <span class="pb-total">{total_text}</span>
+              </div>{''.join(team_lines)}
+            </div>"""
+        )
+    return "".join(blocks)
 
 
 # ==========================================
@@ -825,19 +857,7 @@ def render_latest_results_page(matches: list[dict], version: str | None = None, 
             else "TBD"
         )
 
-        breakdown = calculate_match_breakdown(match)
-        if breakdown:
-            breakdown_html = "".join(
-                f"""
-                <div class="points-row{' points-row-zero' if not item['points'] else ''}">
-                  <span>{item['display_label']}</span>
-                  <span><strong>{'+' if item['points'] else ''}{item['points']} pts</strong> ({', '.join(item['reasons'])})</span>
-                </div>
-                """
-                for item in breakdown
-            )
-        else:
-            breakdown_html = '<div class="points-row"><span>No sweepstake players affected by this result</span></div>'
+        breakdown_html = render_match_breakdown(calculate_match_breakdown(match))
 
         home_team_display = render_team_label(home_team, css_class="team-label")
         away_team_display = render_team_label(away_team, css_class="team-label")
