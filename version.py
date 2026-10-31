@@ -6,14 +6,17 @@ from pathlib import Path
 
 VERSION_FILE = Path(__file__).resolve().parent / ".version"
 API_FETCH_FILE = Path(__file__).resolve().parent / ".api_fetch_timestamp"
-DEFAULT_VERSION = "v0.01"
+# Major version of the site. The build number (GitHub Actions run number) is
+# appended as the minor part, e.g. v2.186.
+MAJOR_VERSION = 2
+DEFAULT_VERSION = f"v{MAJOR_VERSION}.01"
 
 
 def read_version() -> str:
     # 1. Check if running inside GitHub Actions (uses build number automatically, e.g., v0.12)
     run_number = os.getenv("GITHUB_RUN_NUMBER")
     if run_number:
-        return f"v0.{int(run_number):02d}"
+        return f"v{MAJOR_VERSION}.{int(run_number):02d}"
 
     # 2. Fallback for local testing: read from .version file
     if VERSION_FILE.exists():
