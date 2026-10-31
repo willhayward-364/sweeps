@@ -26,7 +26,7 @@ def test_rule_points_are_applied():
     assert scores["Player E"]["wins"] == 1
     assert scores["Player E"]["clean_sheets"] == 1
     assert scores["Player E"]["goal_feasts"] == 1
-    # Player F (Daveylad) owns Chelsea: a loss earns nothing
+    # Player F (Davey) owns Chelsea: a loss earns nothing
     assert scores["Player F"]["points"] == 0
     # Nobody else is involved
     assert all(scores[p]["points"] == 0 for p in ("Player A", "Player B", "Player C", "Player D"))
@@ -178,7 +178,7 @@ def test_latest_results_page_shows_zero_point_players_last():
 def test_breakdown_splits_points_by_team_when_player_owns_both():
     from fetch_and_score import calculate_match_breakdown
 
-    # Daveylad (Player F) owns both Hull City and Chelsea
+    # Davey (Player F) owns both Hull City and Chelsea
     match = {
         "homeTeam": {"name": "Hull City AFC"},
         "awayTeam": {"name": "Chelsea FC"},

@@ -154,7 +154,7 @@ PLAYER_NICKNAMES = {
     "Player C": "Dookie",
     "Player D": "Rich",
     "Player E": "Robin",
-    "Player F": "Daveylad",
+    "Player F": "Davey",
 }
 
 PLAYER_AVATARS = {
