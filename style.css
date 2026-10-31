@@ -657,3 +657,51 @@ td.lt-pts {
 .full-words .t-ab { display: none; }
 .full-words .t-full { display: inline; }
 .full-words .rc-key { display: none; }
+
+/* ==========================================
+   Compact header (overrides the original top bar sizes)
+   ========================================== */
+body {
+  padding: 12px;
+}
+
+.topbar {
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: #cebb3d;
+  font-size: 0.95rem;
+}
+
+.topbar-logo {
+  height: 34px;
+  margin-right: 0;
+}
+
+.nav-links {
+  gap: 4px;
+}
+
+.nav-btn {
+  padding: 4px 9px;
+  font-size: 0.72rem;
+}
+
+h1 {
+  font-size: 1.2rem;
+  margin: 10px 0 8px;
+}
+
+.version-banner {
+  font-size: 0.65rem;
+  padding: 5px 8px;
+  margin-bottom: 8px;
+}

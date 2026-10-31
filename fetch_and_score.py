@@ -1,3 +1,4 @@
+import json
 import os
 import re
 from datetime import datetime, timedelta, timezone
@@ -346,16 +347,54 @@ def render_team_chip_list(team_names: list[str]) -> str:
 def render_topbar() -> str:
     return f"""
   <div class="topbar">
-    <div class="topbar-brand">
+    <a href="index.html" class="topbar-brand">
       <img src="images/crests/LSB_crest.PNG" alt="Sweepstake Logo" class="topbar-logo">
       <strong>LSB Official Agreed Sweepstake</strong>
-    </div>
+    </a>
     <div class="nav-links">{NAV_LINKS}</div>
   </div>"""
 
 
 class MatchFetchError(Exception):
     """Raised when finished matches could not be fetched from the API."""
+
+
+class StaleDataError(Exception):
+    """Raised when the API returns fewer finished matches than already published."""
+
+
+PUBLISHED_STATE_FILE = Path(__file__).resolve().parent / ".published_matches.json"
+
+
+def check_matches_not_stale(matches: list[dict], state_file: Path = PUBLISHED_STATE_FILE) -> None:
+    """Refuse to publish if the API sent an older copy of the data.
+
+    The number of finished matches in a season only ever goes up, so fewer
+    matches than last published (for the same season) means a stale API
+    response. A new season resets the count. Delete the state file to force
+    a publish.
+    """
+    season = next((m.get("seasonStartDate") for m in matches if m.get("seasonStartDate")), None)
+    if not season or not state_file.exists():
+        return
+    try:
+        previous = json.loads(state_file.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return
+    if previous.get("season") == season and len(matches) < previous.get("finished_matches", 0):
+        raise StaleDataError(
+            f"API returned {len(matches)} finished matches but {previous['finished_matches']} "
+            "are already published - looks like stale data."
+        )
+
+
+def record_published_matches(matches: list[dict], state_file: Path = PUBLISHED_STATE_FILE) -> None:
+    season = next((m.get("seasonStartDate") for m in matches if m.get("seasonStartDate")), None)
+    if season:
+        state_file.write_text(
+            json.dumps({"season": season, "finished_matches": len(matches)}, indent=2) + "\n",
+            encoding="utf-8",
+        )
 
 
 def fetch_matches(comp_code: str):
@@ -385,6 +424,7 @@ def fetch_matches(comp_code: str):
         matches = response.json().get("matches", [])
         for match in matches:
             match["competitionCode"] = comp_code
+            match["seasonStartDate"] = start_date
         return matches
     except (requests.RequestException, ValueError) as exc:
         # Raise rather than returning [] so a failed fetch can't be mistaken for
@@ -1039,7 +1079,8 @@ if __name__ == "__main__":
     #    the published site keeps its last good results.
     try:
         matches = load_matches()
-    except MatchFetchError as exc:
+        check_matches_not_stale(matches)
+    except (MatchFetchError, StaleDataError) as exc:
         print(f"❌ {exc}")
         print("Aborting without updating any pages.")
         sys.exit(1)
@@ -1059,3 +1100,4 @@ if __name__ == "__main__":
     render_latest_results_page(matches, version=next_version)
     render_upcoming_fixtures_page(version=next_version)
     render_rules_page(pots_html=render_pots_quadrant(), topbar_html=render_topbar())
+    record_published_matches(matches)

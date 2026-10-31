@@ -14,27 +14,58 @@ spec.loader.exec_module(module)
 
 def test_rule_points_are_applied():
     sample_match = {
-        "homeTeam": {"name": "Arsenal"},
-        "awayTeam": {"name": "Chelsea"},
+        "homeTeam": {"name": "Arsenal FC"},
+        "awayTeam": {"name": "Chelsea FC"},
         "score": {"fullTime": {"home": 3, "away": 0}},
     }
 
-    player_scores = {
-        player: {"points": 0, "wins": 0, "draws": 0, "clean_sheets": 0, "giant_kills": 0}
-        for player in module.PLAYERS
+    scores = module.calculate_scores([sample_match])
+
+    # Player E (Robin) owns Arsenal: win 3 + clean sheet 1 + goal feast 1
+    assert scores["Player E"]["points"] == 5
+    assert scores["Player E"]["wins"] == 1
+    assert scores["Player E"]["clean_sheets"] == 1
+    assert scores["Player E"]["goal_feasts"] == 1
+    # Player F (Daveylad) owns Chelsea: a loss earns nothing
+    assert scores["Player F"]["points"] == 0
+    # Nobody else is involved
+    assert all(scores[p]["points"] == 0 for p in ("Player A", "Player B", "Player C", "Player D"))
+
+
+def test_giant_kill_bonus():
+    # Hull City (Pot 4) beat Chelsea (Pot 1)
+    match = {
+        "homeTeam": {"name": "Hull City AFC"},
+        "awayTeam": {"name": "Chelsea FC"},
+        "score": {"fullTime": {"home": 2, "away": 1}},
     }
+    scores = module.calculate_scores([match])
+    assert scores["Player C"]["points"] == 6  # win 3 + giant kill 3
+    assert scores["Player C"]["giant_kills"] == 1
 
-    for player, teams in module.PLAYERS.items():
-        if "Arsenal" in teams:
-            player_scores[player]["points"] += 3  # win bonus
-            player_scores[player]["wins"] += 1
-            player_scores[player]["points"] += 1  # clean sheet bonus
-            player_scores[player]["clean_sheets"] += 1
-            player_scores[player]["points"] += 1  # goal feast bonus
 
-    assert player_scores["Player A"]["points"] == 5
-    assert player_scores["Player A"]["wins"] == 1
-    assert player_scores["Player A"]["clean_sheets"] == 1
+def test_stale_api_data_is_not_published(tmp_path=None):
+    import tempfile
+
+    state_file = Path(tempfile.mkdtemp()) / "published.json"
+    season_matches = [{"seasonStartDate": "2026-08-15"} for _ in range(87)]
+
+    # First publish records the count
+    module.check_matches_not_stale(season_matches, state_file)
+    module.record_published_matches(season_matches, state_file)
+
+    # Same or more matches is fine
+    module.check_matches_not_stale(season_matches + [{"seasonStartDate": "2026-08-15"}], state_file)
+
+    # Fewer matches in the same season is stale
+    try:
+        module.check_matches_not_stale(season_matches[:80], state_file)
+        assert False, "expected StaleDataError"
+    except module.StaleDataError:
+        pass
+
+    # A new season resets the count
+    module.check_matches_not_stale([{"seasonStartDate": "2027-08-14"}], state_file)
 
 
 def test_rules_page_can_render():
