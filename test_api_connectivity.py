@@ -137,10 +137,10 @@ def test_latest_results_page_shows_player_point_breakdown():
     html = output_path.read_text(encoding="utf-8")
     assert "Robin" in html          # Arsenal owner, shown by nickname
     assert "Player E" not in html
-    assert '<span class="rc-total">+5</span>' in html
-    assert "W+3" in html
-    assert "CS+1" in html
-    assert "GF+1" in html
+    assert '<span class="row-total">+5</span>' in html
+    assert "Win +3" in html
+    assert "Clean sheet +1" in html
+    assert "Goal feast +1" in html
 
     output_path.unlink(missing_ok=True)
 
@@ -169,8 +169,8 @@ def test_latest_results_page_shows_zero_point_players_last():
     output_path = ROOT / "tmp_latest_results_zero_points_test.html"
     render_latest_results_page([match], output_path=str(output_path))
     html = output_path.read_text(encoding="utf-8")
-    assert '<span class="rc-total">0</span>' in html
-    assert ">L<" in html
+    assert '<span class="row-total">0</span>' in html
+    assert ">Loss<" in html
     assert "+0" not in html
     output_path.unlink(missing_ok=True)
 
@@ -203,6 +203,37 @@ def test_kickoff_times_shown_in_uk_time():
     assert format_kickoff_time("", "TBD") == "TBD"
 
 
+def test_all_pages_share_layout_with_version_in_footer():
+    import tempfile
+    from fetch_and_score import (
+        render_html, render_form_page, render_players_page,
+        render_latest_results_page, render_upcoming_fixtures_page, render_pots_quadrant,
+    )
+    from rules import render_rules_page
+
+    out = Path(tempfile.mkdtemp())
+    match = {
+        "utcDate": "2026-10-31T15:00:00Z", "status": "FINISHED",
+        "homeTeam": {"name": "Arsenal FC"}, "awayTeam": {"name": "Chelsea FC"},
+        "score": {"fullTime": {"home": 1, "away": 0}},
+    }
+    render_html(module.calculate_scores([match]), [match], output_path=out / "index.html")
+    render_form_page([match], output_path=out / "form.html")
+    render_players_page(output_path=out / "players.html")
+    render_latest_results_page([match], output_path=out / "latest_results.html")
+    render_rules_page(output_path=out / "rules.html", pots_html=render_pots_quadrant())
+
+    for page in ["index.html", "form.html", "players.html", "latest_results.html", "rules.html"]:
+        html = (out / page).read_text(encoding="utf-8")
+        assert html.count('class="topbar"') == 1, page
+        assert 'class="page-title"' in html, page
+        assert f'href="{page}" class="nav-btn active"' in html, page
+        # Version banner sits in the footer, after the page content
+        assert html.index('class="site-footer"') > html.index("</main>"), page
+        assert 'class="version-banner"' in html.split('class="site-footer"')[1], page
+        assert "style=" not in html, page  # no one-off inline styles
+
+
 def test_latest_results_page_renders_team_crests():
     from fetch_and_score import render_latest_results_page
 
@@ -219,7 +250,7 @@ def test_latest_results_page_renders_team_crests():
     render_latest_results_page(sample_matches, output_path=str(output_path))
 
     html = output_path.read_text(encoding="utf-8")
-    assert 'class="team-crest"' in html
+    assert 'class="crest' in html
     assert 'images/crests/england_arsenal.football-logos.cc.svg' in html
 
     output_path.unlink(missing_ok=True)
@@ -287,8 +318,9 @@ def extract_scores_from_html(filepath: Path) -> dict[str, int]:
         return {}
 
     content = filepath.read_text(encoding="utf-8")
-    # League table format: <tr data-player="Player X"> ... <td class="lt-pts">N</td>
-    pattern = r'<tr data-player="(.*?)">[\s\S]*?<td class="lt-pts">(\d+)</td>'
+    # League table format: <tr data-player="Player X"> ... <td class="col-pts">N</td>
+    # (older builds used class="lt-pts")
+    pattern = r'<tr data-player="(.*?)">[\s\S]*?<td class="(?:col|lt)-pts">(\d+)</td>'
     matches = re.findall(pattern, content)
     if matches:
         return {player.strip(): int(points) for player, points in matches}

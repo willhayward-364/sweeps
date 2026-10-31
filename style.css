@@ -1,721 +1,188 @@
-/* ==========================================
-   1. Base & Page Layout
-   ========================================== */
-body { 
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-  text-align: left; 
-  background: #0b132b; 
-  color: #cebb3d; 
-  padding: 20px; 
-  max-width: 600px; 
-  margin: 0 auto; 
+/* ==========================================================
+   LSB Sweepstake - site styles
+   One set of sizes and colours shared by every page.
+   ========================================================== */
+
+:root {
+  --bg: #0b132b;
+  --card: #1c2541;
+  --card-inner: #0f1c33;
+  --border: #3a506b;
+  --divider: #2c3e5c;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --gold: #ffb703;
+  --cyan: #48cae4;
+  --tag-bg: #24365a;
+  --tag-text: #90e0ef;
+
+  --fs-title: 1.3rem;    /* page titles */
+  --fs-body: 0.95rem;    /* main row text: names, teams, table cells */
+  --fs-small: 0.8rem;    /* section headings, tags, keys */
+  --fs-tiny: 0.7rem;     /* times, footer */
+
+  --crest: 20px;
+  --crest-lg: 26px;
+  --avatar: 24px;
+  --avatar-lg: 36px;
+
+  --radius: 12px;
+  --gap: 10px;
 }
 
-h1 { 
-  text-align: center; 
-  color: #48cae4; 
-  font-size: 1.5rem; 
-  margin-bottom: 20px; 
+/* ---------- Base ---------- */
+* { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: var(--fs-body);
+  background: var(--bg);
+  color: var(--text);
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 12px;
+  line-height: 1.35;
 }
 
-/* ==========================================
-   2. Navigation Bar & Button Links
-   ========================================== */
-.topbar { 
-  display: flex; 
-  flex-direction: column; 
-  align-items: center; 
-  gap: 10px; 
-  background: #1c2541; 
-  border: 1px solid #3a506b; 
-  border-radius: 16px; 
-  padding: 12px 16px; 
-  margin-bottom: 12px; 
+.page-title {
+  text-align: center;
+  color: var(--cyan);
+  font-size: var(--fs-title);
+  margin: 14px 0 10px;
 }
 
-.topbar-logo {
-  height: 68px;
-  width: auto;
-  vertical-align: middle;
-  margin-right: 8px;
-}
-
-.topbar a { 
-  color: #48cae4; 
-  text-decoration: none; 
-  font-weight: 600; 
-}
-
-.nav-links { 
-  display: flex; 
-  flex-wrap: wrap; 
-  gap: 6px; 
-  justify-content: center; 
-}
-
-.nav-btn { 
-  color: #48cae4; 
-  background: #0f1c33; 
-  border: 1px solid #3a506b; 
-  border-radius: 999px; 
-  padding: 6px 12px; 
-  text-decoration: none; 
-  font-weight: 600; 
-  font-size: 0.8rem; 
-  white-space: nowrap; 
-  transition: background 0.2s ease, color 0.2s ease; 
-}
-
-.nav-btn:hover { 
-  background: #48cae4; 
-  color: #0b132b; 
-}
-
-/* ==========================================
-   3. Player Cards & Standings Layout
-   ========================================== */
-.card, .points-breakdown { 
-  background: #1c2541; 
-  border-radius: 12px; 
-  padding: 15px; 
-  margin-bottom: 15px; 
-  border: 1px solid #3a506b; 
-}
-
-.team-label,
-.team-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: #ffffff;
-  font-weight: 600;
-}
-
-.team-crest {
-  width: 30px;
-  height: 30px;
-  object-fit: contain;
-  border-radius: 4px;
-  background: rgba(255,255,255,0.06);
-  padding: 2px;
-}
-
-.team-name-text {
-  white-space: nowrap;
-}
-
-.points-breakdown {
-  margin-top: 10px;
-  padding-top: 12px;
-}
-
-.points-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  font-size: 0.85rem;
-  color: #cbd5e1;
-  margin-bottom: 6px;
-}
-
-.points-row strong {
-  color: #48cae4;
-}
-
-/* ---------- Latest results: compact result cards ---------- */
-.day-heading {
-  font-size: 0.85rem;
+.section-heading {
+  font-size: var(--fs-small);
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin: 16px 2px 6px;
 }
 
-.result-card {
-  padding: 8px 10px;
-  margin-bottom: 8px;
+.page-title + .section-heading { margin-top: 4px; }
+
+.muted { color: var(--muted); font-size: var(--fs-small); }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  margin-bottom: var(--gap);
 }
 
-.rc-score {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: 8px;
-}
-
-.rc-team {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-width: 0;
+.card-heading {
   font-weight: 700;
-  font-size: 0.9rem;
-  color: #f1f5f9;
-}
-
-.rc-home { justify-content: flex-end; text-align: right; }
-.rc-away { justify-content: flex-start; }
-
-.rc-name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.result-card .team-crest {
-  width: 22px;
-  height: 22px;
-  flex-shrink: 0;
-}
-
-.rc-mid {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.rc-badge {
-  font-weight: 800;
-  font-size: 1rem;
-  color: #ffb703;
-  background: #0b132b;
-  border: 1px solid #3a506b;
-  border-radius: 6px;
-  padding: 1px 8px;
-  white-space: nowrap;
-}
-
-.rc-time {
-  font-size: 0.65rem;
-  color: #94a3b8;
-  margin-top: 2px;
-  white-space: nowrap;
-}
-
-.rc-breakdown {
-  margin-top: 6px;
-  border-top: 1px solid #2c3e5c;
-  padding-top: 4px;
-}
-
-.rc-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 3px 0;
-  font-size: 0.82rem;
-}
-
-.rc-player {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  width: 6.2em;
-  flex-shrink: 0;
-  font-weight: 700;
-  color: #ffb703;
-  white-space: nowrap;
-}
-
-.rc-avatar {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.rc-detail {
-  flex: 1;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 10px;
-  min-width: 0;
-}
-
-.rc-team-pts {
-  display: inline-flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 3px;
-  min-width: 0;
-}
-
-.rc-crest {
-  width: 16px;
-  height: 16px;
-  object-fit: contain;
-  margin-right: 2px;
-}
-
-.rc-team-text {
-  font-size: 0.75rem;
-  color: #cbd5e1;
-  margin-right: 2px;
-}
-
-.rc-tag {
-  padding: 0 5px;
-  border-radius: 999px;
-  background: #24365a;
-  border: 1px solid #3a506b;
-  color: #90e0ef;
-  font-size: 0.7rem;
-  line-height: 1.5;
-  white-space: nowrap;
-}
-
-.rc-tag-loss {
-  color: #94a3b8;
-}
-
-.rc-total {
-  font-weight: 800;
-  color: #48cae4;
-  min-width: 2em;
-  text-align: right;
-}
-
-.rc-empty {
-  font-size: 0.8rem;
-  color: #94a3b8;
-  padding: 3px 0;
-}
-
-.player-name { 
-  font-weight: bold; 
-  font-size: 1.2rem; 
-  color: #ffb703; 
-}
-
-.player-id { 
-  font-size: 0.8rem; 
-  color: #a0aec0; 
-  margin-top: 2px; 
-}
-
-.teams { 
-  font-size: 0.9rem; 
-  color: #cbd5e1; 
-  margin-top: 6px; 
-}
-
-.stats { 
-  font-size: 0.8rem; 
-  color: #a0aec0; 
-  margin-top: 8px; 
-  border-top: 1px solid #2d3748; 
-  padding-top: 6px; 
-}
-
-/* Standings Points (Floated right) */
-.score { 
-  font-size: 1.4rem; 
-  font-weight: bold; 
-  float: right; 
-  color: #48cae4; 
-}
-
-/* ==========================================
-   Player Avatar & Header Alignment
-   ========================================== */
-.player-name-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
-}
-
-.player-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #3a506b;
-  background-color: #0f1c33;
-  flex-shrink: 0;
-}
-
-/* ==========================================
-   4. Latest Results Specific Layout
-   ========================================== */
-.match-meta { 
-  font-size: 0.8rem; 
-  color: #a0aec0; 
-  display: flex; 
-  justify-content: space-between; 
-  margin-bottom: 8px; 
-}
-
-.match-teams { 
-  display: flex; 
-  justify-content: space-between; 
-  align-items: center; 
-  font-size: 1.05rem; 
-  font-weight: bold; 
-}
-
-.team { 
-  width: 40%; 
-  color: #ffffff; 
-}
-
-.team.home { text-align: right; }
-.team.away { text-align: left; }
-
-/* Match Results Score Badge (Centered box) */
-.score-badge { 
-  color: #ffb703; 
-  font-size: 1.1rem; 
-  font-weight: 800; 
-  background: #0f1c33; 
-  padding: 4px 10px; 
-  border-radius: 6px; 
-  border: 1px solid #3a506b; 
-  text-align: center; 
-  white-space: nowrap; 
-}
-
-/* ==========================================
-   5. Version Banner & Rules Page Layout
-   ========================================== */
-.version-banner {
-  background: #1c2541;
-  border: 1px solid #3a506b;
-  color: #a0aec0;
-  font-size: 0.8rem;
-  padding: 10px 14px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.rule-card {
-  background: #1c2541;
-  border: 1px solid #3a506b;
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 12px;
-}
-
-.rule-ref {
-  display: inline-block;
-  background: #0f1c33;
-  color: #ffb703;
-  border: 1px solid #3a506b;
-  font-weight: 800;
-  font-size: 0.75rem;
-  padding: 2px 8px;
-  border-radius: 6px;
+  color: var(--gold);
   margin-bottom: 6px;
 }
 
-.rule-title {
-  font-weight: bold;
-  font-size: 1.05rem;
-  color: #48cae4;
-  margin-bottom: 4px;
+.card-text { margin: 0 0 6px; }
+.card-text:last-child { margin-bottom: 0; }
+
+.card-list {
+  margin: 0;
+  padding-left: 1.2em;
+  color: var(--text);
 }
 
-.rule-desc {
-  font-size: 0.9rem;
-  color: #cbd5e1;
-  line-height: 1.4;
+.empty-note {
+  color: var(--muted);
+  font-size: var(--fs-small);
+  padding: 4px 0;
 }
 
-/* Rule Quote / Callout Block */
-.rule-quote-block {
-  margin: 1.5rem 0;
-  padding: 1rem 1.25rem;
-  background-color: #1c2541;
-  border-left: 4px solid #48cae4;
-  border-radius: 0 8px 8px 0;
-}
-
-.rule-quote-block p {
-  margin: 0 0 0.5rem 0;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  color: #ffffff; /* Fixed: High contrast white text */
-}
-
-.rule-quote-block cite {
-  display: block;
-  font-size: 0.85rem;
-  color: #a0aec0; /* Fixed: Muted light gray text */
-  font-style: italic;
-}
-
-/* ==========================================
-   6. Seeded Pots 4-Quadrant Grid Styling
-   ========================================== */
-.pots-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.25rem;
-  margin: 1.5rem 0;
-}
-
-.pots-grid .pot-card {
-  background-color: #1c2541;
-  border: 1px solid #3a506b;
-  border-radius: 12px;
-  padding: 1.25rem;
-}
-
-.pots-grid .pot-card h3 {
-  margin-top: 0;
-  margin-bottom: 0.8rem;
-  font-size: 1.1rem;
-  color: #ffffff;
-  border-bottom: 1px solid #3a506b;
-  padding-bottom: 0.4rem;
-}
-
-.pots-grid .pot-team-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-}
-
-.pots-grid .pot-team-item {
-  display: flex;
-  align-items: center;
-}
-
-.pots-grid .team-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.pots-grid .team-crest {
-  width: 22px;
-  height: 22px;
+/* ---------- Images ---------- */
+.crest {
+  width: var(--crest);
+  height: var(--crest);
   object-fit: contain;
   flex-shrink: 0;
-}
-
-.pots-grid .team-name-text {
-  display: inline-block;
-  color: #ffffff;
-  font-size: 0.95rem;
-  font-weight: 500;
-}
-
-/* ==========================================
-   7. Responsive Adjustments
-   ========================================== */
-@media (min-width: 520px) {
-  .topbar { 
-    flex-direction: row; 
-    justify-content: space-between; 
-    border-radius: 999px; 
-  }
-}
-
-@media (max-width: 600px) {
-  .pots-grid {
-    grid-template-columns: 1fr;
-  }
-}
-/* ==========================================
-   Standings: compact league table
-   ========================================== */
-.league-card {
-  padding: 8px 6px;
-}
-
-.league-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.85rem;
-  color: #e2e8f0;
-}
-
-.league-table th {
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: #94a3b8;
-  text-transform: uppercase;
-  padding: 4px 3px 6px;
-  border-bottom: 1px solid #3a506b;
-}
-
-.league-table td {
-  padding: 6px 3px;
-  border-bottom: 1px solid #2c3e5c;
   vertical-align: middle;
-}
-
-.league-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.lt-rank {
-  width: 1.4em;
-  text-align: center;
-  color: #94a3b8;
-}
-
-.lt-player {
-  text-align: left;
-}
-
-td.lt-player {
-  font-weight: 700;
-  color: #ffb703;
-  white-space: nowrap;
-}
-
-td.lt-player span {
-  vertical-align: middle;
-}
-
-.lt-avatar {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  object-fit: cover;
-  vertical-align: middle;
-  margin-right: 6px;
-}
-
-.lt-teams {
-  text-align: left;
-}
-
-td.lt-teams {
-  white-space: nowrap;
-}
-
-.lt-crest {
-  width: 16px;
-  height: 16px;
-  object-fit: contain;
-  vertical-align: middle;
-  margin-right: 2px;
-}
-
-.lt-stat {
-  width: 1.9em;
-  text-align: center;
-}
-
-td.lt-stat {
-  color: #cbd5e1;
-}
-
-.lt-pts {
-  width: 2.4em;
-  text-align: right;
-  padding-right: 6px !important;
-}
-
-td.lt-pts {
-  font-weight: 800;
-  font-size: 0.95rem;
-  color: #48cae4;
-}
-
-.lt-key {
-  margin-top: 8px;
-  font-size: 0.68rem;
-  color: #94a3b8;
-  text-align: center;
-}
-
-.lt-title {
-  font-size: 0.8rem;
-  color: #94a3b8;
-  text-align: center;
-  margin: 2px 0 6px;
-}
-
-/* Faint light outline so dark crests (e.g. Tottenham) show on the dark background */
-.team-crest,
-.lt-crest,
-.rc-crest {
+  /* faint light outline so dark crests (e.g. Tottenham) show on the dark background */
   filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.7));
 }
 
-/* Latest results: short / full-word tag toggle */
-.rc-toolbar {
+.crest-lg {
+  width: var(--crest-lg);
+  height: var(--crest-lg);
+}
+
+.avatar {
+  width: var(--avatar);
+  height: var(--avatar);
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.avatar-lg {
+  width: var(--avatar-lg);
+  height: var(--avatar-lg);
+}
+
+/* ---------- Header & menu ---------- */
+.topbar {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  margin: 4px 0 4px;
-}
-
-.rc-toggle {
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.t-full { display: none; }
-.full-words .t-ab { display: none; }
-.full-words .t-full { display: inline; }
-.full-words .rc-key { display: none; }
-
-/* ==========================================
-   Compact header (overrides the original top bar sizes)
-   ========================================== */
-body {
-  padding: 12px;
-}
-
-.topbar {
   gap: 8px;
-  padding: 8px 10px;
-  border-radius: 12px;
-  margin-bottom: 8px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px;
 }
 
 .topbar-brand {
   display: flex;
   align-items: center;
-  gap: 8px;
-  text-decoration: none;
-  color: #cebb3d;
-  font-size: 0.95rem;
+  gap: 10px;
+  color: var(--gold);
+  font-size: 1.05rem;
 }
 
 .topbar-logo {
-  height: 34px;
-  margin-right: 0;
-}
-
-.nav-links {
-  gap: 4px;
-}
-
-.nav-btn {
-  padding: 4px 9px;
-  font-size: 0.72rem;
-}
-
-h1 {
-  font-size: 1.2rem;
-  margin: 10px 0 8px;
-}
-
-.version-banner {
-  font-size: 0.65rem;
-  padding: 5px 8px;
-  margin-bottom: 8px;
-}
-
-/* Logo Easter egg */
-.topbar-logo {
+  height: 40px;
+  width: auto;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }
 
-.logo-spin {
-  animation: logo-spin 0.8s ease-in-out;
+.nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
 }
+
+.nav-btn {
+  color: var(--cyan);
+  background: var(--card-inner);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: var(--fs-body);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.nav-btn:hover,
+.nav-btn.active {
+  background: var(--cyan);
+  color: var(--bg);
+}
+
+/* Logo Easter egg */
+.logo-egg {
+  filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, 0.9)) drop-shadow(0 0 6px rgba(255, 255, 255, 0.35));
+}
+
+.logo-spin { animation: logo-spin 0.8s ease-in-out; }
 
 @keyframes logo-spin {
   0%   { transform: rotateY(0deg) scale(1); }
@@ -723,6 +190,283 @@ h1 {
   100% { transform: rotateY(360deg) scale(1); }
 }
 
-.logo-egg {
-  filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, 0.9)) drop-shadow(0 0 6px rgba(255, 255, 255, 0.35));
+/* ---------- Shared row pieces ---------- */
+.player-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--gold);
+  white-space: nowrap;
+}
+
+.tag {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--tag-bg);
+  border: 1px solid var(--border);
+  color: var(--tag-text);
+  font-size: var(--fs-small);
+  white-space: nowrap;
+}
+
+.tag-muted { color: var(--muted); }
+
+.pill {
+  flex-shrink: 0;
+  min-width: 2.4em;
+  text-align: center;
+  font-weight: 800;
+  color: var(--cyan);
+  background: var(--card-inner);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+/* ---------- Standings & Form tables ---------- */
+.table-card { padding: 6px 6px 8px; }
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th {
+  font-size: var(--fs-tiny);
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  padding: 4px 3px 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.data-table td {
+  padding: 7px 3px;
+  border-bottom: 1px solid var(--divider);
+  vertical-align: middle;
+}
+
+.data-table tbody tr:last-child td { border-bottom: none; }
+
+.col-rank { width: 1.4em; text-align: center; color: var(--muted); }
+.col-player, .col-teams { text-align: left; }
+td.col-teams { white-space: nowrap; }
+td.col-teams .crest { width: 18px; height: 18px; margin-right: 2px; }
+.col-stat { width: 1.9em; text-align: center; }
+td.col-stat { color: var(--text); }
+.col-pts { width: 2.4em; text-align: right; padding-right: 6px !important; }
+td.col-pts { font-weight: 800; color: var(--cyan); }
+
+.table-key {
+  margin-top: 8px;
+  font-size: var(--fs-tiny);
+  color: var(--muted);
+  text-align: center;
+}
+
+/* ---------- Results & Fixtures match cards ---------- */
+.match-line {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 8px;
+}
+
+.match-team {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-weight: 700;
+}
+
+.match-team.home { justify-content: flex-end; text-align: right; }
+.match-team.away { justify-content: flex-start; }
+
+.team-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.match-mid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.match-badge {
+  font-weight: 800;
+  color: var(--gold);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1px 8px;
+  white-space: nowrap;
+}
+
+.match-time {
+  font-size: var(--fs-tiny);
+  color: var(--muted);
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
+.match-rows {
+  margin-top: 8px;
+  border-top: 1px solid var(--divider);
+  padding-top: 4px;
+}
+
+.player-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.player-row .player-name {
+  width: 7em;
+  flex-shrink: 0;
+}
+
+.player-detail {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  min-width: 0;
+}
+
+.team-points {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.row-total {
+  font-weight: 800;
+  color: var(--cyan);
+  min-width: 2em;
+  text-align: right;
+}
+
+/* Results: player name + total, then one line per team with its point tags */
+.player-block {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--divider);
+}
+
+.player-block:last-child { border-bottom: none; padding-bottom: 2px; }
+
+.player-block-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.team-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 5px 0 0 32px;
+}
+
+.team-line .crest { margin-top: 1px; }
+
+.team-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* ---------- Players & pots: team lists ---------- */
+.player-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.player-card-head .player-name { font-size: 1.05rem; }
+
+.team-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px 16px;
+}
+
+/* Two columns of teams on wider screens */
+@media (min-width: 520px) {
+  .player-card .team-list { grid-template-columns: 1fr 1fr; }
+}
+
+.team-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.team-row-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.team-row .muted { margin-left: auto; white-space: nowrap; }
+
+/* Pot lists are narrow, so let long names wrap instead of cutting them off */
+.pot-card .team-row { align-items: flex-start; }
+.pot-card .team-row-name { white-space: normal; }
+
+.pots-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap);
+}
+
+.pots-grid .card { margin-bottom: 0; }
+.pot-card .team-list { grid-template-columns: 1fr; }
+
+/* ---------- Rules ---------- */
+.rule-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--divider);
+}
+
+.rule-row:first-child { padding-top: 2px; }
+.rule-row:last-child { border-bottom: none; padding-bottom: 2px; }
+
+.rule-text { flex: 1; }
+.rule-title { font-weight: 700; color: var(--gold); }
+.rule-desc { color: var(--muted); font-size: var(--fs-small); }
+
+/* ---------- Footer: version & technical banner ---------- */
+.site-footer {
+  margin-top: 20px;
+  padding-top: 10px;
+  border-top: 1px solid var(--divider);
+}
+
+.version-banner {
+  font-size: var(--fs-tiny);
+  color: var(--muted);
+  text-align: center;
+}
+
+.version-banner strong { color: var(--text); font-weight: 600; }
+
+/* ---------- Narrow phones ---------- */
+@media (max-width: 380px) {
+  :root { --fs-body: 0.9rem; }
+  .player-row .player-name { width: 6.2em; }
 }

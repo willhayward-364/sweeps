@@ -8,11 +8,8 @@ from zoneinfo import ZoneInfo
 import requests
 
 from rules import RULES
-from version import (
-    get_version_banner,
-    read_version,
-    write_api_fetch_timestamp,
-)
+from layout import render_page
+from version import read_version, write_api_fetch_timestamp
 
 # Configuration & Flags
 USE_MOCK_DATA = False  # 👈 Set to True for testing, False for production
@@ -169,15 +166,6 @@ PLAYER_AVATARS = {
     "Player F": "images/player_avatars/Daveylad_avatar.jpg",
 }
 
-NAV_LINKS = """
-      <a href="index.html" class="nav-btn">Standings</a>
-      <a href="form.html" class="nav-btn">Form</a>
-      <a href="players.html" class="nav-btn">Players</a>
-      <a href="latest_results.html" class="nav-btn">Latest Results</a>
-      <a href="upcoming_fixtures.html" class="nav-btn">Upcoming Fixtures</a>
-      <a href="rules.html" class="nav-btn">Rules</a>
-    """
-
 
 def get_player_display_name(player_id: str) -> str:
     return PLAYER_NICKNAMES.get(player_id, player_id)
@@ -252,7 +240,6 @@ TEAM_CREST_LOOKUP = {
 }
 
 
-
 def normalize_team_name(team_name: str) -> str:
     """Strips noise words (FC, AFC, Club) and converts short-names to standard slugs."""
     clean = re.sub(r"\b(fc|afc|club)\b", "", team_name, flags=re.IGNORECASE)
@@ -287,111 +274,6 @@ def get_team_crest_path(team_name: str) -> str | None:
         return "images/crests/placeholder.svg"
 
     return None
-
-
-def render_team_label(team_name: str, css_class: str = "team-label") -> str:
-    crest_path = get_team_crest_path(team_name)
-    crest_html = (
-        f'<img class="team-crest" src="{crest_path}" alt="{team_name} crest" loading="lazy">'
-        if crest_path
-        else ""
-    )
-    return f'<span class="{css_class}">{crest_html}<span class="team-name-text">{team_name}</span></span>'
-
-
-def get_team_slug(team_name: str) -> str:
-    """Converts a team name like 'Aston Villa' to 'aston-villa' for the SVG filename."""
-    return team_name.lower().replace(" ", "-").replace("&", "and")
-
-
-def render_pots_quadrant() -> str:
-    """Generates the 4-quadrant HTML grid populated with teams and SVG icons."""
-    pot_labels = {
-        "pot1": "Pot 1 (Top Tier)",
-        "pot2": "Pot 2 (Upper Tier)",
-        "pot3": "Pot 3 (Mid Tier)",
-        "pot4": "Pot 4 (Challengers)",
-    }
-
-    quadrant_cards = []
-
-    for pot_key, title in pot_labels.items():
-        teams = POTS.get(pot_key, [])
-
-        team_items = []
-        for team in teams:
-            # 💡 Uses standard render_team_label so .team-label & .team-name-text keep their styling
-            label_html = render_team_label(team)
-            team_items.append(f'          <div class="pot-team-item">{label_html}</div>')
-
-        teams_block = "\n".join(team_items)
-        
-        # 💡 Adding "card" ensures it inherits the site's exact card background and borders!
-        card_html = f"""      <div class="card pot-card">
-        <h3>{title}</h3>
-        <div class="pot-team-list">
-{teams_block}
-        </div>
-      </div>"""
-        quadrant_cards.append(card_html)
-
-    return '<div class="pots-grid">\n' + "\n".join(quadrant_cards) + "\n</div>"
-
-
-def render_team_chip_list(team_names: list[str]) -> str:
-    return " ".join(
-        render_team_label(team_name, css_class="team-chip") for team_name in team_names
-    )
-
-
-# Easter egg: tap the LSB logo 10 times in quick succession and it turns into
-# the Tottenham crest (for this browser session). Another 10 taps turn it back.
-EASTER_EGG_TAPS = 10
-EASTER_EGG_CREST = "images/crests/england_tottenham.football-logos.cc.svg"
-
-
-def render_topbar() -> str:
-    return f"""
-  <div class="topbar">
-    <div class="topbar-brand">
-      <img src="images/crests/LSB_crest.PNG" alt="Sweepstake Logo" class="topbar-logo" id="site-logo">
-      <strong>LSB Official Agreed Sweepstake</strong>
-    </div>
-    <div class="nav-links">{NAV_LINKS}</div>
-  </div>
-  <script>
-    (function () {{
-      var logo = document.getElementById("site-logo");
-      if (!logo) return;
-      var original = logo.getAttribute("src");
-      var egg = "{EASTER_EGG_CREST}";
-      var taps = 0, timer = null;
-      function show(on, animate) {{
-        logo.src = on ? egg : original;
-        logo.alt = on ? "Tottenham Hotspur crest" : "Sweepstake Logo";
-        logo.classList.toggle("logo-egg", on);
-        if (animate) {{
-          logo.classList.remove("logo-spin");
-          void logo.offsetWidth;
-          logo.classList.add("logo-spin");
-        }}
-      }}
-      var active = false;
-      try {{ active = sessionStorage.getItem("spursLogo") === "1"; }} catch (e) {{}}
-      if (active) show(true, false);
-      logo.addEventListener("click", function () {{
-        taps += 1;
-        clearTimeout(timer);
-        timer = setTimeout(function () {{ taps = 0; }}, 1500);
-        if (taps >= {EASTER_EGG_TAPS}) {{
-          taps = 0;
-          active = !active;
-          show(active, true);
-          try {{ sessionStorage.setItem("spursLogo", active ? "1" : "0"); }} catch (e) {{}}
-        }}
-      }});
-    }})();
-  </script>"""
 
 
 class MatchFetchError(Exception):
@@ -630,217 +512,132 @@ def calculate_match_breakdown(match: dict) -> list[dict]:
     return breakdown
 
 
-REASON_ABBREVIATIONS = {
-    "win": ("W", "Win"),
-    "draw": ("D", "Draw"),
-    "clean sheet": ("CS", "Clean sheet"),
-    "goal feast": ("GF", "Goal feast"),
-    "giant kill": ("GK", "Giant kill"),
+
+# ==========================================
+# Shared building blocks
+# ==========================================
+REASON_LABELS = {
+    "win": "Win",
+    "draw": "Draw",
+    "clean sheet": "Clean sheet",
+    "goal feast": "Goal feast",
+    "giant kill": "Giant kill",
 }
 
 
-def render_match_breakdown(breakdown: list[dict]) -> str:
-    """Compact per-player lines under a result: avatar, name, team crest + point tags, total."""
-    if not breakdown:
-        return '<div class="rc-empty">No sweepstake players affected</div>'
-
-    rows = []
-    for item in breakdown:
-        avatar_path = get_player_avatar_path(item["player"])
-        total = item["points"]
-
-        team_parts = []
-        for entry in item["teams"]:
-            crest_path = get_team_crest_path(entry["team"])
-            crest_html = (
-                f'<img class="rc-crest" src="{crest_path}" alt="{entry["team"]}" title="{entry["team"]}" loading="lazy">'
-                if crest_path
-                else f'<span class="rc-team-text">{entry["team"]}</span>'
-            )
-            if entry["items"]:
-                tags = "".join(
-                    f'<span class="rc-tag" title="{REASON_ABBREVIATIONS[reason][1]}">'
-                    f'<span class="t-ab">{REASON_ABBREVIATIONS[reason][0]}+{pts}</span>'
-                    f'<span class="t-full">{REASON_ABBREVIATIONS[reason][1]} +{pts}</span></span>'
-                    for reason, pts in entry["items"]
-                )
-            else:
-                tags = (
-                    '<span class="rc-tag rc-tag-loss" title="Loss">'
-                    '<span class="t-ab">L</span><span class="t-full">Loss</span></span>'
-                )
-            team_parts.append(f'<span class="rc-team-pts">{crest_html}{tags}</span>')
-
-        rows.append(
-            f"""
-          <div class="rc-row">
-            <span class="rc-player"><img class="rc-avatar" src="{avatar_path}" alt="" loading="lazy">{item['display_name']}</span>
-            <span class="rc-detail">{''.join(team_parts)}</span>
-            <span class="rc-total">{f"+{total}" if total else "0"}</span>
-          </div>"""
-        )
-    return "".join(rows)
+def crest_img(team_name: str, css_class: str = "crest") -> str:
+    path = get_team_crest_path(team_name)
+    if not path:
+        return ""
+    return f'<img class="{css_class}" src="{path}" alt="{team_name}" title="{team_name}" loading="lazy">'
 
 
-# ==========================================
-# Weekly Card Component Generator
-# ==========================================
-def render_weekly_card(weekly_scores: dict) -> str:
-    """Compact table of points scored in the last 7 days."""
-    sorted_weekly = sorted(weekly_scores.items(), key=lambda item: item[1]["points"], reverse=True)
+def avatar_img(player_id: str, css_class: str = "avatar") -> str:
+    return f'<img class="{css_class}" src="{get_player_avatar_path(player_id)}" alt="" loading="lazy">'
 
-    rows = []
-    for player, data in sorted_weekly:
-        rank = 1 + sum(1 for other in weekly_scores.values() if other["points"] > data["points"])
-        display_name = get_player_display_name(player)
-        avatar_path = get_player_avatar_path(player)
-        rows.append(
-            f"""
-      <tr>
-        <td class="lt-rank">{rank}</td>
-        <td class="lt-player"><img class="lt-avatar" src="{avatar_path}" alt="" loading="lazy"><span>{display_name}</span></td>
-        <td class="lt-stat">{data['wins']}</td>
-        <td class="lt-stat">{data['draws']}</td>
-        <td class="lt-stat">{data['clean_sheets']}</td>
-        <td class="lt-stat">{data['goal_feasts']}</td>
-        <td class="lt-stat">{data['giant_kills']}</td>
-        <td class="lt-pts">{data['points']}</td>
-      </tr>"""
-        )
 
+def uk_kickoff(utc_date: str) -> datetime | None:
+    try:
+        return datetime.fromisoformat(utc_date.replace("Z", "+00:00")).astimezone(UK_TIMEZONE)
+    except (AttributeError, ValueError):
+        return None
+
+
+def match_team_names(match: dict) -> tuple[str, str]:
+    home = match.get("homeTeam", {})
+    away = match.get("awayTeam", {})
+    return (
+        home.get("shortName") or home.get("name", "Unknown"),
+        away.get("shortName") or away.get("name", "Unknown"),
+    )
+
+
+def render_match_line(home_team: str, away_team: str, badge: str, time_label: str) -> str:
     return f"""
-  <div class="card league-card">
-    <div class="lt-title">Points scored in the last 7 days</div>
-    <table class="league-table">
-      <thead>
-        <tr>
-          <th class="lt-rank">#</th>
-          <th class="lt-player">Player</th>
-          <th class="lt-stat" title="Wins">W</th>
-          <th class="lt-stat" title="Draws">D</th>
-          <th class="lt-stat" title="Clean sheets">CS</th>
-          <th class="lt-stat" title="Goal feasts">GF</th>
-          <th class="lt-stat" title="Giant kills">GK</th>
-          <th class="lt-pts">Pts</th>
-        </tr>
-      </thead>
-      <tbody>{''.join(rows)}
-      </tbody>
-    </table>
-    <div class="lt-key">W wins · D draws · CS clean sheets · GF goal feasts · GK giant kills</div>
-  </div>
-"""
+    <div class="match-line">
+      <span class="match-team home"><span class="team-name">{home_team}</span>{crest_img(home_team, "crest crest-lg")}</span>
+      <span class="match-mid"><span class="match-badge">{badge}</span><span class="match-time">{time_label}</span></span>
+      <span class="match-team away">{crest_img(away_team, "crest crest-lg")}<span class="team-name">{away_team}</span></span>
+    </div>"""
+
+
+def render_day_grouped(cards: list[tuple[datetime | None, str]]) -> str:
+    """Puts a UK-date heading above each run of cards from the same day."""
+    html, current_day = "", None
+    for kickoff, card_html in cards:
+        day_label = kickoff.strftime("%A %-d %B") if kickoff else "Date to be confirmed"
+        if day_label != current_day:
+            html += f'\n  <h2 class="section-heading">{day_label}</h2>'
+            current_day = day_label
+        html += card_html
+    return html
+
 
 # ==========================================
-# Standings Page (league table)
+# Standings & Form: points tables
 # ==========================================
-def render_league_table(scores: dict) -> str:
-    """Compact league table: rank, player, team crests, stats and points."""
+TABLE_KEY = '<div class="table-key">W wins · D draws · CS clean sheets · GF goal feasts · GK giant kills</div>'
+
+
+def render_points_table(scores: dict, show_teams: bool = True) -> str:
+    """Compact table: rank (shared on equal points), player, optional team crests, stats, points."""
     sorted_scores = sorted(scores.items(), key=lambda item: item[1]["points"], reverse=True)
 
     rows = []
     for player, data in sorted_scores:
-        # Players level on points share a rank (e.g. 2, 2, 4)
         rank = 1 + sum(1 for other in scores.values() if other["points"] > data["points"])
-        display_name = get_player_display_name(player)
-        avatar_path = get_player_avatar_path(player)
-
-        crests = []
-        for team in PLAYERS[player]:
-            crest_path = get_team_crest_path(team)
-            if crest_path:
-                crests.append(
-                    f'<img class="lt-crest" src="{crest_path}" alt="{team}" title="{team}" loading="lazy">'
-                )
-
+        teams_cell = (
+            f'\n        <td class="col-teams">{"".join(crest_img(t) for t in PLAYERS[player])}</td>'
+            if show_teams else ""
+        )
         rows.append(
             f"""
       <tr data-player="{player}">
-        <td class="lt-rank">{rank}</td>
-        <td class="lt-player"><img class="lt-avatar" src="{avatar_path}" alt="" loading="lazy"><span>{display_name}</span></td>
-        <td class="lt-teams">{''.join(crests)}</td>
-        <td class="lt-stat">{data['wins']}</td>
-        <td class="lt-stat">{data['draws']}</td>
-        <td class="lt-stat">{data['clean_sheets']}</td>
-        <td class="lt-stat">{data['goal_feasts']}</td>
-        <td class="lt-stat">{data['giant_kills']}</td>
-        <td class="lt-pts">{data['points']}</td>
+        <td class="col-rank">{rank}</td>
+        <td class="col-player"><span class="player-name">{avatar_img(player)}{get_player_display_name(player)}</span></td>{teams_cell}
+        <td class="col-stat">{data['wins']}</td>
+        <td class="col-stat">{data['draws']}</td>
+        <td class="col-stat">{data['clean_sheets']}</td>
+        <td class="col-stat">{data['goal_feasts']}</td>
+        <td class="col-stat">{data['giant_kills']}</td>
+        <td class="col-pts">{data['points']}</td>
       </tr>"""
         )
 
+    teams_head = '\n          <th class="col-teams">Teams</th>' if show_teams else ""
     return f"""
-  <div class="card league-card">
-    <table class="league-table">
+  <div class="card table-card">
+    <table class="data-table">
       <thead>
         <tr>
-          <th class="lt-rank">#</th>
-          <th class="lt-player">Player</th>
-          <th class="lt-teams">Teams</th>
-          <th class="lt-stat" title="Wins">W</th>
-          <th class="lt-stat" title="Draws">D</th>
-          <th class="lt-stat" title="Clean sheets">CS</th>
-          <th class="lt-stat" title="Goal feasts">GF</th>
-          <th class="lt-stat" title="Giant kills">GK</th>
-          <th class="lt-pts">Pts</th>
+          <th class="col-rank">#</th>
+          <th class="col-player">Player</th>{teams_head}
+          <th class="col-stat" title="Wins">W</th>
+          <th class="col-stat" title="Draws">D</th>
+          <th class="col-stat" title="Clean sheets">CS</th>
+          <th class="col-stat" title="Goal feasts">GF</th>
+          <th class="col-stat" title="Giant kills">GK</th>
+          <th class="col-pts">Pts</th>
         </tr>
       </thead>
       <tbody>{''.join(rows)}
       </tbody>
     </table>
-    <div class="lt-key">W wins · D draws · CS clean sheets · GF goal feasts · GK giant kills</div>
+    {TABLE_KEY}
   </div>"""
 
 
 def render_html(scores: dict, matches: list[dict] | None = None, version: str | None = None, output_path: str | None = None):
     """Standings page (index.html): the full league table."""
-    version_banner = get_version_banner(version=version)
+    render_page(
+        page="index.html",
+        title="Standings · LSB Sweepstake",
+        heading="🏆 Standings 2026/27",
+        body=render_points_table(scores, show_teams=True),
+        output_path=output_path or Path(__file__).with_name("index.html"),
+        version=version,
+    )
 
-    html_content = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>2026/27 Premier League Sweepstake</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  {render_topbar()}
-  <h1>🏆 2026/27 Sweepstake Standings</h1>
-  {version_banner}
-  {render_league_table(scores)}
-</body>
-</html>"""
-
-    target_path = Path(output_path) if output_path else Path(__file__).with_name("index.html")
-    target_path.write_text(html_content, encoding="utf-8")
-
-
-# ==========================================
-# Form Page (last 7 days)
-# ==========================================
-def render_form_page(matches: list[dict], version: str | None = None, output_path: str | None = None):
-    """Form page (form.html): points scored in the last 7 days."""
-    version_banner = get_version_banner(version=version)
-    weekly_card_html = render_weekly_card(calculate_weekly_scores(matches))
-
-    html_content = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Form Guide</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  {render_topbar()}
-  <h1>⚡ Form Guide</h1>
-  {version_banner}
-  {weekly_card_html}
-</body>
-</html>"""
-
-    target_path = Path(output_path) if output_path else Path(__file__).with_name("form.html")
-    target_path.write_text(html_content, encoding="utf-8")
 
 def calculate_weekly_scores(matches: list[dict]) -> dict:
     """Filters matches completed in the last 7 days and calculates weekly points."""
@@ -857,256 +654,198 @@ def calculate_weekly_scores(matches: list[dict]) -> dict:
 
     return calculate_scores(recent_matches)
 
-def get_players_for_team(team_name: str) -> list[dict]:
-    """Finds all players who have selected a given team."""
-    matched = []
-    for player_id, teams in PLAYERS.items():
+
+def render_form_page(matches: list[dict], version: str | None = None, output_path: str | None = None):
+    """Form page (form.html): points scored in the last 7 days."""
+    body = '  <h2 class="section-heading">Last 7 days</h2>' + render_points_table(
+        calculate_weekly_scores(matches), show_teams=False
+    )
+    render_page(
+        page="form.html",
+        title="Form · LSB Sweepstake",
+        heading="⚡ Form",
+        body=body,
+        output_path=output_path or Path(__file__).with_name("form.html"),
+        version=version,
+    )
+
+
+# ==========================================
+# Players page
+# ==========================================
+def get_team_pot(team_name: str) -> str:
+    for pot_key, teams in POTS.items():
         if team_is_in_player_selection(team_name, teams):
-            matched.append({
-                "player_id": player_id,
-                "display_name": get_player_display_name(player_id),
-                "avatar_path": get_player_avatar_path(player_id),
-            })
-    return matched
+            return pot_key.replace("pot", "Pot ")
+    return ""
 
-
-def render_team_player_badges(team_name: str) -> str:
-    """Renders player avatar and nickname badges underneath the team label."""
-    players = get_players_for_team(team_name)
-    if not players:
-        return ""
-
-    badges_html = ""
-    for p in players:
-        badges_html += f"""
-        <div class="owner-badge" style="display: inline-flex; align-items: center; gap: 6px; margin-top: 6px;">
-            <img class="player-avatar" src="{p['avatar_path']}" alt="{p['display_name']}" width="20" height="20" style="border-radius: 50%; object-fit: cover;" loading="lazy">
-            <span style="font-size: 0.85rem; font-weight: 600; color: #ffb703;">{p['display_name']}</span>
-        </div>
-        """
-    return f'<div class="team-owners" style="display: flex; flex-wrap: wrap; gap: 8px;">{badges_html}</div>'
-
-def render_upcoming_fixtures_page(version: str | None = None, output_path: str | None = None):
-    version_banner = get_version_banner(version=version)
-    matches = load_upcoming_matches()
-
-    sorted_matches = sorted(
-        matches, key=lambda match: match.get("utcDate", "")
-    )[:25]
-
-    matches_html = ""
-    for match in sorted_matches:
-        comp = match.get("competitionCode", "Unknown")
-        raw_date = match.get("utcDate", "")
-        date_str = format_kickoff_time(raw_date, "TBD")
-
-        home_team = (
-            match.get("homeTeam", {}).get("shortName")
-            or match.get("homeTeam", {}).get("name", "Unknown")
-        )
-        away_team = (
-            match.get("awayTeam", {}).get("shortName")
-            or match.get("awayTeam", {}).get("name", "Unknown")
-        )
-
-        home_team_display = render_team_label(home_team, css_class="team-label")
-        away_team_display = render_team_label(away_team, css_class="team-label")
-
-        home_owners_html = render_team_player_badges(home_team)
-        away_owners_html = render_team_player_badges(away_team)
-
-        matches_html += f"""
-        <div class="card">
-          <div class="match-meta">
-            <span>{comp}</span>
-            <span>{date_str}</span>
-          </div>
-          <div class="match-teams" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
-            <div class="team-column home" style="flex: 1;">
-              {home_team_display}
-              {home_owners_html}
-            </div>
-            <span class="score-badge" style="align-self: center;">VS</span>
-            <div class="team-column away" style="flex: 1; text-align: right;">
-              {away_team_display}
-              <div style="display: flex; justify-content: flex-end;">
-                {away_owners_html}
-              </div>
-            </div>
-          </div>
-        </div>
-        """
-
-    if not matches_html:
-        matches_html = '<div class="card"><p>No upcoming fixtures scheduled at this time.</p></div>'
-
-    html_content = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Upcoming Fixtures in the next 7 days</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  {render_topbar()}
-  <h1>📅 Upcoming Fixtures in the next 7 days</h1>
-  {version_banner}
-  {matches_html}
-</body>
-</html>"""
-
-    target_path = Path(output_path) if output_path else Path(__file__).with_name("upcoming_fixtures.html")
-    target_path.write_text(html_content, encoding="utf-8")
 
 def render_players_page(version: str | None = None, output_path: str | None = None):
-    version_banner = get_version_banner(version=version)
-    cards_html = ""
+    cards = []
     for player, teams in PLAYERS.items():
-        display_name = get_player_display_name(player)
-        teams_str = ", ".join(teams)
-
-        # 1. Resolve avatar path & build tag
-        avatar_path = get_player_avatar_path(player)
-        avatar_html = f'<img class="player-avatar" src="{avatar_path}" alt="{display_name} avatar" width="150" height="150" loading="lazy">'
-
-        cards_html += f"""
-        <div class="card">
-            <div class="player-name-wrapper">
-                {avatar_html}
-                <span class="player-name">{display_name}</span>
-            </div>
-            <div class="teams">{teams_str}</div>
-        </div>
-        """
-
-    html_content = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Players</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-  {render_topbar()}
-  <h1>🏆 Players</h1>
-  {version_banner}
-  {cards_html}
-</body>
-</html>"""
-
-    target_path = Path(output_path) if output_path else Path(__file__).with_name("players.html")
-    target_path.write_text(html_content, encoding="utf-8")
+        team_rows = "".join(
+            f"""
+        <div class="team-row">{crest_img(team)}<span class="team-row-name">{team}</span><span class="muted">{get_team_pot(team)}</span></div>"""
+            for team in teams
+        )
+        cards.append(
+            f"""
+  <div class="card player-card">
+    <div class="player-card-head">{avatar_img(player, "avatar avatar-lg")}<span class="player-name">{get_player_display_name(player)}</span></div>
+    <div class="team-list">{team_rows}
+    </div>
+  </div>"""
+        )
+    render_page(
+        page="players.html",
+        title="Players · LSB Sweepstake",
+        heading="👥 Players",
+        body="".join(cards),
+        output_path=output_path or Path(__file__).with_name("players.html"),
+        version=version,
+    )
 
 
-def _uk_kickoff(utc_date: str) -> datetime | None:
-    try:
-        return datetime.fromisoformat(utc_date.replace("Z", "+00:00")).astimezone(UK_TIMEZONE)
-    except (AttributeError, ValueError):
-        return None
+# ==========================================
+# Latest results page
+# ==========================================
+def render_match_breakdown(breakdown: list[dict]) -> str:
+    """Each involved player: name and total on one line, then a line per team with its point tags."""
+    if not breakdown:
+        return '\n      <div class="empty-note">No sweepstake players involved</div>'
+
+    rows = []
+    for item in breakdown:
+        total = item["points"]
+        team_parts = []
+        for entry in item["teams"]:
+            if entry["items"]:
+                tags = "".join(
+                    f'<span class="tag">{REASON_LABELS[reason]} +{pts}</span>'
+                    for reason, pts in entry["items"]
+                )
+            else:
+                tags = '<span class="tag tag-muted">Loss</span>'
+            team_parts.append(f"""
+        <div class="team-line">{crest_img(entry["team"])}<span class="team-tags">{tags}</span></div>""")
+
+        rows.append(
+            f"""
+      <div class="player-block">
+        <div class="player-block-head">
+          <span class="player-name">{avatar_img(item['player'])}{item['display_name']}</span>
+          <span class="row-total">{f"+{total}" if total else "0"}</span>
+        </div>{''.join(team_parts)}
+      </div>"""
+        )
+    return "".join(rows)
 
 
 def render_latest_results_page(matches: list[dict], version: str | None = None, output_path: str | None = None):
-    version_banner = get_version_banner(version=version)
+    sorted_matches = sorted(matches, key=lambda match: match.get("utcDate", ""), reverse=True)[:380]
 
-    sorted_matches = sorted(
-        matches, key=lambda match: match.get("utcDate", ""), reverse=True
-    )
-    recent_matches = sorted_matches[:380]  # Limit to the most recent 380 matches
-
-    matches_html = ""
-    current_day = None
-    for match in recent_matches:
-        kickoff = _uk_kickoff(match.get("utcDate", ""))
-
-        # Day heading whenever the (UK) date changes
-        day_label = kickoff.strftime("%A %-d %B") if kickoff else "Date unknown"
-        if day_label != current_day:
-            matches_html += f'\n  <h2 class="day-heading">{day_label}</h2>'
-            current_day = day_label
+    cards = []
+    for match in sorted_matches:
+        kickoff = uk_kickoff(match.get("utcDate", ""))
+        home_team, away_team = match_team_names(match)
+        score = match.get("score", {}).get("fullTime", {})
+        home_score, away_score = score.get("home"), score.get("away")
+        badge = f"{home_score}-{away_score}" if home_score is not None and away_score is not None else "TBD"
         time_label = kickoff.strftime("%H:%M %Z") if kickoff else ""
 
-        home_team = (
-            match.get("homeTeam", {}).get("shortName")
-            or match.get("homeTeam", {}).get("name", "Unknown")
-        )
-        away_team = (
-            match.get("awayTeam", {}).get("shortName")
-            or match.get("awayTeam", {}).get("name", "Unknown")
-        )
-
-        score = match.get("score", {}).get("fullTime", {})
-        home_score = score.get("home")
-        away_score = score.get("away")
-        score_display = (
-            f"{home_score}-{away_score}"
-            if home_score is not None and away_score is not None
-            else "TBD"
-        )
-
-        def crest(team_name: str) -> str:
-            path = get_team_crest_path(team_name)
-            return f'<img class="team-crest" src="{path}" alt="{team_name} crest" loading="lazy">' if path else ""
-
-        breakdown_html = render_match_breakdown(calculate_match_breakdown(match))
-
-        matches_html += f"""
-  <div class="card result-card">
-    <div class="rc-score">
-      <span class="rc-team rc-home"><span class="rc-name">{home_team}</span>{crest(home_team)}</span>
-      <span class="rc-mid"><span class="rc-badge">{score_display}</span><span class="rc-time">{time_label}</span></span>
-      <span class="rc-team rc-away">{crest(away_team)}<span class="rc-name">{away_team}</span></span>
+        cards.append((kickoff, f"""
+  <div class="card match-card">{render_match_line(home_team, away_team, badge, time_label)}
+    <div class="match-rows">{render_match_breakdown(calculate_match_breakdown(match))}
     </div>
-    <div class="rc-breakdown">{breakdown_html}
-    </div>
-  </div>"""
+  </div>"""))
 
-    html_content = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Latest Results</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  {render_topbar()}
-  <h1>⚽ Latest Results</h1>
-  {version_banner}
-  <div class="rc-toolbar">
-    <span class="lt-key rc-key">W win · D draw · L loss · CS clean sheet · GF goal feast · GK giant kill</span>
-    <button type="button" id="toggle-words" class="nav-btn rc-toggle" aria-pressed="false">Show full words</button>
-  </div>
-  {matches_html}
-  <script>
-    // Switch the point tags between short (W+3) and full words (Win +3); remembered on this device.
-    (function () {{
-      var button = document.getElementById("toggle-words");
-      function apply(full) {{
-        document.body.classList.toggle("full-words", full);
-        button.textContent = full ? "Show short" : "Show full words";
-        button.setAttribute("aria-pressed", full ? "true" : "false");
-      }}
-      var saved = false;
-      try {{ saved = localStorage.getItem("fullWords") === "1"; }} catch (e) {{}}
-      apply(saved);
-      button.addEventListener("click", function () {{
-        var full = !document.body.classList.contains("full-words");
-        apply(full);
-        try {{ localStorage.setItem("fullWords", full ? "1" : "0"); }} catch (e) {{}}
-      }});
-    }})();
-  </script>
-</body>
-</html>"""
-
-    target_path = (
-        Path(output_path)
-        if output_path
-        else Path(__file__).with_name("latest_results.html")
+    body = render_day_grouped(cards) or '  <div class="card empty-note">No results yet.</div>'
+    render_page(
+        page="latest_results.html",
+        title="Results · LSB Sweepstake",
+        heading="⚽ Latest Results",
+        body=body,
+        output_path=output_path or Path(__file__).with_name("latest_results.html"),
+        version=version,
     )
-    target_path.write_text(html_content, encoding="utf-8")
+
+
+# ==========================================
+# Upcoming fixtures page
+# ==========================================
+def render_fixture_owners(home_team: str, away_team: str) -> str:
+    rows = []
+    for player, teams in PLAYERS.items():
+        owned = [t for t in (home_team, away_team) if team_is_in_player_selection(t, teams)]
+        if not owned:
+            continue
+        team_parts = "".join(
+            f'<span class="team-points">{crest_img(t)}<span class="team-row-name">{_selected_team_name(t, teams)}</span></span>'
+            for t in owned
+        )
+        rows.append(
+            f"""
+      <div class="player-row">
+        <span class="player-name">{avatar_img(player)}{get_player_display_name(player)}</span>
+        <span class="player-detail">{team_parts}</span>
+      </div>"""
+        )
+    return "".join(rows) or '\n      <div class="empty-note">No sweepstake players involved</div>'
+
+
+def render_upcoming_fixtures_page(version: str | None = None, output_path: str | None = None):
+    matches = sorted(load_upcoming_matches(), key=lambda match: match.get("utcDate", ""))[:25]
+
+    cards = []
+    for match in matches:
+        kickoff = uk_kickoff(match.get("utcDate", ""))
+        home_team, away_team = match_team_names(match)
+        badge = kickoff.strftime("%H:%M") if kickoff else "TBC"
+        time_label = kickoff.strftime("%Z") if kickoff else ""
+        cards.append((kickoff, f"""
+  <div class="card match-card">{render_match_line(home_team, away_team, badge, time_label)}
+    <div class="match-rows">{render_fixture_owners(home_team, away_team)}
+    </div>
+  </div>"""))
+
+    body = render_day_grouped(cards) or '  <div class="card empty-note">No fixtures in the next 7 days.</div>'
+    render_page(
+        page="upcoming_fixtures.html",
+        title="Fixtures · LSB Sweepstake",
+        heading="📅 Upcoming Fixtures",
+        body=body,
+        output_path=output_path or Path(__file__).with_name("upcoming_fixtures.html"),
+        version=version,
+    )
+
+
+# ==========================================
+# Rules page: pots grid
+# ==========================================
+POT_LABELS = {
+    "pot1": "Pot 1 · Top tier",
+    "pot2": "Pot 2 · Upper tier",
+    "pot3": "Pot 3 · Mid tier",
+    "pot4": "Pot 4 · Challengers",
+}
+
+
+def render_pots_quadrant() -> str:
+    cards = []
+    for pot_key, label in POT_LABELS.items():
+        team_rows = "".join(
+            f'\n        <div class="team-row">{crest_img(team)}<span class="team-row-name">{team}</span></div>'
+            for team in POTS.get(pot_key, [])
+        )
+        cards.append(
+            f"""
+    <div class="card pot-card">
+      <div class="card-heading">{label}</div>
+      <div class="team-list">{team_rows}
+      </div>
+    </div>"""
+        )
+    return '  <div class="pots-grid">' + "".join(cards) + "\n  </div>"
 
 
 if __name__ == "__main__":
@@ -1138,5 +877,5 @@ if __name__ == "__main__":
     render_players_page(version=next_version)
     render_latest_results_page(matches, version=next_version)
     render_upcoming_fixtures_page(version=next_version)
-    render_rules_page(pots_html=render_pots_quadrant(), topbar_html=render_topbar())
+    render_rules_page(pots_html=render_pots_quadrant(), version=next_version)
     record_published_matches(matches)
