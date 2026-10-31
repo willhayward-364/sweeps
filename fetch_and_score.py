@@ -530,7 +530,7 @@ def calculate_match_breakdown(match: dict) -> list[dict]:
             if not reasons:
                 reasons.append("loss")
             nickname = get_player_display_name(player)
-            display_label = f"{player} ({nickname})" if nickname and nickname != player else player
+            display_label = nickname
             breakdown.append(
                 {
                     "player": player,
@@ -598,13 +598,12 @@ def render_html(scores: dict, matches: list[dict], version: str | None = None, o
         avatar_html = f'<img class="player-avatar" src="{avatar_path}" alt="{display_name} avatar" loading="lazy">'
 
         cards_html += f"""
-        <div class="card">
+        <div class="card" data-player="{player}">
             <span class="score">{data['points']} pts</span>
             <div class="player-name-wrapper">
                 {avatar_html}
                 <span class="player-name">#{rank} {display_name}</span>
             </div>
-            <div class="player-id">{player}</div>
             <div class="teams">{teams_html}</div>
             <div class="stats">Wins: {data['wins']} | Draws: {data['draws']} | Clean Sheets: {data['clean_sheets']}| Goal Feasts: {data['goal_feasts']}| Giant Kills: {data['giant_kills']}</div>
         </div>
@@ -767,7 +766,6 @@ def render_players_page(version: str | None = None, output_path: str | None = No
                 {avatar_html}
                 <span class="player-name">{display_name}</span>
             </div>
-            <div class="player-id">{player}</div>
             <div class="teams">{teams_str}</div>
         </div>
         """

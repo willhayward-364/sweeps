@@ -59,7 +59,7 @@ def test_players_page_can_render_with_nicknames():
     html = output_path.read_text(encoding="utf-8")
     assert "Players" in html
     assert "364" in html or "Keano" in html or "Dookie" in html
-    assert "Player A" in html
+    assert "Player A" not in html  # only nicknames are shown
 
     output_path.unlink(missing_ok=True)
 
@@ -104,7 +104,8 @@ def test_latest_results_page_shows_player_point_breakdown():
     render_latest_results_page(sample_matches, output_path=str(output_path))
 
     html = output_path.read_text(encoding="utf-8")
-    assert "Player A" in html
+    assert "Robin" in html          # Arsenal owner, shown by nickname
+    assert "Player E" not in html
     assert "+5 pts" in html
     assert "win" in html
 
@@ -222,7 +223,13 @@ def extract_scores_from_html(filepath: Path) -> dict[str, int]:
         return {}
 
     content = filepath.read_text(encoding="utf-8")
-    # Matches <span class="score">X pts</span> ... <div class="player-id">Player X</div>
+    # Current format: <div class="card" data-player="Player X"> <span class="score">N pts</span>
+    pattern = r'data-player="(.*?)">\s*<span class="score">(\d+)\s*pts</span>'
+    matches = re.findall(pattern, content)
+    if matches:
+        return {player.strip(): int(points) for player, points in matches}
+
+    # Older format: <span class="score">N pts</span> ... <div class="player-id">Player X</div>
     pattern = r'<span class="score">(\d+)\s*pts</span>[\s\S]*?<div class="player-id">(.*?)</div>'
     matches = re.findall(pattern, content)
 
