@@ -97,7 +97,7 @@ def render_page(
 <body>
   {render_topbar(page)}
   <main>
-  <h1 class="page-title">{heading}</h1>
+  <h1 class="page-title visually-hidden">{heading}</h1>
 {body}
   </main>
   <footer class="site-footer">

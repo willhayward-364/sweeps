@@ -226,7 +226,7 @@ def test_all_pages_share_layout_with_version_in_footer():
     for page in ["index.html", "form.html", "players.html", "latest_results.html", "rules.html"]:
         html = (out / page).read_text(encoding="utf-8")
         assert html.count('class="topbar"') == 1, page
-        assert 'class="page-title"' in html, page
+        assert 'class="page-title' in html, page  # kept for screen readers
         assert f'href="{page}" class="nav-btn active"' in html, page
         # Version banner sits in the footer, after the page content
         assert html.index('class="site-footer"') > html.index("</main>"), page

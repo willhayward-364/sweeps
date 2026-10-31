@@ -63,11 +63,12 @@ Safety checks - the job stops without changing any pages if:
 
 ## Versioning
 
-The site version is set by hand in `version.py` (`SITE_VERSION`) and bumped with
-each change to the site's code:
+The site version is set by hand in `version.py` (`SITE_VERSION`) and bumped once
+per release to the live site (a merge to `main`), not for every change while work
+is in progress:
 
-- `v2.0.1` - small tweaks and fixes
-- `v2.1.0` - noticeable new features
+- `v2.0.1` - a release of small tweaks and fixes
+- `v2.1.0` - a release with noticeable new features
 - `v3.0.0` - big overhauls
 
 The run number in the banner is GitHub's count of update runs, which goes up with

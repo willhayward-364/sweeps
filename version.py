@@ -6,11 +6,12 @@ from pathlib import Path
 
 API_FETCH_FILE = Path(__file__).resolve().parent / ".api_fetch_timestamp"
 
-# Site version, bumped by hand when the site's code changes:
-#   patch (v2.0.1) for small tweaks and fixes,
-#   minor (v2.1.0) for noticeable new features,
+# Site version, bumped by hand once per release to the live site (a merge to main),
+# not for every change while work is in progress:
+#   patch (v2.0.1) for a release of small tweaks and fixes,
+#   minor (v2.1.0) for a release with noticeable new features,
 #   major (v3.0.0) for big overhauls.
-SITE_VERSION = "v2.4.1"
+SITE_VERSION = "v2.0.0"
 
 
 def read_version() -> str:
