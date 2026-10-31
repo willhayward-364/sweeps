@@ -122,6 +122,15 @@ h1 {
   color: #48cae4;
 }
 
+/* Players involved in the match who earned no points (shown as a reminder) */
+.points-row-zero {
+  opacity: 0.55;
+}
+
+.points-row-zero strong {
+  color: #94a3b8;
+}
+
 .player-name { 
   font-weight: bold; 
   font-size: 1.2rem; 

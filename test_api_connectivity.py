@@ -111,6 +111,34 @@ def test_latest_results_page_shows_player_point_breakdown():
     output_path.unlink(missing_ok=True)
 
 
+def test_latest_results_page_shows_zero_point_players_last():
+    from fetch_and_score import calculate_match_breakdown, render_latest_results_page
+
+    match = {
+        "competitionCode": "PL",
+        "utcDate": "2026-07-30T20:00:00Z",
+        "homeTeam": {"name": "Arsenal"},
+        "awayTeam": {"name": "Chelsea"},
+        "score": {"fullTime": {"home": 2, "away": 1}},
+    }
+
+    breakdown = calculate_match_breakdown(match)
+    by_player = {item["player"]: item for item in breakdown}
+    assert by_player["Player E"]["points"] == 3          # Arsenal win
+    assert by_player["Player F"]["points"] == 0          # Chelsea loss still listed
+    assert by_player["Player F"]["reasons"] == ["loss"]
+    assert breakdown[-1]["player"] == "Player F"         # zero-point rows at the bottom
+    assert "Player A" not in by_player                   # uninvolved players not listed
+
+    output_path = ROOT / "tmp_latest_results_zero_points_test.html"
+    render_latest_results_page([match], output_path=str(output_path))
+    html = output_path.read_text(encoding="utf-8")
+    assert "points-row-zero" in html
+    assert "0 pts</strong> (loss)" in html
+    assert "+0 pts" not in html
+    output_path.unlink(missing_ok=True)
+
+
 def test_latest_results_page_renders_team_crests():
     from fetch_and_score import render_latest_results_page
 

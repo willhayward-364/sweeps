@@ -524,7 +524,11 @@ def calculate_match_breakdown(match: dict) -> list[dict]:
                 points += 3
                 reasons.append("giant kill")
 
-        if points:
+        # Include players whose team was involved but earned nothing (e.g. a loss),
+        # so the breakdown shows everyone with a stake in the match.
+        if home_selected or away_selected:
+            if not reasons:
+                reasons.append("loss")
             nickname = get_player_display_name(player)
             display_label = f"{player} ({nickname})" if nickname and nickname != player else player
             breakdown.append(
@@ -537,6 +541,8 @@ def calculate_match_breakdown(match: dict) -> list[dict]:
                 }
             )
 
+    # Point scorers first (highest first); zero-point players at the bottom.
+    breakdown.sort(key=lambda item: item["points"], reverse=True)
     return breakdown
 
 
@@ -825,9 +831,9 @@ def render_latest_results_page(matches: list[dict], version: str | None = None, 
         if breakdown:
             breakdown_html = "".join(
                 f"""
-                <div class="points-row">
+                <div class="points-row{' points-row-zero' if not item['points'] else ''}">
                   <span>{item['display_label']}</span>
-                  <span><strong>+{item['points']} pts</strong> ({', '.join(item['reasons'])})</span>
+                  <span><strong>{'+' if item['points'] else ''}{item['points']} pts</strong> ({', '.join(item['reasons'])})</span>
                 </div>
                 """
                 for item in breakdown
