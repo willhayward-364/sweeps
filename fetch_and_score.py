@@ -208,6 +208,7 @@ COMMON_ALIASES = {
     "brighton-and-hove-albion": "brighton-hove-albion",
     "brighton-hove": "brighton-hove-albion",
     "wolves": "wolverhampton-wanderers",
+    "wolverhampton": "wolverhampton-wanderers",
     "spurs": "tottenham-hotspur",
     "tottenham": "tottenham-hotspur",
     "newcastle": "newcastle-united",
@@ -550,48 +551,52 @@ def calculate_match_breakdown(match: dict) -> list[dict]:
     return breakdown
 
 
-def render_match_breakdown(breakdown: list[dict]) -> str:
-    """HTML for the per-player points breakdown under a result."""
-    if not breakdown:
-        return '<div class="pb-empty">No sweepstake players affected by this result</div>'
+REASON_ABBREVIATIONS = {
+    "win": ("W", "Win"),
+    "draw": ("D", "Draw"),
+    "clean sheet": ("CS", "Clean sheet"),
+    "goal feast": ("GF", "Goal feast"),
+    "giant kill": ("GK", "Giant kill"),
+}
 
-    blocks = []
+
+def render_match_breakdown(breakdown: list[dict]) -> str:
+    """Compact per-player lines under a result: avatar, name, team crest + point tags, total."""
+    if not breakdown:
+        return '<div class="rc-empty">No sweepstake players affected</div>'
+
+    rows = []
     for item in breakdown:
         avatar_path = get_player_avatar_path(item["player"])
         total = item["points"]
-        total_text = f"+{total} pts" if total else "0 pts"
 
-        team_lines = []
+        team_parts = []
         for entry in item["teams"]:
             crest_path = get_team_crest_path(entry["team"])
             crest_html = (
-                f'<img class="pb-crest" src="{crest_path}" alt="" loading="lazy">' if crest_path else ""
+                f'<img class="rc-crest" src="{crest_path}" alt="{entry["team"]}" title="{entry["team"]}" loading="lazy">'
+                if crest_path
+                else f'<span class="rc-team-text">{entry["team"]}</span>'
             )
             if entry["items"]:
                 tags = "".join(
-                    f'<span class="pb-tag">{reason.capitalize()} +{pts}</span>'
+                    f'<span class="rc-tag" title="{REASON_ABBREVIATIONS[reason][1]}">'
+                    f'{REASON_ABBREVIATIONS[reason][0]}+{pts}</span>'
                     for reason, pts in entry["items"]
                 )
             else:
-                tags = '<span class="pb-tag pb-tag-loss">Loss</span>'
-            team_lines.append(
-                f"""
-              <div class="pb-team">
-                <span class="pb-team-name">{crest_html}{entry['team']}</span>
-                <span class="pb-tags">{tags}</span>
-              </div>"""
-            )
+                tags = '<span class="rc-tag rc-tag-loss" title="Loss">L</span>'
+            team_parts.append(f'<span class="rc-team-pts">{crest_html}{tags}</span>')
 
-        blocks.append(
+        rows.append(
             f"""
-            <div class="pb-player">
-              <div class="pb-head">
-                <span class="pb-name"><img class="pb-avatar" src="{avatar_path}" alt="" loading="lazy">{item['display_name']}</span>
-                <span class="pb-total">{total_text}</span>
-              </div>{''.join(team_lines)}
-            </div>"""
+          <div class="rc-row">
+            <span class="rc-player"><img class="rc-avatar" src="{avatar_path}" alt="" loading="lazy">{item['display_name']}</span>
+            <span class="rc-detail">{''.join(team_parts)}</span>
+            <span class="rc-total">{f"+{total}" if total else "0"}</span>
+          </div>"""
         )
-    return "".join(blocks)
+    return "".join(rows)
 
 
 # ==========================================
@@ -912,6 +917,13 @@ def render_players_page(version: str | None = None, output_path: str | None = No
     target_path.write_text(html_content, encoding="utf-8")
 
 
+def _uk_kickoff(utc_date: str) -> datetime | None:
+    try:
+        return datetime.fromisoformat(utc_date.replace("Z", "+00:00")).astimezone(UK_TIMEZONE)
+    except (AttributeError, ValueError):
+        return None
+
+
 def render_latest_results_page(matches: list[dict], version: str | None = None, output_path: str | None = None):
     version_banner = get_version_banner(version=version)
 
@@ -921,10 +933,16 @@ def render_latest_results_page(matches: list[dict], version: str | None = None, 
     recent_matches = sorted_matches[:380]  # Limit to the most recent 380 matches
 
     matches_html = ""
+    current_day = None
     for match in recent_matches:
-        comp = match.get("competitionCode", "Unknown")
-        raw_date = match.get("utcDate", "")
-        date_str = format_kickoff_time(raw_date, "Unknown Date")
+        kickoff = _uk_kickoff(match.get("utcDate", ""))
+
+        # Day heading whenever the (UK) date changes
+        day_label = kickoff.strftime("%A %-d %B") if kickoff else "Date unknown"
+        if day_label != current_day:
+            matches_html += f'\n  <h2 class="day-heading">{day_label}</h2>'
+            current_day = day_label
+        time_label = kickoff.strftime("%H:%M %Z") if kickoff else ""
 
         home_team = (
             match.get("homeTeam", {}).get("shortName")
@@ -938,34 +956,28 @@ def render_latest_results_page(matches: list[dict], version: str | None = None, 
         score = match.get("score", {}).get("fullTime", {})
         home_score = score.get("home")
         away_score = score.get("away")
-
         score_display = (
-            f"{home_score} - {away_score}"
+            f"{home_score}-{away_score}"
             if home_score is not None and away_score is not None
             else "TBD"
         )
 
+        def crest(team_name: str) -> str:
+            path = get_team_crest_path(team_name)
+            return f'<img class="team-crest" src="{path}" alt="{team_name} crest" loading="lazy">' if path else ""
+
         breakdown_html = render_match_breakdown(calculate_match_breakdown(match))
 
-        home_team_display = render_team_label(home_team, css_class="team-label")
-        away_team_display = render_team_label(away_team, css_class="team-label")
-
         matches_html += f"""
-        <div class="card">
-          <div class="match-meta">
-            <span>{comp}</span>
-            <span>{date_str}</span>
-          </div>
-          <div class="match-teams">
-            <span class="team home">{home_team_display}</span>
-            <span class="score-badge">{score_display}</span>
-            <span class="team away">{away_team_display}</span>
-          </div>
-          <div class="points-breakdown">
-            {breakdown_html}
-          </div>
-        </div>
-        """
+  <div class="card result-card">
+    <div class="rc-score">
+      <span class="rc-team rc-home"><span class="rc-name">{home_team}</span>{crest(home_team)}</span>
+      <span class="rc-mid"><span class="rc-badge">{score_display}</span><span class="rc-time">{time_label}</span></span>
+      <span class="rc-team rc-away">{crest(away_team)}<span class="rc-name">{away_team}</span></span>
+    </div>
+    <div class="rc-breakdown">{breakdown_html}
+    </div>
+  </div>"""
 
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
@@ -973,12 +985,13 @@ def render_latest_results_page(matches: list[dict], version: str | None = None, 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Latest Results</title>
- <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   {render_topbar()}
   <h1>⚽ Latest Results</h1>
   {version_banner}
+  <div class="lt-key">W win · D draw · L loss · CS clean sheet · GF goal feast · GK giant kill</div>
   {matches_html}
 </body>
 </html>"""

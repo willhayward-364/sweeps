@@ -106,10 +106,10 @@ def test_latest_results_page_shows_player_point_breakdown():
     html = output_path.read_text(encoding="utf-8")
     assert "Robin" in html          # Arsenal owner, shown by nickname
     assert "Player E" not in html
-    assert "+5 pts" in html
-    assert "Win +3" in html
-    assert "Clean sheet +1" in html
-    assert "Goal feast +1" in html
+    assert '<span class="rc-total">+5</span>' in html
+    assert "W+3" in html
+    assert "CS+1" in html
+    assert "GF+1" in html
 
     output_path.unlink(missing_ok=True)
 
@@ -138,9 +138,9 @@ def test_latest_results_page_shows_zero_point_players_last():
     output_path = ROOT / "tmp_latest_results_zero_points_test.html"
     render_latest_results_page([match], output_path=str(output_path))
     html = output_path.read_text(encoding="utf-8")
-    assert ">0 pts<" in html
-    assert ">Loss<" in html
-    assert "+0 pts" not in html
+    assert '<span class="rc-total">0</span>' in html
+    assert ">L<" in html
+    assert "+0" not in html
     output_path.unlink(missing_ok=True)
 
 

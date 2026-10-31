@@ -122,92 +122,162 @@ h1 {
   color: #48cae4;
 }
 
-/* ---------- Latest results: per-player points breakdown ---------- */
-.pb-player {
-  padding: 8px 0;
-  border-bottom: 1px solid #2c3e5c;
-}
-
-.pb-player:first-child { padding-top: 0; }
-.pb-player:last-child { border-bottom: none; padding-bottom: 0; }
-
-.pb-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-}
-
-.pb-name {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+/* ---------- Latest results: compact result cards ---------- */
+.day-heading {
+  font-size: 0.85rem;
   font-weight: 700;
-  color: #ffb703;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 16px 2px 6px;
 }
 
-.pb-avatar {
+.result-card {
+  padding: 8px 10px;
+  margin-bottom: 8px;
+}
+
+.rc-score {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 8px;
+}
+
+.rc-team {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #f1f5f9;
+}
+
+.rc-home { justify-content: flex-end; text-align: right; }
+.rc-away { justify-content: flex-start; }
+
+.rc-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.result-card .team-crest {
   width: 22px;
   height: 22px;
+  flex-shrink: 0;
+}
+
+.rc-mid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rc-badge {
+  font-weight: 800;
+  font-size: 1rem;
+  color: #ffb703;
+  background: #0b132b;
+  border: 1px solid #3a506b;
+  border-radius: 6px;
+  padding: 1px 8px;
+  white-space: nowrap;
+}
+
+.rc-time {
+  font-size: 0.65rem;
+  color: #94a3b8;
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
+.rc-breakdown {
+  margin-top: 6px;
+  border-top: 1px solid #2c3e5c;
+  padding-top: 4px;
+}
+
+.rc-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 0;
+  font-size: 0.82rem;
+}
+
+.rc-player {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: 6.2em;
+  flex-shrink: 0;
+  font-weight: 700;
+  color: #ffb703;
+  white-space: nowrap;
+}
+
+.rc-avatar {
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   object-fit: cover;
 }
 
-.pb-total {
-  font-weight: 700;
-  color: #48cae4;
-  white-space: nowrap;
-}
-
-.pb-team {
+.rc-detail {
+  flex: 1;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 8px;
-  margin: 6px 0 0 30px;
-  font-size: 0.82rem;
-  color: #cbd5e1;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  min-width: 0;
 }
 
-.pb-team-name {
+.rc-team-pts {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-  white-space: nowrap;
-  line-height: 20px;
+  gap: 3px;
 }
 
-.pb-crest {
+.rc-crest {
   width: 16px;
   height: 16px;
   object-fit: contain;
+  margin-right: 2px;
 }
 
-.pb-tags {
-  display: inline-flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 4px;
+.rc-team-text {
+  font-size: 0.75rem;
+  color: #cbd5e1;
+  margin-right: 2px;
 }
 
-.pb-tag {
-  padding: 1px 7px;
+.rc-tag {
+  padding: 0 5px;
   border-radius: 999px;
   background: #24365a;
   border: 1px solid #3a506b;
   color: #90e0ef;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
+  line-height: 1.5;
   white-space: nowrap;
 }
 
-.pb-tag-loss {
+.rc-tag-loss {
   color: #94a3b8;
 }
 
-.pb-empty {
-  font-size: 0.85rem;
+.rc-total {
+  font-weight: 800;
+  color: #48cae4;
+  min-width: 2em;
+  text-align: right;
+}
+
+.rc-empty {
+  font-size: 0.8rem;
   color: #94a3b8;
+  padding: 3px 0;
 }
 
 .player-name { 
