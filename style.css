@@ -499,3 +499,40 @@ td.col-pts { font-weight: 800; color: var(--cyan); }
   padding: 4px;
   object-fit: contain;
 }
+
+/* Fixtures: owners listed under each team */
+.owners-line {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: start;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+/* keep the middle column the same width as the time badge above */
+.owners-line > span:nth-child(2) { width: 4.2em; }
+
+.owners {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  min-width: 0;
+}
+
+.owners.home { justify-content: flex-end; }
+.owners.away { justify-content: flex-start; }
+
+.owner {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--fs-small);
+  font-weight: 700;
+  color: var(--gold);
+  white-space: nowrap;
+}
+
+.avatar-sm {
+  width: 18px;
+  height: 18px;
+}

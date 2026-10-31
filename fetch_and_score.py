@@ -779,24 +779,23 @@ def render_latest_results_page(matches: list[dict], version: str | None = None, 
 # ==========================================
 # Upcoming fixtures page
 # ==========================================
+def render_team_owners(team_name: str) -> str:
+    """Small avatar + name for every player who owns the team."""
+    return "".join(
+        f'<span class="owner">{avatar_img(player, "avatar avatar-sm")}{get_player_display_name(player)}</span>'
+        for player, teams in PLAYERS.items()
+        if team_is_in_player_selection(team_name, teams)
+    )
+
+
 def render_fixture_owners(home_team: str, away_team: str) -> str:
-    rows = []
-    for player, teams in PLAYERS.items():
-        owned = [t for t in (home_team, away_team) if team_is_in_player_selection(t, teams)]
-        if not owned:
-            continue
-        team_parts = "".join(
-            f'<span class="team-points">{crest_img(t)}<span class="team-row-name">{_selected_team_name(t, teams)}</span></span>'
-            for t in owned
-        )
-        rows.append(
-            f"""
-      <div class="player-row">
-        <span class="player-name">{avatar_img(player)}{get_player_display_name(player)}</span>
-        <span class="player-detail">{team_parts}</span>
-      </div>"""
-        )
-    return "".join(rows) or '\n      <div class="empty-note">No sweepstake players involved</div>'
+    """Owners listed under each side of the fixture, lined up with the teams above."""
+    return f"""
+    <div class="owners-line">
+      <span class="owners home">{render_team_owners(home_team)}</span>
+      <span></span>
+      <span class="owners away">{render_team_owners(away_team)}</span>
+    </div>"""
 
 
 def render_upcoming_fixtures_page(version: str | None = None, output_path: str | None = None):
@@ -812,9 +811,7 @@ def render_upcoming_fixtures_page(version: str | None = None, output_path: str |
         badge = kickoff.strftime("%H:%M") if kickoff else "TBC"
         time_label = kickoff.strftime("%Z") if kickoff else ""
         cards.append((kickoff, f"""
-  <div class="card match-card">{render_match_line(home_team, away_team, badge, time_label)}
-    <div class="match-rows">{render_fixture_owners(home_team, away_team)}
-    </div>
+  <div class="card match-card">{render_match_line(home_team, away_team, badge, time_label)}{render_fixture_owners(home_team, away_team)}
   </div>"""))
 
     body = render_day_grouped(cards) or '  <div class="card empty-note">No fixtures in the next 7 days.</div>'
