@@ -568,7 +568,7 @@ def render_match_breakdown(breakdown: list[dict]) -> str:
 
         blocks.append(
             f"""
-            <div class="pb-player{' pb-player-zero' if not total else ''}">
+            <div class="pb-player">
               <div class="pb-head">
                 <span class="pb-name"><img class="pb-avatar" src="{avatar_path}" alt="" loading="lazy">{item['display_name']}</span>
                 <span class="pb-total">{total_text}</span>

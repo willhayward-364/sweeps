@@ -205,16 +205,6 @@ h1 {
   color: #94a3b8;
 }
 
-/* Players involved in the match who earned no points (shown as a reminder) */
-.pb-player-zero {
-  opacity: 0.55;
-}
-
-.pb-player-zero .pb-name,
-.pb-player-zero .pb-total {
-  color: #94a3b8;
-}
-
 .pb-empty {
   font-size: 0.85rem;
   color: #94a3b8;
