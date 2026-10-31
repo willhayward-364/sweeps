@@ -10,7 +10,7 @@ API_FETCH_FILE = Path(__file__).resolve().parent / ".api_fetch_timestamp"
 #   patch (v2.0.1) for small tweaks and fixes,
 #   minor (v2.1.0) for noticeable new features,
 #   major (v3.0.0) for big overhauls.
-SITE_VERSION = "v2.3.1"
+SITE_VERSION = "v2.3.2"
 
 
 def read_version() -> str:

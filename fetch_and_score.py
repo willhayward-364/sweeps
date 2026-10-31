@@ -344,15 +344,54 @@ def render_team_chip_list(team_names: list[str]) -> str:
     )
 
 
+# Easter egg: tap the LSB logo 10 times in quick succession and it turns into
+# the Tottenham crest (for this browser session). Another 10 taps turn it back.
+EASTER_EGG_TAPS = 10
+EASTER_EGG_CREST = "images/crests/england_tottenham.football-logos.cc.svg"
+
+
 def render_topbar() -> str:
     return f"""
   <div class="topbar">
-    <a href="index.html" class="topbar-brand">
-      <img src="images/crests/LSB_crest.PNG" alt="Sweepstake Logo" class="topbar-logo">
+    <div class="topbar-brand">
+      <img src="images/crests/LSB_crest.PNG" alt="Sweepstake Logo" class="topbar-logo" id="site-logo">
       <strong>LSB Official Agreed Sweepstake</strong>
-    </a>
+    </div>
     <div class="nav-links">{NAV_LINKS}</div>
-  </div>"""
+  </div>
+  <script>
+    (function () {{
+      var logo = document.getElementById("site-logo");
+      if (!logo) return;
+      var original = logo.getAttribute("src");
+      var egg = "{EASTER_EGG_CREST}";
+      var taps = 0, timer = null;
+      function show(on, animate) {{
+        logo.src = on ? egg : original;
+        logo.alt = on ? "Tottenham Hotspur crest" : "Sweepstake Logo";
+        logo.classList.toggle("logo-egg", on);
+        if (animate) {{
+          logo.classList.remove("logo-spin");
+          void logo.offsetWidth;
+          logo.classList.add("logo-spin");
+        }}
+      }}
+      var active = false;
+      try {{ active = sessionStorage.getItem("spursLogo") === "1"; }} catch (e) {{}}
+      if (active) show(true, false);
+      logo.addEventListener("click", function () {{
+        taps += 1;
+        clearTimeout(timer);
+        timer = setTimeout(function () {{ taps = 0; }}, 1500);
+        if (taps >= {EASTER_EGG_TAPS}) {{
+          taps = 0;
+          active = !active;
+          show(active, true);
+          try {{ sessionStorage.setItem("spursLogo", active ? "1" : "0"); }} catch (e) {{}}
+        }}
+      }});
+    }})();
+  </script>"""
 
 
 class MatchFetchError(Exception):
