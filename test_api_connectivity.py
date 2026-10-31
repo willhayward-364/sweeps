@@ -196,7 +196,8 @@ def test_version_banner_is_rendered_on_pages():
     render_rules_page(output_path=str(output_paths[0]))
     render_players_page(output_path=str(output_paths[1]))
     render_html(
-        {"Player A": {"points": 0, "wins": 0, "draws": 0, "clean_sheets": 0, "giant_kills": 0}},
+        {"Player A": {"points": 0, "wins": 0, "draws": 0, "clean_sheets": 0, "goal_feasts": 0, "giant_kills": 0}},
+        [],
         output_path=str(output_paths[2]),
     )
 

@@ -7,11 +7,9 @@ import requests
 
 from rules import RULES
 from version import (
-    bump_version,
     get_version_banner,
     read_version,
     write_api_fetch_timestamp,
-    write_version,
 )
 
 # Configuration & Flags
@@ -923,13 +921,8 @@ if __name__ == "__main__":
     timestamp = os.getenv("DEPLOYMENT_TIMESTAMP") or datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
     write_api_fetch_timestamp(timestamp)
 
-    # 3. Version management
-    # In GitHub Actions the version comes from the run number; locally, bump it.
-    if os.getenv("GITHUB_RUN_NUMBER"):
-        next_version = read_version()
-    else:
-        next_version = bump_version(read_version())
-    write_version(next_version)
+    # 3. Site version (set by hand in version.py)
+    next_version = read_version()
 
     # 4. Scoring and page generation
     scores = calculate_scores(matches)
