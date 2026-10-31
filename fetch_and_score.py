@@ -794,7 +794,10 @@ def render_fixture_owners(home_team: str, away_team: str) -> str:
 
 
 def render_upcoming_fixtures_page(version: str | None = None, output_path: str | None = None):
-    matches = sorted(load_upcoming_matches(), key=lambda match: match.get("utcDate", ""))[:25]
+    # The API returns all of today's matches, so leave out ones already played
+    finished_statuses = {"FINISHED", "AWARDED", "CANCELLED"}
+    upcoming = [m for m in load_upcoming_matches() if m.get("status") not in finished_statuses]
+    matches = sorted(upcoming, key=lambda match: match.get("utcDate", ""))[:25]
 
     cards = []
     for match in matches:

@@ -234,6 +234,28 @@ def test_all_pages_share_layout_with_version_in_footer():
         assert "style=" not in html, page  # no one-off inline styles
 
 
+def test_upcoming_fixtures_skip_finished_matches():
+    import tempfile
+    from fetch_and_score import render_upcoming_fixtures_page
+
+    original = module.load_upcoming_matches
+    import fetch_and_score
+    fetch_and_score.load_upcoming_matches = lambda: [
+        {"utcDate": "2026-10-31T12:30:00Z", "status": "FINISHED",
+         "homeTeam": {"name": "Chelsea FC"}, "awayTeam": {"name": "Manchester United FC"}},
+        {"utcDate": "2026-11-01T14:00:00Z", "status": "TIMED",
+         "homeTeam": {"name": "Everton FC"}, "awayTeam": {"name": "Fulham FC"}},
+    ]
+    try:
+        out = Path(tempfile.mkdtemp()) / "upcoming.html"
+        render_upcoming_fixtures_page(output_path=out)
+        html = out.read_text(encoding="utf-8")
+        assert "Everton" in html
+        assert "Chelsea" not in html
+    finally:
+        fetch_and_score.load_upcoming_matches = original
+
+
 def test_latest_results_page_renders_team_crests():
     from fetch_and_score import render_latest_results_page
 
