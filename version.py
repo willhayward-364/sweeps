@@ -6,17 +6,20 @@ from pathlib import Path
 
 VERSION_FILE = Path(__file__).resolve().parent / ".version"
 API_FETCH_FILE = Path(__file__).resolve().parent / ".api_fetch_timestamp"
-# Major version of the site. The build number (GitHub Actions run number) is
-# appended as the minor part, e.g. v2.186.
+# Major version of the site, e.g. v2.001, v2.002, ...
 MAJOR_VERSION = 2
-DEFAULT_VERSION = f"v{MAJOR_VERSION}.01"
+# GitHub's run number keeps counting across every run of the workflow, so the
+# build count for this major version starts from the run after this one.
+MAJOR_VERSION_BASE_RUN = 187
+DEFAULT_VERSION = f"v{MAJOR_VERSION}.000"
 
 
 def read_version() -> str:
     # 1. Check if running inside GitHub Actions (uses build number automatically, e.g., v0.12)
     run_number = os.getenv("GITHUB_RUN_NUMBER")
     if run_number:
-        return f"v{MAJOR_VERSION}.{int(run_number):02d}"
+        build = max(int(run_number) - MAJOR_VERSION_BASE_RUN, 1)
+        return f"v{MAJOR_VERSION}.{build:03d}"
 
     # 2. Fallback for local testing: read from .version file
     if VERSION_FILE.exists():
@@ -36,7 +39,7 @@ def bump_version(current_version: str | None = None) -> str:
     try:
         major, minor = version.lstrip("v").split(".")
         minor_value = int(minor) + 1
-        return f"v{major}.{minor_value:02d}"
+        return f"v{major}.{minor_value:03d}"
     except ValueError:
         return DEFAULT_VERSION
 

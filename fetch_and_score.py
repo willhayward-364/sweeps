@@ -924,8 +924,11 @@ if __name__ == "__main__":
     write_api_fetch_timestamp(timestamp)
 
     # 3. Version management
-    current_version = read_version()
-    next_version = bump_version(current_version)
+    # In GitHub Actions the version comes from the run number; locally, bump it.
+    if os.getenv("GITHUB_RUN_NUMBER"):
+        next_version = read_version()
+    else:
+        next_version = bump_version(read_version())
     write_version(next_version)
 
     # 4. Scoring and page generation
