@@ -581,11 +581,15 @@ def render_match_breakdown(breakdown: list[dict]) -> str:
             if entry["items"]:
                 tags = "".join(
                     f'<span class="rc-tag" title="{REASON_ABBREVIATIONS[reason][1]}">'
-                    f'{REASON_ABBREVIATIONS[reason][0]}+{pts}</span>'
+                    f'<span class="t-ab">{REASON_ABBREVIATIONS[reason][0]}+{pts}</span>'
+                    f'<span class="t-full">{REASON_ABBREVIATIONS[reason][1]} +{pts}</span></span>'
                     for reason, pts in entry["items"]
                 )
             else:
-                tags = '<span class="rc-tag rc-tag-loss" title="Loss">L</span>'
+                tags = (
+                    '<span class="rc-tag rc-tag-loss" title="Loss">'
+                    '<span class="t-ab">L</span><span class="t-full">Loss</span></span>'
+                )
             team_parts.append(f'<span class="rc-team-pts">{crest_html}{tags}</span>')
 
         rows.append(
@@ -991,8 +995,30 @@ def render_latest_results_page(matches: list[dict], version: str | None = None, 
   {render_topbar()}
   <h1>⚽ Latest Results</h1>
   {version_banner}
-  <div class="lt-key">W win · D draw · L loss · CS clean sheet · GF goal feast · GK giant kill</div>
+  <div class="rc-toolbar">
+    <span class="lt-key rc-key">W win · D draw · L loss · CS clean sheet · GF goal feast · GK giant kill</span>
+    <button type="button" id="toggle-words" class="nav-btn rc-toggle" aria-pressed="false">Show full words</button>
+  </div>
   {matches_html}
+  <script>
+    // Switch the point tags between short (W+3) and full words (Win +3); remembered on this device.
+    (function () {{
+      var button = document.getElementById("toggle-words");
+      function apply(full) {{
+        document.body.classList.toggle("full-words", full);
+        button.textContent = full ? "Show short" : "Show full words";
+        button.setAttribute("aria-pressed", full ? "true" : "false");
+      }}
+      var saved = false;
+      try {{ saved = localStorage.getItem("fullWords") === "1"; }} catch (e) {{}}
+      apply(saved);
+      button.addEventListener("click", function () {{
+        var full = !document.body.classList.contains("full-words");
+        apply(full);
+        try {{ localStorage.setItem("fullWords", full ? "1" : "0"); }} catch (e) {{}}
+      }});
+    }})();
+  </script>
 </body>
 </html>"""
 

@@ -235,8 +235,10 @@ h1 {
 
 .rc-team-pts {
   display: inline-flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 3px;
+  min-width: 0;
 }
 
 .rc-crest {
@@ -629,3 +631,29 @@ td.lt-pts {
   text-align: center;
   margin: 2px 0 6px;
 }
+
+/* Faint light outline so dark crests (e.g. Tottenham) show on the dark background */
+.team-crest,
+.lt-crest,
+.rc-crest {
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.7));
+}
+
+/* Latest results: short / full-word tag toggle */
+.rc-toolbar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0 4px;
+}
+
+.rc-toggle {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.t-full { display: none; }
+.full-words .t-ab { display: none; }
+.full-words .t-full { display: inline; }
+.full-words .rc-key { display: none; }
