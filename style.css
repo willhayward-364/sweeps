@@ -484,3 +484,18 @@ td.col-pts { font-weight: 800; color: var(--cyan); }
   :root { --fs-body: 0.9rem; }
   .player-row .player-name { width: 6.2em; }
 }
+
+/* Dark crests (e.g. Tottenham) sit on a light circle so they stand out */
+.crest-on-light,
+.topbar-logo.logo-egg {
+  background: #e2e8f0;
+  border-radius: 50%;
+  padding: 2px;
+  filter: none;
+}
+
+.topbar-logo.logo-egg {
+  width: 40px;
+  padding: 4px;
+  object-fit: contain;
+}

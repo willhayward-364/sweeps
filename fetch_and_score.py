@@ -525,10 +525,16 @@ REASON_LABELS = {
 }
 
 
+# Crests that are too dark to see on the dark background get a light circle behind them
+DARK_CRESTS = {"tottenham-hotspur"}
+
+
 def crest_img(team_name: str, css_class: str = "crest") -> str:
     path = get_team_crest_path(team_name)
     if not path:
         return ""
+    if normalize_team_name(team_name) in DARK_CRESTS:
+        css_class += " crest-on-light"
     return f'<img class="{css_class}" src="{path}" alt="{team_name}" title="{team_name}" loading="lazy">'
 
 
