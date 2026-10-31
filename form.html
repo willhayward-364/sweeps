@@ -3,25 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Form Guide</title>
+  <title>Form · LSB Sweepstake</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   
-  <div class="topbar">
+  <header class="topbar">
     <div class="topbar-brand">
       <img src="images/crests/LSB_crest.PNG" alt="Sweepstake Logo" class="topbar-logo" id="site-logo">
       <strong>LSB Official Agreed Sweepstake</strong>
     </div>
-    <div class="nav-links">
+    <nav class="nav-links">
       <a href="index.html" class="nav-btn">Standings</a>
-      <a href="form.html" class="nav-btn">Form</a>
+      <a href="form.html" class="nav-btn active" aria-current="page">Form</a>
       <a href="players.html" class="nav-btn">Players</a>
-      <a href="latest_results.html" class="nav-btn">Latest Results</a>
-      <a href="upcoming_fixtures.html" class="nav-btn">Upcoming Fixtures</a>
+      <a href="latest_results.html" class="nav-btn">Results</a>
+      <a href="upcoming_fixtures.html" class="nav-btn">Fixtures</a>
       <a href="rules.html" class="nav-btn">Rules</a>
-    </div>
-  </div>
+    </nav>
+  </header>
   <script>
     (function () {
       var logo = document.getElementById("site-logo");
@@ -55,89 +55,91 @@
       });
     })();
   </script>
-  <h1>⚡ Form Guide</h1>
-  <div class="version-banner">Version <strong>v2.3.2</strong> &nbsp;•&nbsp; Run <strong>#195</strong> &nbsp;•&nbsp; Last deployed <strong>2026-10-31 20:07:49 UTC</strong> &nbsp;•&nbsp; API last fetched <strong>2026-10-31 20:07:49 UTC</strong></div>
-  
-  <div class="card league-card">
-    <div class="lt-title">Points scored in the last 7 days</div>
-    <table class="league-table">
+  <main>
+  <h1 class="page-title">⚡ Form</h1>
+  <h2 class="section-heading">Last 7 days</h2>
+  <div class="card table-card">
+    <table class="data-table">
       <thead>
         <tr>
-          <th class="lt-rank">#</th>
-          <th class="lt-player">Player</th>
-          <th class="lt-stat" title="Wins">W</th>
-          <th class="lt-stat" title="Draws">D</th>
-          <th class="lt-stat" title="Clean sheets">CS</th>
-          <th class="lt-stat" title="Goal feasts">GF</th>
-          <th class="lt-stat" title="Giant kills">GK</th>
-          <th class="lt-pts">Pts</th>
+          <th class="col-rank">#</th>
+          <th class="col-player">Player</th>
+          <th class="col-stat" title="Wins">W</th>
+          <th class="col-stat" title="Draws">D</th>
+          <th class="col-stat" title="Clean sheets">CS</th>
+          <th class="col-stat" title="Goal feasts">GF</th>
+          <th class="col-stat" title="Giant kills">GK</th>
+          <th class="col-pts">Pts</th>
         </tr>
       </thead>
       <tbody>
-      <tr>
-        <td class="lt-rank">1</td>
-        <td class="lt-player"><img class="lt-avatar" src="images/player_avatars/364_avatar.jpg" alt="" loading="lazy"><span>364</span></td>
-        <td class="lt-stat">3</td>
-        <td class="lt-stat">2</td>
-        <td class="lt-stat">4</td>
-        <td class="lt-stat">1</td>
-        <td class="lt-stat">0</td>
-        <td class="lt-pts">16</td>
+      <tr data-player="Player A">
+        <td class="col-rank">1</td>
+        <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/364_avatar.jpg" alt="" loading="lazy">364</span></td>
+        <td class="col-stat">3</td>
+        <td class="col-stat">2</td>
+        <td class="col-stat">4</td>
+        <td class="col-stat">1</td>
+        <td class="col-stat">0</td>
+        <td class="col-pts">16</td>
       </tr>
-      <tr>
-        <td class="lt-rank">2</td>
-        <td class="lt-player"><img class="lt-avatar" src="images/player_avatars/Rich_avatar.jpg" alt="" loading="lazy"><span>Rich</span></td>
-        <td class="lt-stat">3</td>
-        <td class="lt-stat">2</td>
-        <td class="lt-stat">2</td>
-        <td class="lt-stat">1</td>
-        <td class="lt-stat">0</td>
-        <td class="lt-pts">14</td>
+      <tr data-player="Player D">
+        <td class="col-rank">2</td>
+        <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/Rich_avatar.jpg" alt="" loading="lazy">Rich</span></td>
+        <td class="col-stat">3</td>
+        <td class="col-stat">2</td>
+        <td class="col-stat">2</td>
+        <td class="col-stat">1</td>
+        <td class="col-stat">0</td>
+        <td class="col-pts">14</td>
       </tr>
-      <tr>
-        <td class="lt-rank">3</td>
-        <td class="lt-player"><img class="lt-avatar" src="images/player_avatars/Daveylad_avatar.jpg" alt="" loading="lazy"><span>Daveylad</span></td>
-        <td class="lt-stat">2</td>
-        <td class="lt-stat">2</td>
-        <td class="lt-stat">2</td>
-        <td class="lt-stat">0</td>
-        <td class="lt-stat">0</td>
-        <td class="lt-pts">10</td>
+      <tr data-player="Player F">
+        <td class="col-rank">3</td>
+        <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/Daveylad_avatar.jpg" alt="" loading="lazy">Daveylad</span></td>
+        <td class="col-stat">2</td>
+        <td class="col-stat">2</td>
+        <td class="col-stat">2</td>
+        <td class="col-stat">0</td>
+        <td class="col-stat">0</td>
+        <td class="col-pts">10</td>
       </tr>
-      <tr>
-        <td class="lt-rank">4</td>
-        <td class="lt-player"><img class="lt-avatar" src="images/player_avatars/dookie_avatar.jpg" alt="" loading="lazy"><span>Dookie</span></td>
-        <td class="lt-stat">1</td>
-        <td class="lt-stat">2</td>
-        <td class="lt-stat">1</td>
-        <td class="lt-stat">0</td>
-        <td class="lt-stat">0</td>
-        <td class="lt-pts">6</td>
+      <tr data-player="Player C">
+        <td class="col-rank">4</td>
+        <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/dookie_avatar.jpg" alt="" loading="lazy">Dookie</span></td>
+        <td class="col-stat">1</td>
+        <td class="col-stat">2</td>
+        <td class="col-stat">1</td>
+        <td class="col-stat">0</td>
+        <td class="col-stat">0</td>
+        <td class="col-pts">6</td>
       </tr>
-      <tr>
-        <td class="lt-rank">5</td>
-        <td class="lt-player"><img class="lt-avatar" src="images/player_avatars/keano_avatar.jpg" alt="" loading="lazy"><span>Keano</span></td>
-        <td class="lt-stat">0</td>
-        <td class="lt-stat">2</td>
-        <td class="lt-stat">1</td>
-        <td class="lt-stat">0</td>
-        <td class="lt-stat">0</td>
-        <td class="lt-pts">3</td>
+      <tr data-player="Player B">
+        <td class="col-rank">5</td>
+        <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/keano_avatar.jpg" alt="" loading="lazy">Keano</span></td>
+        <td class="col-stat">0</td>
+        <td class="col-stat">2</td>
+        <td class="col-stat">1</td>
+        <td class="col-stat">0</td>
+        <td class="col-stat">0</td>
+        <td class="col-pts">3</td>
       </tr>
-      <tr>
-        <td class="lt-rank">6</td>
-        <td class="lt-player"><img class="lt-avatar" src="images/player_avatars/Robin_avatar.jpg" alt="" loading="lazy"><span>Robin</span></td>
-        <td class="lt-stat">0</td>
-        <td class="lt-stat">2</td>
-        <td class="lt-stat">0</td>
-        <td class="lt-stat">0</td>
-        <td class="lt-stat">0</td>
-        <td class="lt-pts">2</td>
+      <tr data-player="Player E">
+        <td class="col-rank">6</td>
+        <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/Robin_avatar.jpg" alt="" loading="lazy">Robin</span></td>
+        <td class="col-stat">0</td>
+        <td class="col-stat">2</td>
+        <td class="col-stat">0</td>
+        <td class="col-stat">0</td>
+        <td class="col-stat">0</td>
+        <td class="col-pts">2</td>
       </tr>
       </tbody>
     </table>
-    <div class="lt-key">W wins · D draws · CS clean sheets · GF goal feasts · GK giant kills</div>
+    <div class="table-key">W wins · D draws · CS clean sheets · GF goal feasts · GK giant kills</div>
   </div>
-
+  </main>
+  <footer class="site-footer">
+    <div class="version-banner">Version <strong>v2.4.0</strong> &nbsp;•&nbsp; Run <strong>#196</strong> &nbsp;•&nbsp; Last deployed <strong>2026-10-31 20:18:13 UTC</strong> &nbsp;•&nbsp; API last fetched <strong>2026-10-31 20:18:13 UTC</strong></div>
+  </footer>
 </body>
 </html>

@@ -3,25 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>2026/27 Premier League Sweepstake</title>
+  <title>Standings · LSB Sweepstake</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   
-  <div class="topbar">
+  <header class="topbar">
     <div class="topbar-brand">
       <img src="images/crests/LSB_crest.PNG" alt="Sweepstake Logo" class="topbar-logo" id="site-logo">
       <strong>LSB Official Agreed Sweepstake</strong>
     </div>
-    <div class="nav-links">
-      <a href="index.html" class="nav-btn">Standings</a>
+    <nav class="nav-links">
+      <a href="index.html" class="nav-btn active" aria-current="page">Standings</a>
       <a href="form.html" class="nav-btn">Form</a>
       <a href="players.html" class="nav-btn">Players</a>
-      <a href="latest_results.html" class="nav-btn">Latest Results</a>
-      <a href="upcoming_fixtures.html" class="nav-btn">Upcoming Fixtures</a>
+      <a href="latest_results.html" class="nav-btn">Results</a>
+      <a href="upcoming_fixtures.html" class="nav-btn">Fixtures</a>
       <a href="rules.html" class="nav-btn">Rules</a>
-    </div>
-  </div>
+    </nav>
+  </header>
   <script>
     (function () {
       var logo = document.getElementById("site-logo");
@@ -55,94 +55,98 @@
       });
     })();
   </script>
-  <h1>🏆 2026/27 Sweepstake Standings</h1>
-  <div class="version-banner">Version <strong>v2.3.2</strong> &nbsp;•&nbsp; Run <strong>#195</strong> &nbsp;•&nbsp; Last deployed <strong>2026-10-31 20:07:49 UTC</strong> &nbsp;•&nbsp; API last fetched <strong>2026-10-31 20:07:49 UTC</strong></div>
-  
-  <div class="card league-card">
-    <table class="league-table">
+  <main>
+  <h1 class="page-title">🏆 Standings 2026/27</h1>
+
+  <div class="card table-card">
+    <table class="data-table">
       <thead>
         <tr>
-          <th class="lt-rank">#</th>
-          <th class="lt-player">Player</th>
-          <th class="lt-teams">Teams</th>
-          <th class="lt-stat" title="Wins">W</th>
-          <th class="lt-stat" title="Draws">D</th>
-          <th class="lt-stat" title="Clean sheets">CS</th>
-          <th class="lt-stat" title="Goal feasts">GF</th>
-          <th class="lt-stat" title="Giant kills">GK</th>
-          <th class="lt-pts">Pts</th>
+          <th class="col-rank">#</th>
+          <th class="col-player">Player</th>
+          <th class="col-teams">Teams</th>
+          <th class="col-stat" title="Wins">W</th>
+          <th class="col-stat" title="Draws">D</th>
+          <th class="col-stat" title="Clean sheets">CS</th>
+          <th class="col-stat" title="Goal feasts">GF</th>
+          <th class="col-stat" title="Giant kills">GK</th>
+          <th class="col-pts">Pts</th>
         </tr>
       </thead>
       <tbody>
       <tr data-player="Player F">
-        <td class="lt-rank">1</td>
-        <td class="lt-player"><img class="lt-avatar" src="images/player_avatars/Daveylad_avatar.jpg" alt="" loading="lazy"><span>Daveylad</span></td>
-        <td class="lt-teams"><img class="lt-crest" src="images/crests/england_chelsea.football-logos.cc.svg" alt="Chelsea" title="Chelsea" loading="lazy"><img class="lt-crest" src="images/crests/england_brighton.football-logos.cc.svg" alt="Brighton & Hove Albion" title="Brighton & Hove Albion" loading="lazy"><img class="lt-crest" src="images/crests/england_everton.football-logos.cc.svg" alt="Everton" title="Everton" loading="lazy"><img class="lt-crest" src="images/crests/england_hull-city.football-logos.cc.svg" alt="Hull City" title="Hull City" loading="lazy"></td>
-        <td class="lt-stat">15</td>
-        <td class="lt-stat">11</td>
-        <td class="lt-stat">14</td>
-        <td class="lt-stat">8</td>
-        <td class="lt-stat">1</td>
-        <td class="lt-pts">81</td>
+        <td class="col-rank">1</td>
+        <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/Daveylad_avatar.jpg" alt="" loading="lazy">Daveylad</span></td>
+        <td class="col-teams"><img class="crest" src="images/crests/england_chelsea.football-logos.cc.svg" alt="Chelsea" title="Chelsea" loading="lazy"><img class="crest" src="images/crests/england_brighton.football-logos.cc.svg" alt="Brighton & Hove Albion" title="Brighton & Hove Albion" loading="lazy"><img class="crest" src="images/crests/england_everton.football-logos.cc.svg" alt="Everton" title="Everton" loading="lazy"><img class="crest" src="images/crests/england_hull-city.football-logos.cc.svg" alt="Hull City" title="Hull City" loading="lazy"></td>
+        <td class="col-stat">15</td>
+        <td class="col-stat">11</td>
+        <td class="col-stat">14</td>
+        <td class="col-stat">8</td>
+        <td class="col-stat">1</td>
+        <td class="col-pts">81</td>
       </tr>
       <tr data-player="Player A">
-        <td class="lt-rank">2</td>
-        <td class="lt-player"><img class="lt-avatar" src="images/player_avatars/364_avatar.jpg" alt="" loading="lazy"><span>364</span></td>
-        <td class="lt-teams"><img class="lt-crest" src="images/crests/england_liverpool.football-logos.cc.svg" alt="Liverpool" title="Liverpool" loading="lazy"><img class="lt-crest" src="images/crests/england_bournemouth.football-logos.cc.svg" alt="AFC Bournemouth" title="AFC Bournemouth" loading="lazy"><img class="lt-crest" src="images/crests/england_leeds-united.football-logos.cc.svg" alt="Leeds United" title="Leeds United" loading="lazy"><img class="lt-crest" src="images/crests/england_ipswich.football-logos.cc.svg" alt="Ipswich Town" title="Ipswich Town" loading="lazy"></td>
-        <td class="lt-stat">12</td>
-        <td class="lt-stat">13</td>
-        <td class="lt-stat">10</td>
-        <td class="lt-stat">3</td>
-        <td class="lt-stat">0</td>
-        <td class="lt-pts">62</td>
+        <td class="col-rank">2</td>
+        <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/364_avatar.jpg" alt="" loading="lazy">364</span></td>
+        <td class="col-teams"><img class="crest" src="images/crests/england_liverpool.football-logos.cc.svg" alt="Liverpool" title="Liverpool" loading="lazy"><img class="crest" src="images/crests/england_bournemouth.football-logos.cc.svg" alt="AFC Bournemouth" title="AFC Bournemouth" loading="lazy"><img class="crest" src="images/crests/england_leeds-united.football-logos.cc.svg" alt="Leeds United" title="Leeds United" loading="lazy"><img class="crest" src="images/crests/england_ipswich.football-logos.cc.svg" alt="Ipswich Town" title="Ipswich Town" loading="lazy"></td>
+        <td class="col-stat">12</td>
+        <td class="col-stat">13</td>
+        <td class="col-stat">10</td>
+        <td class="col-stat">3</td>
+        <td class="col-stat">0</td>
+        <td class="col-pts">62</td>
       </tr>
       <tr data-player="Player B">
-        <td class="lt-rank">2</td>
-        <td class="lt-player"><img class="lt-avatar" src="images/player_avatars/keano_avatar.jpg" alt="" loading="lazy"><span>Keano</span></td>
-        <td class="lt-teams"><img class="lt-crest" src="images/crests/england_manchester-city.football-logos.cc.svg" alt="Manchester City" title="Manchester City" loading="lazy"><img class="lt-crest" src="images/crests/england_aston-villa.football-logos.cc.svg" alt="Aston Villa" title="Aston Villa" loading="lazy"><img class="lt-crest" src="images/crests/england_sunderland.football-logos.cc.svg" alt="Sunderland" title="Sunderland" loading="lazy"><img class="lt-crest" src="images/crests/england_ipswich.football-logos.cc.svg" alt="Ipswich Town" title="Ipswich Town" loading="lazy"></td>
-        <td class="lt-stat">14</td>
-        <td class="lt-stat">6</td>
-        <td class="lt-stat">7</td>
-        <td class="lt-stat">7</td>
-        <td class="lt-stat">0</td>
-        <td class="lt-pts">62</td>
+        <td class="col-rank">2</td>
+        <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/keano_avatar.jpg" alt="" loading="lazy">Keano</span></td>
+        <td class="col-teams"><img class="crest" src="images/crests/england_manchester-city.football-logos.cc.svg" alt="Manchester City" title="Manchester City" loading="lazy"><img class="crest" src="images/crests/england_aston-villa.football-logos.cc.svg" alt="Aston Villa" title="Aston Villa" loading="lazy"><img class="crest" src="images/crests/england_sunderland.football-logos.cc.svg" alt="Sunderland" title="Sunderland" loading="lazy"><img class="crest" src="images/crests/england_ipswich.football-logos.cc.svg" alt="Ipswich Town" title="Ipswich Town" loading="lazy"></td>
+        <td class="col-stat">14</td>
+        <td class="col-stat">6</td>
+        <td class="col-stat">7</td>
+        <td class="col-stat">7</td>
+        <td class="col-stat">0</td>
+        <td class="col-pts">62</td>
       </tr>
       <tr data-player="Player E">
-        <td class="lt-rank">2</td>
-        <td class="lt-player"><img class="lt-avatar" src="images/player_avatars/Robin_avatar.jpg" alt="" loading="lazy"><span>Robin</span></td>
-        <td class="lt-teams"><img class="lt-crest" src="images/crests/england_arsenal.football-logos.cc.svg" alt="Arsenal" title="Arsenal" loading="lazy"><img class="lt-crest" src="images/crests/england_fulham.football-logos.cc.svg" alt="Fulham" title="Fulham" loading="lazy"><img class="lt-crest" src="images/crests/england_nottingham-forest.football-logos.cc.svg" alt="Nottingham Forest" title="Nottingham Forest" loading="lazy"><img class="lt-crest" src="images/crests/england_hull-city.football-logos.cc.svg" alt="Hull City" title="Hull City" loading="lazy"></td>
-        <td class="lt-stat">12</td>
-        <td class="lt-stat">10</td>
-        <td class="lt-stat">12</td>
-        <td class="lt-stat">1</td>
-        <td class="lt-stat">1</td>
-        <td class="lt-pts">62</td>
+        <td class="col-rank">2</td>
+        <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/Robin_avatar.jpg" alt="" loading="lazy">Robin</span></td>
+        <td class="col-teams"><img class="crest" src="images/crests/england_arsenal.football-logos.cc.svg" alt="Arsenal" title="Arsenal" loading="lazy"><img class="crest" src="images/crests/england_fulham.football-logos.cc.svg" alt="Fulham" title="Fulham" loading="lazy"><img class="crest" src="images/crests/england_nottingham-forest.football-logos.cc.svg" alt="Nottingham Forest" title="Nottingham Forest" loading="lazy"><img class="crest" src="images/crests/england_hull-city.football-logos.cc.svg" alt="Hull City" title="Hull City" loading="lazy"></td>
+        <td class="col-stat">12</td>
+        <td class="col-stat">10</td>
+        <td class="col-stat">12</td>
+        <td class="col-stat">1</td>
+        <td class="col-stat">1</td>
+        <td class="col-pts">62</td>
       </tr>
       <tr data-player="Player D">
-        <td class="lt-rank">5</td>
-        <td class="lt-player"><img class="lt-avatar" src="images/player_avatars/Rich_avatar.jpg" alt="" loading="lazy"><span>Rich</span></td>
-        <td class="lt-teams"><img class="lt-crest" src="images/crests/england_tottenham.football-logos.cc.svg" alt="Tottenham Hotspur" title="Tottenham Hotspur" loading="lazy"><img class="lt-crest" src="images/crests/england_brentford.football-logos.cc.svg" alt="Brentford" title="Brentford" loading="lazy"><img class="lt-crest" src="images/crests/england_coventry-city.football-logos.cc.svg" alt="Coventry City" title="Coventry City" loading="lazy"><img class="lt-crest" src="images/crests/england_ipswich.football-logos.cc.svg" alt="Ipswich Town" title="Ipswich Town" loading="lazy"></td>
-        <td class="lt-stat">12</td>
-        <td class="lt-stat">10</td>
-        <td class="lt-stat">8</td>
-        <td class="lt-stat">6</td>
-        <td class="lt-stat">0</td>
-        <td class="lt-pts">60</td>
+        <td class="col-rank">5</td>
+        <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/Rich_avatar.jpg" alt="" loading="lazy">Rich</span></td>
+        <td class="col-teams"><img class="crest" src="images/crests/england_tottenham.football-logos.cc.svg" alt="Tottenham Hotspur" title="Tottenham Hotspur" loading="lazy"><img class="crest" src="images/crests/england_brentford.football-logos.cc.svg" alt="Brentford" title="Brentford" loading="lazy"><img class="crest" src="images/crests/england_coventry-city.football-logos.cc.svg" alt="Coventry City" title="Coventry City" loading="lazy"><img class="crest" src="images/crests/england_ipswich.football-logos.cc.svg" alt="Ipswich Town" title="Ipswich Town" loading="lazy"></td>
+        <td class="col-stat">12</td>
+        <td class="col-stat">10</td>
+        <td class="col-stat">8</td>
+        <td class="col-stat">6</td>
+        <td class="col-stat">0</td>
+        <td class="col-pts">60</td>
       </tr>
       <tr data-player="Player C">
-        <td class="lt-rank">6</td>
-        <td class="lt-player"><img class="lt-avatar" src="images/player_avatars/dookie_avatar.jpg" alt="" loading="lazy"><span>Dookie</span></td>
-        <td class="lt-teams"><img class="lt-crest" src="images/crests/england_manchester-united.football-logos.cc.svg" alt="Manchester United" title="Manchester United" loading="lazy"><img class="lt-crest" src="images/crests/england_newcastle.football-logos.cc.svg" alt="Newcastle United" title="Newcastle United" loading="lazy"><img class="lt-crest" src="images/crests/england_crystal-palace.football-logos.cc.svg" alt="Crystal Palace" title="Crystal Palace" loading="lazy"><img class="lt-crest" src="images/crests/england_hull-city.football-logos.cc.svg" alt="Hull City" title="Hull City" loading="lazy"></td>
-        <td class="lt-stat">8</td>
-        <td class="lt-stat">12</td>
-        <td class="lt-stat">6</td>
-        <td class="lt-stat">3</td>
-        <td class="lt-stat">1</td>
-        <td class="lt-pts">48</td>
+        <td class="col-rank">6</td>
+        <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/dookie_avatar.jpg" alt="" loading="lazy">Dookie</span></td>
+        <td class="col-teams"><img class="crest" src="images/crests/england_manchester-united.football-logos.cc.svg" alt="Manchester United" title="Manchester United" loading="lazy"><img class="crest" src="images/crests/england_newcastle.football-logos.cc.svg" alt="Newcastle United" title="Newcastle United" loading="lazy"><img class="crest" src="images/crests/england_crystal-palace.football-logos.cc.svg" alt="Crystal Palace" title="Crystal Palace" loading="lazy"><img class="crest" src="images/crests/england_hull-city.football-logos.cc.svg" alt="Hull City" title="Hull City" loading="lazy"></td>
+        <td class="col-stat">8</td>
+        <td class="col-stat">12</td>
+        <td class="col-stat">6</td>
+        <td class="col-stat">3</td>
+        <td class="col-stat">1</td>
+        <td class="col-pts">48</td>
       </tr>
       </tbody>
     </table>
-    <div class="lt-key">W wins · D draws · CS clean sheets · GF goal feasts · GK giant kills</div>
+    <div class="table-key">W wins · D draws · CS clean sheets · GF goal feasts · GK giant kills</div>
   </div>
+  </main>
+  <footer class="site-footer">
+    <div class="version-banner">Version <strong>v2.4.0</strong> &nbsp;•&nbsp; Run <strong>#196</strong> &nbsp;•&nbsp; Last deployed <strong>2026-10-31 20:18:13 UTC</strong> &nbsp;•&nbsp; API last fetched <strong>2026-10-31 20:18:13 UTC</strong></div>
+  </footer>
 </body>
 </html>

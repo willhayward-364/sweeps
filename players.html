@@ -3,25 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Players</title>
-<link rel="stylesheet" href="style.css">
+  <title>Players · LSB Sweepstake</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   
-  <div class="topbar">
+  <header class="topbar">
     <div class="topbar-brand">
       <img src="images/crests/LSB_crest.PNG" alt="Sweepstake Logo" class="topbar-logo" id="site-logo">
       <strong>LSB Official Agreed Sweepstake</strong>
     </div>
-    <div class="nav-links">
+    <nav class="nav-links">
       <a href="index.html" class="nav-btn">Standings</a>
       <a href="form.html" class="nav-btn">Form</a>
-      <a href="players.html" class="nav-btn">Players</a>
-      <a href="latest_results.html" class="nav-btn">Latest Results</a>
-      <a href="upcoming_fixtures.html" class="nav-btn">Upcoming Fixtures</a>
+      <a href="players.html" class="nav-btn active" aria-current="page">Players</a>
+      <a href="latest_results.html" class="nav-btn">Results</a>
+      <a href="upcoming_fixtures.html" class="nav-btn">Fixtures</a>
       <a href="rules.html" class="nav-btn">Rules</a>
-    </div>
-  </div>
+    </nav>
+  </header>
   <script>
     (function () {
       var logo = document.getElementById("site-logo");
@@ -55,56 +55,66 @@
       });
     })();
   </script>
-  <h1>🏆 Players</h1>
-  <div class="version-banner">Version <strong>v2.3.2</strong> &nbsp;•&nbsp; Run <strong>#195</strong> &nbsp;•&nbsp; Last deployed <strong>2026-10-31 20:07:49 UTC</strong> &nbsp;•&nbsp; API last fetched <strong>2026-10-31 20:07:49 UTC</strong></div>
-  
-        <div class="card">
-            <div class="player-name-wrapper">
-                <img class="player-avatar" src="images/player_avatars/364_avatar.jpg" alt="364 avatar" width="150" height="150" loading="lazy">
-                <span class="player-name">364</span>
-            </div>
-            <div class="teams">Liverpool, AFC Bournemouth, Leeds United, Ipswich Town</div>
-        </div>
-        
-        <div class="card">
-            <div class="player-name-wrapper">
-                <img class="player-avatar" src="images/player_avatars/keano_avatar.jpg" alt="Keano avatar" width="150" height="150" loading="lazy">
-                <span class="player-name">Keano</span>
-            </div>
-            <div class="teams">Manchester City, Aston Villa, Sunderland, Ipswich Town</div>
-        </div>
-        
-        <div class="card">
-            <div class="player-name-wrapper">
-                <img class="player-avatar" src="images/player_avatars/dookie_avatar.jpg" alt="Dookie avatar" width="150" height="150" loading="lazy">
-                <span class="player-name">Dookie</span>
-            </div>
-            <div class="teams">Manchester United, Newcastle United, Crystal Palace, Hull City</div>
-        </div>
-        
-        <div class="card">
-            <div class="player-name-wrapper">
-                <img class="player-avatar" src="images/player_avatars/Rich_avatar.jpg" alt="Rich avatar" width="150" height="150" loading="lazy">
-                <span class="player-name">Rich</span>
-            </div>
-            <div class="teams">Tottenham Hotspur, Brentford, Coventry City, Ipswich Town</div>
-        </div>
-        
-        <div class="card">
-            <div class="player-name-wrapper">
-                <img class="player-avatar" src="images/player_avatars/Robin_avatar.jpg" alt="Robin avatar" width="150" height="150" loading="lazy">
-                <span class="player-name">Robin</span>
-            </div>
-            <div class="teams">Arsenal, Fulham, Nottingham Forest, Hull City</div>
-        </div>
-        
-        <div class="card">
-            <div class="player-name-wrapper">
-                <img class="player-avatar" src="images/player_avatars/Daveylad_avatar.jpg" alt="Daveylad avatar" width="150" height="150" loading="lazy">
-                <span class="player-name">Daveylad</span>
-            </div>
-            <div class="teams">Chelsea, Brighton & Hove Albion, Everton, Hull City</div>
-        </div>
-        
+  <main>
+  <h1 class="page-title">👥 Players</h1>
+
+  <div class="card player-card">
+    <div class="player-card-head"><img class="avatar avatar-lg" src="images/player_avatars/364_avatar.jpg" alt="" loading="lazy"><span class="player-name">364</span></div>
+    <div class="team-list">
+        <div class="team-row"><img class="crest" src="images/crests/england_liverpool.football-logos.cc.svg" alt="Liverpool" title="Liverpool" loading="lazy"><span class="team-row-name">Liverpool</span><span class="muted">Pot 1</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_bournemouth.football-logos.cc.svg" alt="AFC Bournemouth" title="AFC Bournemouth" loading="lazy"><span class="team-row-name">AFC Bournemouth</span><span class="muted">Pot 2</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_leeds-united.football-logos.cc.svg" alt="Leeds United" title="Leeds United" loading="lazy"><span class="team-row-name">Leeds United</span><span class="muted">Pot 3</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_ipswich.football-logos.cc.svg" alt="Ipswich Town" title="Ipswich Town" loading="lazy"><span class="team-row-name">Ipswich Town</span><span class="muted">Pot 4</span></div>
+    </div>
+  </div>
+  <div class="card player-card">
+    <div class="player-card-head"><img class="avatar avatar-lg" src="images/player_avatars/keano_avatar.jpg" alt="" loading="lazy"><span class="player-name">Keano</span></div>
+    <div class="team-list">
+        <div class="team-row"><img class="crest" src="images/crests/england_manchester-city.football-logos.cc.svg" alt="Manchester City" title="Manchester City" loading="lazy"><span class="team-row-name">Manchester City</span><span class="muted">Pot 1</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_aston-villa.football-logos.cc.svg" alt="Aston Villa" title="Aston Villa" loading="lazy"><span class="team-row-name">Aston Villa</span><span class="muted">Pot 2</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_sunderland.football-logos.cc.svg" alt="Sunderland" title="Sunderland" loading="lazy"><span class="team-row-name">Sunderland</span><span class="muted">Pot 3</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_ipswich.football-logos.cc.svg" alt="Ipswich Town" title="Ipswich Town" loading="lazy"><span class="team-row-name">Ipswich Town</span><span class="muted">Pot 4</span></div>
+    </div>
+  </div>
+  <div class="card player-card">
+    <div class="player-card-head"><img class="avatar avatar-lg" src="images/player_avatars/dookie_avatar.jpg" alt="" loading="lazy"><span class="player-name">Dookie</span></div>
+    <div class="team-list">
+        <div class="team-row"><img class="crest" src="images/crests/england_manchester-united.football-logos.cc.svg" alt="Manchester United" title="Manchester United" loading="lazy"><span class="team-row-name">Manchester United</span><span class="muted">Pot 1</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_newcastle.football-logos.cc.svg" alt="Newcastle United" title="Newcastle United" loading="lazy"><span class="team-row-name">Newcastle United</span><span class="muted">Pot 2</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_crystal-palace.football-logos.cc.svg" alt="Crystal Palace" title="Crystal Palace" loading="lazy"><span class="team-row-name">Crystal Palace</span><span class="muted">Pot 3</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_hull-city.football-logos.cc.svg" alt="Hull City" title="Hull City" loading="lazy"><span class="team-row-name">Hull City</span><span class="muted">Pot 4</span></div>
+    </div>
+  </div>
+  <div class="card player-card">
+    <div class="player-card-head"><img class="avatar avatar-lg" src="images/player_avatars/Rich_avatar.jpg" alt="" loading="lazy"><span class="player-name">Rich</span></div>
+    <div class="team-list">
+        <div class="team-row"><img class="crest" src="images/crests/england_tottenham.football-logos.cc.svg" alt="Tottenham Hotspur" title="Tottenham Hotspur" loading="lazy"><span class="team-row-name">Tottenham Hotspur</span><span class="muted">Pot 1</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_brentford.football-logos.cc.svg" alt="Brentford" title="Brentford" loading="lazy"><span class="team-row-name">Brentford</span><span class="muted">Pot 2</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_coventry-city.football-logos.cc.svg" alt="Coventry City" title="Coventry City" loading="lazy"><span class="team-row-name">Coventry City</span><span class="muted">Pot 3</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_ipswich.football-logos.cc.svg" alt="Ipswich Town" title="Ipswich Town" loading="lazy"><span class="team-row-name">Ipswich Town</span><span class="muted">Pot 4</span></div>
+    </div>
+  </div>
+  <div class="card player-card">
+    <div class="player-card-head"><img class="avatar avatar-lg" src="images/player_avatars/Robin_avatar.jpg" alt="" loading="lazy"><span class="player-name">Robin</span></div>
+    <div class="team-list">
+        <div class="team-row"><img class="crest" src="images/crests/england_arsenal.football-logos.cc.svg" alt="Arsenal" title="Arsenal" loading="lazy"><span class="team-row-name">Arsenal</span><span class="muted">Pot 1</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_fulham.football-logos.cc.svg" alt="Fulham" title="Fulham" loading="lazy"><span class="team-row-name">Fulham</span><span class="muted">Pot 2</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_nottingham-forest.football-logos.cc.svg" alt="Nottingham Forest" title="Nottingham Forest" loading="lazy"><span class="team-row-name">Nottingham Forest</span><span class="muted">Pot 3</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_hull-city.football-logos.cc.svg" alt="Hull City" title="Hull City" loading="lazy"><span class="team-row-name">Hull City</span><span class="muted">Pot 4</span></div>
+    </div>
+  </div>
+  <div class="card player-card">
+    <div class="player-card-head"><img class="avatar avatar-lg" src="images/player_avatars/Daveylad_avatar.jpg" alt="" loading="lazy"><span class="player-name">Daveylad</span></div>
+    <div class="team-list">
+        <div class="team-row"><img class="crest" src="images/crests/england_chelsea.football-logos.cc.svg" alt="Chelsea" title="Chelsea" loading="lazy"><span class="team-row-name">Chelsea</span><span class="muted">Pot 1</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_brighton.football-logos.cc.svg" alt="Brighton & Hove Albion" title="Brighton & Hove Albion" loading="lazy"><span class="team-row-name">Brighton & Hove Albion</span><span class="muted">Pot 2</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_everton.football-logos.cc.svg" alt="Everton" title="Everton" loading="lazy"><span class="team-row-name">Everton</span><span class="muted">Pot 3</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_hull-city.football-logos.cc.svg" alt="Hull City" title="Hull City" loading="lazy"><span class="team-row-name">Hull City</span><span class="muted">Pot 4</span></div>
+    </div>
+  </div>
+  </main>
+  <footer class="site-footer">
+    <div class="version-banner">Version <strong>v2.4.0</strong> &nbsp;•&nbsp; Run <strong>#196</strong> &nbsp;•&nbsp; Last deployed <strong>2026-10-31 20:18:13 UTC</strong> &nbsp;•&nbsp; API last fetched <strong>2026-10-31 20:18:13 UTC</strong></div>
+  </footer>
 </body>
 </html>
