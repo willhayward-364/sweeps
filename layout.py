@@ -30,6 +30,7 @@ NAV_ITEMS = [
     ("players.html", "Players"),
     ("latest_results.html", "Results"),
     ("upcoming_fixtures.html", "Fixtures"),
+    ("prizes.html", "Prizes"),
     ("rules.html", "Rules"),
     ("shame.html", "Hall of Shame"),
 ]

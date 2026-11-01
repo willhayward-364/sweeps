@@ -365,7 +365,7 @@ def team_is_in_player_selection(team_name: str, selected_teams: list[str]) -> bo
 
 def calculate_scores(matches: list[dict]):
     player_scores = {
-        player: {"points": 0, "played": 0, "wins": 0, "draws": 0, "clean_sheets": 0, "goal_feasts": 0, "giant_kills": 0}
+        player: {"points": 0, "played": 0, "wins": 0, "draws": 0, "clean_sheets": 0, "goal_feasts": 0, "giant_kills": 0, "goals": 0}
         for player in PLAYERS
     }
 
@@ -388,6 +388,7 @@ def calculate_scores(matches: list[dict]):
 
             if home_selected:
                 player_scores[player]["played"] += 1
+                player_scores[player]["goals"] += home_score
                 if home_score > away_score:
                     player_scores[player]["points"] += rule_points["R1"]
                     player_scores[player]["wins"] += 1
@@ -412,6 +413,7 @@ def calculate_scores(matches: list[dict]):
 
             if away_selected:
                 player_scores[player]["played"] += 1
+                player_scores[player]["goals"] += away_score
                 if away_score > home_score:
                     player_scores[player]["points"] += rule_points["R1"]
                     player_scores[player]["wins"] += 1
@@ -833,6 +835,94 @@ def render_upcoming_fixtures_page(version: str | None = None, output_path: str |
 
 
 # ==========================================
+# Prizes page
+# ==========================================
+# Christmas "mid-season tickler": points from matches kicking off before this moment (UK time),
+# i.e. everything up to and including Christmas Day.
+XMAS_CUTOFF = datetime(2026, 12, 26, 0, 0, tzinfo=UK_TIMEZONE)
+SEASON_MATCHES = 380
+
+
+def _leaders(scores: dict, key: str, lowest: bool = False, exclude: set | None = None) -> tuple[list[str], int | None]:
+    """Players with the best (or worst) value for a stat; ties share the spot."""
+    pool = {p: d for p, d in scores.items() if p not in (exclude or set())}
+    if not pool:
+        return [], None
+    values = [d[key] for d in pool.values()]
+    target = min(values) if lowest else max(values)
+    return [p for p, d in pool.items() if d[key] == target], target
+
+
+def scores_before(matches: list[dict], cutoff: datetime) -> dict:
+    early = []
+    for match in matches:
+        kickoff = uk_kickoff(match.get("utcDate", ""))
+        if kickoff and kickoff < cutoff:
+            early.append(match)
+    return calculate_scores(early)
+
+
+def render_prizes_page(matches: list[dict], scores: dict | None = None, version: str | None = None, output_path: str | None = None):
+    scores = scores if scores is not None else calculate_scores(matches)
+    season_over = len(matches) >= SEASON_MATCHES
+    xmas_over = datetime.now(UK_TIMEZONE) >= XMAS_CUTOFF
+
+    first, first_pts = _leaders(scores, "points")
+    second, second_pts = _leaders(scores, "points", exclude=set(first))
+    xmas_scores = scores_before(matches, XMAS_CUTOFF)
+    xmas, xmas_pts = _leaders(xmas_scores, "points")
+    clean, clean_n = _leaders(scores, "clean_sheets")
+    goals, goals_n = _leaders(scores, "goals")
+    spoon, spoon_pts = _leaders(scores, "points", lowest=True)
+
+    prizes = [
+        ("🥇", "Champion", "Most points", 50, first, f"{first_pts} pts", season_over),
+        ("🥈", "Runner-up", "2nd most points", 30, second, f"{second_pts} pts", season_over),
+        ("🧤", "Golden Gloves", "Most clean sheets", 10, clean, f"{clean_n} clean sheets", season_over),
+        ("⚽", "Golden Boot", "Most goals scored by your teams", 10, goals, f"{goals_n} goals", season_over),
+        ("🎄", "Christmas No. 1", "Most points up to Christmas Day (mid-season tickler)", 10, xmas, f"{xmas_pts} pts", xmas_over),
+        ("🥄", "Wooden Spoon", "Fewest points", 10, spoon, f"{spoon_pts} pts", season_over),
+    ]
+
+    cards = []
+    for emoji, name, desc, amount, players, value, final in prizes:
+        status = "Winner" if final else "Leading"
+        if len(players) > 1:
+            status = "Joint winners" if final else "Joint leaders"
+        holders = "".join(
+            f'<span class="owner">{avatar_img(p, "avatar avatar-sm")}{get_player_display_name(p)}</span>'
+            for p in players
+        )
+        cards.append(
+            f"""
+    <div class="prize-row">
+      <span class="prize-emoji">{emoji}</span>
+      <div class="prize-text">
+        <div class="prize-title">{name} <span class="muted">· {desc}</span></div>
+        <div class="prize-holder"><span class="prize-status">{status}:</span>{holders}<span class="muted">{value}</span></div>
+      </div>
+      <span class="pill">£{amount}</span>
+    </div>"""
+        )
+
+    total = sum(prize[3] for prize in prizes)
+    body = f"""
+  <h2 class="section-heading">Prizes · £{total} in total</h2>
+  <div class="card prizes-card">{''.join(cards)}
+  </div>
+  <p class="table-key">Leaders update after every result. Ties share the spot until the group decides otherwise.</p>"""
+
+    render_page(
+        page="prizes.html",
+        title="Prizes · LSB Sweepstake",
+        heading="💰 Prizes",
+        body=body,
+        output_path=output_path or Path(__file__).with_name("prizes.html"),
+        version=version,
+    )
+
+
+# ==========================================
 # Hall of Shame page (unpaid subs)
 # ==========================================
 SHAME_LINES = [
@@ -941,6 +1031,7 @@ if __name__ == "__main__":
     render_players_page(version=next_version)
     render_latest_results_page(matches, version=next_version)
     render_upcoming_fixtures_page(version=next_version)
+    render_prizes_page(matches, scores, version=next_version)
     render_shame_page(scores, version=next_version)
     render_rules_page(pots_html=render_pots_quadrant(), version=next_version)
     record_published_matches(matches)

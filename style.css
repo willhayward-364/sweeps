@@ -589,3 +589,32 @@ td.col-pts { font-weight: 800; color: var(--cyan); }
   display: block;
   margin: 6px 0 0 48px;
 }
+
+/* ---------- Prizes ---------- */
+.prize-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--divider);
+}
+
+.prize-row:first-child { padding-top: 2px; }
+.prize-row:last-child { border-bottom: none; padding-bottom: 2px; }
+
+.prize-emoji { font-size: 1.4rem; width: 1.6em; text-align: center; flex-shrink: 0; }
+
+.prize-text { flex: 1; min-width: 0; }
+
+.prize-title { font-weight: 700; color: var(--gold); }
+.prize-title .muted { font-weight: 400; }
+
+.prize-holder {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  margin-top: 4px;
+}
+
+.prize-status { font-size: var(--fs-small); color: var(--muted); }

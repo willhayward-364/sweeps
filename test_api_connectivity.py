@@ -280,6 +280,30 @@ def test_shame_page_lists_unpaid_players():
         fetch_and_score.UNPAID_SUBS.extend(original)
 
 
+def test_prizes_page_leaders():
+    import tempfile
+    from fetch_and_score import render_prizes_page
+
+    matches = [
+        # Arsenal (Robin) win 3-0 before Christmas
+        {"utcDate": "2026-12-20T15:00:00Z", "homeTeam": {"name": "Arsenal FC"},
+         "awayTeam": {"name": "Chelsea FC"}, "score": {"fullTime": {"home": 3, "away": 0}}},
+        # Hull City (Dookie, Robin, Davey) win 4-1 after Christmas
+        {"utcDate": "2026-12-28T15:00:00Z", "homeTeam": {"name": "Hull City AFC"},
+         "awayTeam": {"name": "Liverpool FC"}, "score": {"fullTime": {"home": 4, "away": 1}}},
+    ]
+    scores = module.calculate_scores(matches)
+    assert scores["Player E"]["goals"] == 7          # Robin: 3 (Arsenal) + 4 (Hull)
+    xmas = module.scores_before(matches, module.XMAS_CUTOFF)
+    assert xmas["Player E"]["points"] == 5 and xmas["Player C"]["points"] == 0
+
+    out = Path(tempfile.mkdtemp()) / "prizes.html"
+    render_prizes_page(matches, scores, output_path=out)
+    html = out.read_text(encoding="utf-8")
+    for text in ["Champion", "Runner-up", "Golden Gloves", "Golden Boot", "Christmas", "Wooden Spoon", "£120"]:
+        assert text in html, text
+
+
 def test_latest_results_page_renders_team_crests():
     from fetch_and_score import render_latest_results_page
 
