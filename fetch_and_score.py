@@ -881,6 +881,40 @@ def scores_before(matches: list[dict], cutoff: datetime) -> dict:
     return calculate_scores(early)
 
 
+# Prizes whose rows expand to show everyone's standing: name -> (score key, column heading)
+PRIZE_TABLES = {
+    "Golden Gloves": ("clean_sheets", "Clean sheets"),
+    "Golden Boot": ("goals", "Goals"),
+}
+
+
+def render_stat_ranking(scores: dict, key: str, heading: str) -> str:
+    """Small table ranking every player on one stat (equal values share a rank)."""
+    ordered = sorted(scores.items(), key=lambda item: item[1][key], reverse=True)
+    rows = "".join(
+        f"""
+          <tr>
+            <td class="col-rank">{1 + sum(1 for d in scores.values() if d[key] > data[key])}</td>
+            <td class="col-player"><span class="player-name">{avatar_img(player)}{get_player_display_name(player)}</span></td>
+            <td class="col-teams">{"".join(crest_img(t) for t in PLAYERS[player])}</td>
+            <td class="col-pts">{data[key]}</td>
+          </tr>"""
+        for player, data in ordered
+    )
+    return f"""<table class="data-table prize-table">
+        <thead>
+          <tr>
+            <th class="col-rank">#</th>
+            <th class="col-player">Player</th>
+            <th class="col-teams">Teams</th>
+            <th class="col-pts">{heading}</th>
+          </tr>
+        </thead>
+        <tbody>{rows}
+        </tbody>
+      </table>"""
+
+
 def render_prizes_page(matches: list[dict], scores: dict | None = None, version: str | None = None, output_path: str | None = None):
     scores = scores if scores is not None else calculate_scores(matches)
     season_over = len(matches) >= SEASON_MATCHES
@@ -919,24 +953,38 @@ def render_prizes_page(matches: list[dict], scores: dict | None = None, version:
             f'<span class="owner">{avatar_img(p, "avatar avatar-sm")}{get_player_display_name(p)}</span>'
             for p in players
         )
-        cards.append(
-            f"""
-    <div class="prize-row">
+        row_inner = f"""
       <span class="prize-emoji">{emoji}</span>
       <div class="prize-text">
         <div class="prize-title">{name} <span class="muted">· {desc}</span></div>
         <div class="prize-holder"><span class="prize-status">{status}:</span>{holders}<span class="muted">{value}</span></div>
       </div>
-      <span class="pill">£{amount}</span>
-    </div>"""
-        )
+      <span class="pill">£{amount}</span>"""
+
+        table_stat = PRIZE_TABLES.get(name)
+        if table_stat:
+            # Tap to expand: the full ranking for this prize
+            key, heading = table_stat
+            cards.append(
+                f"""
+    <details class="prize-details">
+      <summary class="prize-row">{row_inner}
+        <span class="prize-toggle" aria-hidden="true"></span>
+      </summary>
+      {render_stat_ranking(scores, key, heading)}
+    </details>"""
+            )
+        else:
+            cards.append(f"""
+    <div class="prize-row">{row_inner}
+    </div>""")
 
     total = sum(prize[3] for prize in prizes)
     body = render_season_progress(len(matches), SEASON_MATCHES) + f"""
   <h2 class="section-heading">Prizes · £{total} in total</h2>
   <div class="card prizes-card">{''.join(cards)}
   </div>
-  <p class="table-key">Leaders update after every result. Ties share the spot until the group decides otherwise.</p>"""
+  <p class="table-key">Tap Golden Gloves or Golden Boot to see where everyone stands. Leaders update after every result; ties share the spot until the group decides otherwise.</p>"""
 
     render_page(
         page="prizes.html",

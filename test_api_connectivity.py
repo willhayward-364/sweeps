@@ -304,6 +304,9 @@ def test_prizes_page_leaders():
         assert text in html, text
     assert '<progress class="progress-bar" value="2" max="380">' in html
     assert "378 to go" in html
+    # Golden Gloves and Golden Boot expand to a full ranking table
+    assert html.count('<details class="prize-details">') == 2
+    assert html.count('class="data-table prize-table"') == 2
 
 
 def test_latest_results_page_renders_team_crests():

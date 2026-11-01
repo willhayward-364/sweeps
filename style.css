@@ -665,3 +665,39 @@ td.col-pts { font-weight: 800; color: var(--cyan); }
   background: linear-gradient(90deg, var(--cyan), var(--gold));
   border-radius: 999px;
 }
+
+/* Prizes: rows that expand to show everyone's standing */
+.prize-details { border-bottom: 1px solid var(--divider); }
+.prize-details:last-child { border-bottom: none; }
+.prize-details > .prize-row { border-bottom: none; }
+
+.prize-details > summary {
+  list-style: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.prize-details > summary::-webkit-details-marker { display: none; }
+
+/* small chevron that flips when open */
+.prize-toggle {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
+  transform: rotate(45deg);
+  margin: 0 4px 4px 0;
+  transition: transform 0.2s ease;
+}
+
+.prize-details[open] .prize-toggle { transform: rotate(-135deg); margin: 4px 4px 0 0; }
+
+.prize-table {
+  margin: 0 0 10px;
+  background: var(--card-inner);
+  border-radius: 8px;
+}
+
+.prize-table th { padding-top: 6px; }
+.prize-table td.col-pts { color: var(--gold); }
