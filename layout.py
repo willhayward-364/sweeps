@@ -20,7 +20,7 @@ NAV_ITEMS = [
 # Easter egg: tap the LSB logo 10 times in quick succession and it turns into
 # the Tottenham crest (for this browser session). Another 10 taps turn it back.
 EASTER_EGG_TAPS = 10
-EASTER_EGG_CREST = "images/crests/england_tottenham.football-logos.cc.svg"
+EASTER_EGG_CREST = "images/crests/england_tottenham.football-logos.cc.png"
 
 
 def render_topbar(active_page: str = "") -> str:

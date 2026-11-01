@@ -273,7 +273,7 @@ def test_latest_results_page_renders_team_crests():
 
     html = output_path.read_text(encoding="utf-8")
     assert 'class="crest' in html
-    assert 'images/crests/england_arsenal.football-logos.cc.svg' in html
+    assert 'images/crests/england_arsenal.football-logos.cc.png' in html
 
     output_path.unlink(missing_ok=True)
 
