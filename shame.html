@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hall of Shame · LSB Sweepstake</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+  <header class="topbar">
+    <div class="topbar-brand">
+      <img src="images/crests/LSB_crest.PNG" alt="Sweepstake Logo" class="topbar-logo" id="site-logo">
+      <strong>LSB Official Agreed Sweepstake</strong>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html" class="nav-btn">Standings</a>
+      <a href="form.html" class="nav-btn">Form</a>
+      <a href="players.html" class="nav-btn">Players</a>
+      <a href="latest_results.html" class="nav-btn">Results</a>
+      <a href="upcoming_fixtures.html" class="nav-btn">Fixtures</a>
+      <a href="rules.html" class="nav-btn">Rules</a>
+      <a href="shame.html" class="nav-btn active" aria-current="page">Shame</a>
+    </nav>
+  </header>
+  <script>
+    (function () {
+      var logo = document.getElementById("site-logo");
+      if (!logo) return;
+      var original = logo.getAttribute("src");
+      var egg = "images/crests/england_tottenham.football-logos.cc.png";
+      var taps = 0, timer = null;
+      function show(on, animate) {
+        logo.src = on ? egg : original;
+        logo.alt = on ? "Tottenham Hotspur crest" : "Sweepstake Logo";
+        logo.classList.toggle("logo-egg", on);
+        if (animate) {
+          logo.classList.remove("logo-spin");
+          void logo.offsetWidth;
+          logo.classList.add("logo-spin");
+        }
+      }
+      var active = false;
+      try { active = sessionStorage.getItem("spursLogo") === "1"; } catch (e) {}
+      if (active) show(true, false);
+      logo.addEventListener("click", function () {
+        taps += 1;
+        clearTimeout(timer);
+        timer = setTimeout(function () { taps = 0; }, 1500);
+        if (taps >= 10) {
+          taps = 0;
+          active = !active;
+          show(active, true);
+          try { sessionStorage.setItem("spursLogo", active ? "1" : "0"); } catch (e) {}
+        }
+      });
+    })();
+  </script>
+  <main>
+  <h1 class="page-title visually-hidden">🙈 Hall of Shame</h1>
+  <h2 class="section-heading">Subs outstanding</h2>
+  <div class="card shame-card">
+    <div class="shame-head">
+      <img class="avatar avatar-lg shame-avatar" src="images/player_avatars/keano_avatar.jpg" alt="" loading="lazy">
+      <div class="shame-text">
+        <span class="player-name">Keano</span>
+        <span class="shame-line">Finds time to check the table. Not to pay.</span>
+      </div>
+      <span class="shame-stamp">UNPAID</span>
+    </div>
+    <span class="muted">63 pts and counting</span>
+  </div>
+  <div class="card shame-card">
+    <div class="shame-head">
+      <img class="avatar avatar-lg shame-avatar" src="images/player_avatars/Robin_avatar.jpg" alt="" loading="lazy">
+      <div class="shame-text">
+        <span class="player-name">Robin</span>
+        <span class="shame-line">Says the money's "on its way". So was Christmas.</span>
+      </div>
+      <span class="shame-stamp">UNPAID</span>
+    </div>
+    <span class="muted">63 pts and counting</span>
+  </div>
+  <div class="card shame-card">
+    <div class="shame-head">
+      <img class="avatar avatar-lg shame-avatar" src="images/player_avatars/Daveylad_avatar.jpg" alt="" loading="lazy">
+      <div class="shame-text">
+        <span class="player-name">Davey</span>
+        <span class="shame-line">Points on the board, nothing in the kitty.</span>
+      </div>
+      <span class="shame-stamp">UNPAID</span>
+    </div>
+    <span class="muted">81 pts and counting</span>
+  </div>
+  <p class="table-key">Paid up? Get your name off this page by settling with the treasurer.</p>
+  </main>
+  <footer class="site-footer">
+    <div class="version-banner">Version <strong>v2.0.0</strong> &nbsp;•&nbsp; Run <strong>#208</strong> &nbsp;•&nbsp; Last deployed <strong>2026-11-01 13:36:26 UTC</strong> &nbsp;•&nbsp; API last fetched <strong>2026-11-01 13:36:26 UTC</strong></div>
+  </footer>
+</body>
+</html>
