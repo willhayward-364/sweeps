@@ -31,7 +31,7 @@ NAV_ITEMS = [
     ("latest_results.html", "Results"),
     ("upcoming_fixtures.html", "Fixtures"),
     ("rules.html", "Rules"),
-    ("shame.html", "Shame"),
+    ("shame.html", "Hall of Shame"),
 ]
 
 # Easter egg: tap the LSB logo 10 times in quick succession and it turns into
