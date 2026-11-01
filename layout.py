@@ -4,9 +4,25 @@ Every page is wrapped by render_page() so they all look and behave the same.
 """
 from __future__ import annotations
 
+import hashlib
 from pathlib import Path
 
 from version import get_version_banner
+
+STYLESHEET = Path(__file__).with_name("style.css")
+
+
+def stylesheet_href() -> str:
+    """style.css with a short fingerprint of its contents, e.g. style.css?v=1a2b3c4d.
+
+    Browsers and preview sites cache the stylesheet; changing the URL whenever the
+    file changes makes them fetch the new version instead of using an old copy.
+    """
+    try:
+        fingerprint = hashlib.md5(STYLESHEET.read_bytes()).hexdigest()[:8]
+        return f"style.css?v={fingerprint}"
+    except OSError:
+        return "style.css"
 
 NAV_ITEMS = [
     ("index.html", "Standings"),
@@ -93,7 +109,7 @@ def render_page(
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{title}</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="{stylesheet_href()}">
 </head>
 <body>
   {render_topbar(page)}
