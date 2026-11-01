@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prizes · LSB Sweepstake</title>
+  <link rel="stylesheet" href="style.css?v=4f5eaf7c">
+</head>
+<body>
+  
+  <header class="topbar">
+    <div class="topbar-brand">
+      <img src="images/crests/LSB_crest.PNG" alt="Sweepstake Logo" class="topbar-logo" id="site-logo">
+      <strong>LSB Official Agreed Sweepstake</strong>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html" class="nav-btn">Standings</a>
+      <a href="form.html" class="nav-btn">Form</a>
+      <a href="players.html" class="nav-btn">Players</a>
+      <a href="latest_results.html" class="nav-btn">Results</a>
+      <a href="upcoming_fixtures.html" class="nav-btn">Fixtures</a>
+      <a href="prizes.html" class="nav-btn active" aria-current="page">Prizes</a>
+      <a href="rules.html" class="nav-btn">Rules</a>
+      <a href="shame.html" class="nav-btn">Hall of Shame</a>
+    </nav>
+  </header>
+  <script>
+    (function () {
+      var logo = document.getElementById("site-logo");
+      if (!logo) return;
+      var original = logo.getAttribute("src");
+      var egg = "images/crests/england_tottenham.football-logos.cc.png";
+      var taps = 0, timer = null;
+      function show(on, animate) {
+        logo.src = on ? egg : original;
+        logo.alt = on ? "Tottenham Hotspur crest" : "Sweepstake Logo";
+        logo.classList.toggle("logo-egg", on);
+        if (animate) {
+          logo.classList.remove("logo-spin");
+          void logo.offsetWidth;
+          logo.classList.add("logo-spin");
+        }
+      }
+      var active = false;
+      try { active = sessionStorage.getItem("spursLogo") === "1"; } catch (e) {}
+      if (active) show(true, false);
+      logo.addEventListener("click", function () {
+        taps += 1;
+        clearTimeout(timer);
+        timer = setTimeout(function () { taps = 0; }, 1500);
+        if (taps >= 10) {
+          taps = 0;
+          active = !active;
+          show(active, true);
+          try { sessionStorage.setItem("spursLogo", active ? "1" : "0"); } catch (e) {}
+        }
+      });
+    })();
+  </script>
+  <main>
+  <h1 class="page-title visually-hidden">💰 Prizes</h1>
+
+  <h2 class="section-heading">Prizes · £120 in total</h2>
+  <div class="card prizes-card">
+    <div class="prize-row">
+      <span class="prize-emoji">🥇</span>
+      <div class="prize-text">
+        <div class="prize-title">Champion <span class="muted">· Most points</span></div>
+        <div class="prize-holder"><span class="prize-status">Leading:</span><span class="owner"><img class="avatar avatar-sm" src="images/player_avatars/Daveylad_avatar.jpg" alt="" loading="lazy">Davey</span><span class="muted">81 pts</span></div>
+      </div>
+      <span class="pill">£50</span>
+    </div>
+    <div class="prize-row">
+      <span class="prize-emoji">🥈</span>
+      <div class="prize-text">
+        <div class="prize-title">Runner-up <span class="muted">· 2nd most points</span></div>
+        <div class="prize-holder"><span class="prize-status">Joint leaders:</span><span class="owner"><img class="avatar avatar-sm" src="images/player_avatars/keano_avatar.jpg" alt="" loading="lazy">Keano</span><span class="owner"><img class="avatar avatar-sm" src="images/player_avatars/Robin_avatar.jpg" alt="" loading="lazy">Robin</span><span class="muted">63 pts</span></div>
+      </div>
+      <span class="pill">£30</span>
+    </div>
+    <div class="prize-row">
+      <span class="prize-emoji">🧤</span>
+      <div class="prize-text">
+        <div class="prize-title">Golden Gloves <span class="muted">· Most clean sheets</span></div>
+        <div class="prize-holder"><span class="prize-status">Leading:</span><span class="owner"><img class="avatar avatar-sm" src="images/player_avatars/Daveylad_avatar.jpg" alt="" loading="lazy">Davey</span><span class="muted">14 clean sheets</span></div>
+      </div>
+      <span class="pill">£10</span>
+    </div>
+    <div class="prize-row">
+      <span class="prize-emoji">⚽</span>
+      <div class="prize-text">
+        <div class="prize-title">Golden Boot <span class="muted">· Most goals scored by your teams</span></div>
+        <div class="prize-holder"><span class="prize-status">Leading:</span><span class="owner"><img class="avatar avatar-sm" src="images/player_avatars/Daveylad_avatar.jpg" alt="" loading="lazy">Davey</span><span class="muted">62 goals</span></div>
+      </div>
+      <span class="pill">£10</span>
+    </div>
+    <div class="prize-row">
+      <span class="prize-emoji">🎄</span>
+      <div class="prize-text">
+        <div class="prize-title">Christmas No. 1 <span class="muted">· Most points up to Christmas Day (mid-season tickler)</span></div>
+        <div class="prize-holder"><span class="prize-status">Leading:</span><span class="owner"><img class="avatar avatar-sm" src="images/player_avatars/Daveylad_avatar.jpg" alt="" loading="lazy">Davey</span><span class="muted">81 pts</span></div>
+      </div>
+      <span class="pill">£10</span>
+    </div>
+    <div class="prize-row">
+      <span class="prize-emoji">🥄</span>
+      <div class="prize-text">
+        <div class="prize-title">Wooden Spoon <span class="muted">· Fewest points</span></div>
+        <div class="prize-holder"><span class="prize-status">Leading:</span><span class="owner"><img class="avatar avatar-sm" src="images/player_avatars/dookie_avatar.jpg" alt="" loading="lazy">Dookie</span><span class="muted">48 pts</span></div>
+      </div>
+      <span class="pill">£10</span>
+    </div>
+  </div>
+  <p class="table-key">Leaders update after every result. Ties share the spot until the group decides otherwise.</p>
+  </main>
+  <footer class="site-footer">
+    <div class="version-banner">Version <strong>v2.0.0</strong> &nbsp;•&nbsp; Run <strong>#211</strong> &nbsp;•&nbsp; Last deployed <strong>2026-11-01 14:14:52 UTC</strong> &nbsp;•&nbsp; API last fetched <strong>2026-11-01 14:14:52 UTC</strong></div>
+  </footer>
+</body>
+</html>
