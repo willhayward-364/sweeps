@@ -536,3 +536,13 @@ td.col-pts { font-weight: 800; color: var(--cyan); }
   width: 18px;
   height: 18px;
 }
+
+/* Narrow phones: tighten the tables so every column fits */
+@media (max-width: 380px) {
+  .data-table th,
+  .data-table td { padding-left: 2px; padding-right: 2px; }
+  .data-table .avatar { width: 20px; height: 20px; }
+  .data-table .player-name { gap: 5px; }
+  td.col-teams .crest { width: 15px; height: 15px; margin-right: 1px; }
+  .col-stat { width: 1.6em; }
+}
