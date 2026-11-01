@@ -888,6 +888,9 @@ PRIZE_TABLES = {
 }
 
 
+TOGGLE_HTML = '\n      <span class="prize-toggle" aria-hidden="true"></span>'
+
+
 def render_stat_ranking(scores: dict, key: str, heading: str) -> str:
     """Small table ranking every player on one stat (equal values share a rank)."""
     ordered = sorted(scores.items(), key=lambda item: item[1][key], reverse=True)
@@ -958,7 +961,7 @@ def render_prizes_page(matches: list[dict], scores: dict | None = None, version:
       <div class="prize-text">
         <div class="prize-title">{name} <span class="muted">· {desc}</span></div>
         <div class="prize-holder"><span class="prize-status">{status}:</span>{holders}<span class="muted">{value}</span></div>
-      </div>
+      </div>{{toggle}}
       <span class="pill">£{amount}</span>"""
 
         table_stat = PRIZE_TABLES.get(name)
@@ -968,15 +971,14 @@ def render_prizes_page(matches: list[dict], scores: dict | None = None, version:
             cards.append(
                 f"""
     <details class="prize-details">
-      <summary class="prize-row">{row_inner}
-        <span class="prize-toggle" aria-hidden="true"></span>
+      <summary class="prize-row">{row_inner.replace("{toggle}", TOGGLE_HTML)}
       </summary>
       {render_stat_ranking(scores, key, heading)}
     </details>"""
             )
         else:
             cards.append(f"""
-    <div class="prize-row">{row_inner}
+    <div class="prize-row">{row_inner.replace("{toggle}", "")}
     </div>""")
 
     total = sum(prize[3] for prize in prizes)
