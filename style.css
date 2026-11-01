@@ -546,3 +546,46 @@ td.col-pts { font-weight: 800; color: var(--cyan); }
   td.col-teams .crest { width: 15px; height: 15px; margin-right: 1px; }
   .col-stat { width: 1.6em; }
 }
+
+/* ---------- Hall of Shame ---------- */
+.shame-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.shame-avatar {
+  filter: grayscale(1);
+  border: 2px solid #e5484d;
+}
+
+.shame-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.shame-line {
+  color: var(--muted);
+  font-size: var(--fs-small);
+  font-style: italic;
+}
+
+.shame-stamp {
+  flex-shrink: 0;
+  transform: rotate(-8deg);
+  border: 2px solid #e5484d;
+  color: #e5484d;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: var(--fs-small);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.shame-card .muted {
+  display: block;
+  margin: 6px 0 0 48px;
+}

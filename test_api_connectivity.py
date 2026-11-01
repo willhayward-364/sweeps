@@ -259,6 +259,27 @@ def test_upcoming_fixtures_skip_finished_matches():
         fetch_and_score.load_upcoming_matches = original
 
 
+def test_shame_page_lists_unpaid_players():
+    import tempfile
+    import fetch_and_score
+    from fetch_and_score import render_shame_page
+
+    out = Path(tempfile.mkdtemp()) / "shame.html"
+    render_shame_page(output_path=out)
+    html = out.read_text(encoding="utf-8")
+    for player in fetch_and_score.UNPAID_SUBS:
+        assert fetch_and_score.get_player_display_name(player) in html
+    assert 'href="shame.html" class="nav-btn active"' in html
+
+    original = list(fetch_and_score.UNPAID_SUBS)
+    fetch_and_score.UNPAID_SUBS.clear()
+    try:
+        render_shame_page(output_path=out)
+        assert "Everyone has paid" in out.read_text(encoding="utf-8")
+    finally:
+        fetch_and_score.UNPAID_SUBS.extend(original)
+
+
 def test_latest_results_page_renders_team_crests():
     from fetch_and_score import render_latest_results_page
 

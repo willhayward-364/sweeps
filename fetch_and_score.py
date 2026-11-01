@@ -157,6 +157,9 @@ PLAYER_NICKNAMES = {
     "Player F": "Davey",
 }
 
+# Hall of Shame: players who haven't paid their subs yet. Remove a player once they pay.
+UNPAID_SUBS = ["Player B", "Player E", "Player F"]  # Keano, Robin, Davey
+
 PLAYER_AVATARS = {
     "Player A": "images/player_avatars/364_avatar.jpg",
     "Player B": "images/player_avatars/keano_avatar.jpg",
@@ -830,6 +833,57 @@ def render_upcoming_fixtures_page(version: str | None = None, output_path: str |
 
 
 # ==========================================
+# Hall of Shame page (unpaid subs)
+# ==========================================
+SHAME_LINES = [
+    "Finds time to check the table. Not to pay.",
+    "Says the money's \"on its way\". So was Christmas.",
+    "Points on the board, nothing in the kitty.",
+    "Happy to take the glory, less keen on the invoice.",
+    "Has been reminded. Several times.",
+]
+
+
+def render_shame_page(scores: dict | None = None, version: str | None = None, output_path: str | None = None):
+    """Light-hearted list of players who haven't paid their subs."""
+    if UNPAID_SUBS:
+        cards = []
+        for i, player in enumerate(UNPAID_SUBS):
+            points = (scores or {}).get(player, {}).get("points")
+            points_note = f'<span class="muted">{points} pts and counting</span>' if points is not None else ""
+            cards.append(
+                f"""
+  <div class="card shame-card">
+    <div class="shame-head">
+      {avatar_img(player, "avatar avatar-lg shame-avatar")}
+      <div class="shame-text">
+        <span class="player-name">{get_player_display_name(player)}</span>
+        <span class="shame-line">{SHAME_LINES[i % len(SHAME_LINES)]}</span>
+      </div>
+      <span class="shame-stamp">UNPAID</span>
+    </div>
+    {points_note}
+  </div>"""
+            )
+        body = (
+            '  <h2 class="section-heading">Subs outstanding</h2>'
+            + "".join(cards)
+            + '\n  <p class="table-key">Paid up? Get your name off this page by settling with the treasurer.</p>'
+        )
+    else:
+        body = '  <div class="card empty-note">Everyone has paid their subs. 🎉 Nothing to see here.</div>'
+
+    render_page(
+        page="shame.html",
+        title="Hall of Shame · LSB Sweepstake",
+        heading="🙈 Hall of Shame",
+        body=body,
+        output_path=output_path or Path(__file__).with_name("shame.html"),
+        version=version,
+    )
+
+
+# ==========================================
 # Rules page: pots grid
 # ==========================================
 POT_LABELS = {
@@ -887,5 +941,6 @@ if __name__ == "__main__":
     render_players_page(version=next_version)
     render_latest_results_page(matches, version=next_version)
     render_upcoming_fixtures_page(version=next_version)
+    render_shame_page(scores, version=next_version)
     render_rules_page(pots_html=render_pots_quadrant(), version=next_version)
     record_published_matches(matches)
