@@ -362,7 +362,7 @@ def team_is_in_player_selection(team_name: str, selected_teams: list[str]) -> bo
 
 def calculate_scores(matches: list[dict]):
     player_scores = {
-        player: {"points": 0, "wins": 0, "draws": 0, "clean_sheets": 0,"goal_feasts": 0, "giant_kills": 0}
+        player: {"points": 0, "played": 0, "wins": 0, "draws": 0, "clean_sheets": 0, "goal_feasts": 0, "giant_kills": 0}
         for player in PLAYERS
     }
 
@@ -384,6 +384,7 @@ def calculate_scores(matches: list[dict]):
             away_selected = team_is_in_player_selection(away_team, teams)
 
             if home_selected:
+                player_scores[player]["played"] += 1
                 if home_score > away_score:
                     player_scores[player]["points"] += rule_points["R1"]
                     player_scores[player]["wins"] += 1
@@ -407,6 +408,7 @@ def calculate_scores(matches: list[dict]):
                     player_scores[player]["giant_kills"] += 1
 
             if away_selected:
+                player_scores[player]["played"] += 1
                 if away_score > home_score:
                     player_scores[player]["points"] += rule_points["R1"]
                     player_scores[player]["wins"] += 1
@@ -582,7 +584,7 @@ def render_day_grouped(cards: list[tuple[datetime | None, str]]) -> str:
 # ==========================================
 # Standings & Form: points tables
 # ==========================================
-TABLE_KEY = '<div class="table-key">W wins · D draws · CS clean sheets · GF goal feasts · GK giant kills</div>'
+TABLE_KEY = '<div class="table-key">P played · W wins · D draws · CS clean sheets · GF goal feasts · GK giant kills</div>'
 
 
 def render_points_table(scores: dict, show_teams: bool = True) -> str:
@@ -601,6 +603,7 @@ def render_points_table(scores: dict, show_teams: bool = True) -> str:
       <tr data-player="{player}">
         <td class="col-rank">{rank}</td>
         <td class="col-player"><span class="player-name">{avatar_img(player)}{get_player_display_name(player)}</span></td>{teams_cell}
+        <td class="col-stat">{data.get('played', 0)}</td>
         <td class="col-stat">{data['wins']}</td>
         <td class="col-stat">{data['draws']}</td>
         <td class="col-stat">{data['clean_sheets']}</td>
@@ -618,6 +621,7 @@ def render_points_table(scores: dict, show_teams: bool = True) -> str:
         <tr>
           <th class="col-rank">#</th>
           <th class="col-player">Player</th>{teams_head}
+          <th class="col-stat" title="Games played">P</th>
           <th class="col-stat" title="Wins">W</th>
           <th class="col-stat" title="Draws">D</th>
           <th class="col-stat" title="Clean sheets">CS</th>

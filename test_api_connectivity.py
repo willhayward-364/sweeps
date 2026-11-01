@@ -24,6 +24,9 @@ def test_rule_points_are_applied():
     # Player E (Robin) owns Arsenal: win 3 + clean sheet 1 + goal feast 1
     assert scores["Player E"]["points"] == 5
     assert scores["Player E"]["wins"] == 1
+    assert scores["Player E"]["played"] == 1
+    assert scores["Player F"]["played"] == 1
+    assert scores["Player A"]["played"] == 0
     assert scores["Player E"]["clean_sheets"] == 1
     assert scores["Player E"]["goal_feasts"] == 1
     # Player F (Davey) owns Chelsea: a loss earns nothing
