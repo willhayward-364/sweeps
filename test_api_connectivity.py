@@ -302,6 +302,8 @@ def test_prizes_page_leaders():
     html = out.read_text(encoding="utf-8")
     for text in ["Champion", "Runner-up", "Golden Gloves", "Golden Boot", "Christmas", "Wooden Spoon", "£120"]:
         assert text in html, text
+    assert '<progress class="progress-bar" value="2" max="380">' in html
+    assert "378 to go" in html
 
 
 def test_latest_results_page_renders_team_crests():

@@ -587,6 +587,24 @@ def render_day_grouped(cards: list[tuple[datetime | None, str]]) -> str:
 
 
 # ==========================================
+# Season progress (matches played out of the season)
+# ==========================================
+def render_season_progress(matches_played: int, total: int = 380) -> str:
+    played = min(matches_played, total)
+    percent = round(100 * played / total) if total else 0
+    remaining = total - played
+    note = f"{remaining} to go" if remaining else "Season complete"
+    return f"""
+  <div class="card progress-card">
+    <div class="progress-head">
+      <span class="progress-label">Season progress</span>
+      <span><strong>{played}</strong> of {total} matches played · <span class="muted">{note}</span></span>
+    </div>
+    <progress class="progress-bar" value="{played}" max="{total}">{percent}%</progress>
+  </div>"""
+
+
+# ==========================================
 # Standings & Form: points tables
 # ==========================================
 TABLE_KEY = '<div class="table-key">P played · W wins · D draws · CS clean sheets · GF goal feasts · GK giant kills</div>'
@@ -648,7 +666,8 @@ def render_html(scores: dict, matches: list[dict] | None = None, version: str | 
         page="index.html",
         title="Standings · LSB Sweepstake",
         heading="🏆 Standings 2026/27",
-        body=render_points_table(scores, show_teams=True),
+        body=render_points_table(scores, show_teams=True)
+        + render_season_progress(len(matches) if matches is not None else 0, SEASON_MATCHES),
         output_path=output_path or Path(__file__).with_name("index.html"),
         version=version,
     )
@@ -875,20 +894,27 @@ def render_prizes_page(matches: list[dict], scores: dict | None = None, version:
     goals, goals_n = _leaders(scores, "goals")
     spoon, spoon_pts = _leaders(scores, "points", lowest=True)
 
+    # Wording for (one holder, joint holders) while in progress, then once decided
+    leading = ("Leading", "Joint leaders")
     prizes = [
-        ("🥇", "Champion", "Most points", 50, first, f"{first_pts} pts", season_over),
-        ("🥈", "Runner-up", "2nd most points", 30, second, f"{second_pts} pts", season_over),
-        ("🧤", "Golden Gloves", "Most clean sheets", 10, clean, f"{clean_n} clean sheets", season_over),
-        ("⚽", "Golden Boot", "Most goals scored by your teams", 10, goals, f"{goals_n} goals", season_over),
-        ("🎄", "Christmas No. 1", "Most points up to Christmas Day (mid-season tickler)", 10, xmas, f"{xmas_pts} pts", xmas_over),
-        ("🥄", "Wooden Spoon", "Fewest points", 10, spoon, f"{spoon_pts} pts", season_over),
+        ("🥇", "Champion", "Most points", 50, first, f"{first_pts} pts", season_over,
+         leading, ("Champion", "Joint champions")),
+        ("🥈", "Runner-up", "2nd most points", 30, second, f"{second_pts} pts", season_over,
+         ("Currently 2nd", "Joint 2nd"), ("Runner-up", "Joint runners-up")),
+        ("🧤", "Golden Gloves", "Most clean sheets", 10, clean, f"{clean_n} clean sheets", season_over,
+         leading, ("Winner", "Joint winners")),
+        ("⚽", "Golden Boot", "Most goals scored by your teams", 10, goals, f"{goals_n} goals", season_over,
+         leading, ("Winner", "Joint winners")),
+        ("🎄", "Christmas No. 1", "Most points up to Christmas Day (mid-season tickler)", 10, xmas, f"{xmas_pts} pts", xmas_over,
+         leading, ("Winner", "Joint winners")),
+        ("🥄", "Wooden Spoon", "Fewest points", 10, spoon, f"{spoon_pts} pts", season_over,
+         ("Currently bottom", "Joint bottom"), ("Winner", "Joint winners")),
     ]
 
     cards = []
-    for emoji, name, desc, amount, players, value, final in prizes:
-        status = "Winner" if final else "Leading"
-        if len(players) > 1:
-            status = "Joint winners" if final else "Joint leaders"
+    for emoji, name, desc, amount, players, value, final, live_words, final_words in prizes:
+        words = final_words if final else live_words
+        status = words[1] if len(players) > 1 else words[0]
         holders = "".join(
             f'<span class="owner">{avatar_img(p, "avatar avatar-sm")}{get_player_display_name(p)}</span>'
             for p in players
@@ -906,7 +932,7 @@ def render_prizes_page(matches: list[dict], scores: dict | None = None, version:
         )
 
     total = sum(prize[3] for prize in prizes)
-    body = f"""
+    body = render_season_progress(len(matches), SEASON_MATCHES) + f"""
   <h2 class="section-heading">Prizes · £{total} in total</h2>
   <div class="card prizes-card">{''.join(cards)}
   </div>
