@@ -1041,7 +1041,8 @@ def fixture_highlights(home_team: str, away_team: str, scores: dict | None) -> l
 
     for team, opponent in ((home_team, away_team), (away_team, home_team)):
         if team_is_in_player_selection(team, POTS["pot3"] + POTS["pot4"]) and team_is_in_player_selection(opponent, POTS["pot1"]):
-            badges.append(f"🗡️ Giant-kill chance: +3 extra if {escape(team)} win")
+            full_name = _selected_team_name(team, [t for pot in POTS.values() for t in pot])
+            badges.append(f"🗡️ Giant-kill chance: +3 extra if {escape(full_name)} win")
 
     if scores:
         bottom = clash(_top_players(scores, 2, lowest=True))
