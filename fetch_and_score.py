@@ -690,8 +690,12 @@ def render_points_race(matches: list[dict]) -> str:
     <script type="application/json" class="race-data">{data}</script>
   </div>
   <script>
+    // Finds the chart by class (not document.currentScript), so it also works in
+    // previewers like htmlpreview that re-insert page scripts.
     (function () {{
-      var card = document.currentScript.previousElementSibling;
+      function setup(card) {{
+      if (card.dataset.ready) return;
+      card.dataset.ready = "1";
       var data = JSON.parse(card.querySelector(".race-data").textContent);
       var svg = card.querySelector(".race-chart"), hit = card.querySelector(".race-hit");
       var cursor = card.querySelector(".race-cursor"), tip = card.querySelector(".race-tip");
@@ -715,6 +719,9 @@ def render_points_race(matches: list[dict]) -> str:
       hit.addEventListener("pointerdown", show);
       hit.addEventListener("pointerleave", function (e) {{ if (e.pointerType === "mouse") hide(); }});
       document.addEventListener("pointerdown", function (e) {{ if (!card.contains(e.target)) hide(); }});
+      }}
+      function init() {{ document.querySelectorAll(".race-card").forEach(setup); }}
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
     }})();
   </script>"""
 
@@ -820,7 +827,10 @@ BREAKDOWN_HINT = '\n    <div class="table-key">Tap a player to see their points 
 BREAKDOWN_SCRIPT = """
   <script>
     // Tap a player's row to show or hide their points-by-team row beneath it.
+    (function () {
+    function init() {
     document.querySelectorAll("tr[data-player]").forEach(function (row) {
+      if (row.classList.contains("expandable")) return;
       var detail = row.nextElementSibling;
       if (!detail || !detail.classList.contains("breakdown")) return;
       row.classList.add("expandable");
@@ -836,6 +846,9 @@ BREAKDOWN_SCRIPT = """
         if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); }
       });
     });
+    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+    })();
   </script>"""
 
 
