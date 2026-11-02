@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fixtures · LSB Sweepstake</title>
-  <link rel="stylesheet" href="style.css?v=9fba4784">
+  <link rel="stylesheet" href="style.css?v=bd506967">
 </head>
 <body>
   
@@ -57,18 +57,52 @@
       });
     })();
   </script>
-  <a href="shame.html" class="celebrate-banner" data-expires="2026-11-04T21:15:00+00:00">
-    🎉 <strong>Davey has paid his subs!</strong> What a legend. 🏆
-  </a>
+  <div class="celebrate-banner" data-expires="2026-11-04T21:15:00+00:00" data-dismiss-key="celebrate-Player F-202611042115">
+    <a href="shame.html">🎉 <strong>Davey has paid his subs!</strong> What a legend. 🏆</a>
+    <button type="button" class="celebrate-close" aria-label="Dismiss">✕</button>
+  </div>
   <script>
     // Hide celebrations once their 48 hours are up, even if the page hasn't been rebuilt yet.
+    // The banner can be dismissed (tap the cross or swipe it sideways); that's remembered on this device.
     (function () {
-      function tidy() {
-        document.querySelectorAll("[data-expires]").forEach(function (el) {
-          if (Date.now() >= Date.parse(el.getAttribute("data-expires"))) el.remove();
+      function remember(key) { try { localStorage.setItem(key, "1"); } catch (e) {} }
+      function dismissed(key) { try { return localStorage.getItem(key) === "1"; } catch (e) { return false; } }
+
+      function dismiss(banner, direction) {
+        remember(banner.getAttribute("data-dismiss-key"));
+        banner.style.transition = "transform 0.25s ease, opacity 0.25s ease";
+        banner.style.transform = "translateX(" + (direction || 1) * 110 + "%)";
+        banner.style.opacity = "0";
+        setTimeout(function () { banner.remove(); }, 250);
+      }
+
+      function setupBanner(banner) {
+        if (dismissed(banner.getAttribute("data-dismiss-key"))) { banner.remove(); return; }
+        banner.querySelector(".celebrate-close").addEventListener("click", function () { dismiss(banner, 1); });
+        var startX = null, dx = 0;
+        banner.addEventListener("touchstart", function (e) { startX = e.touches[0].clientX; dx = 0; banner.style.transition = "none"; }, { passive: true });
+        banner.addEventListener("touchmove", function (e) {
+          if (startX === null) return;
+          dx = e.touches[0].clientX - startX;
+          banner.style.transform = "translateX(" + dx + "px)";
+          banner.style.opacity = String(Math.max(0.2, 1 - Math.abs(dx) / 250));
+        }, { passive: true });
+        banner.addEventListener("touchend", function () {
+          if (startX === null) return;
+          startX = null;
+          if (Math.abs(dx) > 80) { dismiss(banner, dx > 0 ? 1 : -1); return; }
+          banner.style.transition = "transform 0.2s ease, opacity 0.2s ease";
+          banner.style.transform = ""; banner.style.opacity = "";
         });
       }
-      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", tidy); else tidy();
+
+      function init() {
+        document.querySelectorAll("[data-expires]").forEach(function (el) {
+          if (Date.now() >= Date.parse(el.getAttribute("data-expires"))) { el.remove(); return; }
+          if (el.classList.contains("celebrate-banner")) setupBanner(el);
+        });
+      }
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
     })();
   </script>
   <main>
@@ -217,7 +251,7 @@
   </div>
   </main>
   <footer class="site-footer">
-    <div class="version-banner">Version <strong>v2.0.0</strong> &nbsp;•&nbsp; Run <strong>#227</strong> &nbsp;•&nbsp; Last deployed <strong>2026-11-02 21:16:07 UTC</strong> &nbsp;•&nbsp; API last fetched <strong>2026-11-02 21:16:07 UTC</strong></div>
+    <div class="version-banner">Version <strong>v2.0.0</strong> &nbsp;•&nbsp; Run <strong>#228</strong> &nbsp;•&nbsp; Last deployed <strong>2026-11-02 21:18:19 UTC</strong> &nbsp;•&nbsp; API last fetched <strong>2026-11-02 21:18:19 UTC</strong></div>
   </footer>
 </body>
 </html>
