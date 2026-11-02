@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fixtures · LSB Sweepstake</title>
-  <link rel="stylesheet" href="style.css?v=bd506967">
+  <link rel="stylesheet" href="style.css?v=7a298a48">
 </head>
 <body>
   
@@ -251,7 +251,99 @@
   </div>
   </main>
   <footer class="site-footer">
-    <div class="version-banner">Version <strong>v2.0.0</strong> &nbsp;•&nbsp; Run <strong>#228</strong> &nbsp;•&nbsp; Last deployed <strong>2026-11-02 21:18:19 UTC</strong> &nbsp;•&nbsp; API last fetched <strong>2026-11-02 21:18:19 UTC</strong></div>
+    <div class="version-banner">Version <strong>v2.0.0</strong> &nbsp;•&nbsp; Run <strong>#229</strong> &nbsp;•&nbsp; Last deployed <strong>2026-11-02 21:30:12 UTC</strong> &nbsp;•&nbsp; API last fetched <strong>2026-11-02 21:30:12 UTC</strong></div>
+    <button type="button" class="egg-ball" aria-label="Play keepy-uppy">⚽</button>
   </footer>
+  <div class="game-overlay" hidden>
+    <div class="game-box">
+      <div class="game-head">
+        <span class="game-title">Keepy-Uppy</span>
+        <span class="game-score">0</span>
+        <button type="button" class="game-close" aria-label="Close game">✕</button>
+      </div>
+      <canvas class="game-canvas" width="320" height="420"></canvas>
+      <div class="game-foot"><span class="game-msg">Tap the ball to start</span><span class="muted game-best"></span></div>
+    </div>
+  </div>
+  <script>
+    // Keepy-uppy: tap the ball to kick it up; score a point per touch; game over when it hits the floor.
+    (function () {
+      function init() {
+        var opener = document.querySelector(".egg-ball"), overlay = document.querySelector(".game-overlay");
+        if (!opener || !overlay || overlay.dataset.ready) return;
+        overlay.dataset.ready = "1";
+        var canvas = overlay.querySelector(".game-canvas"), ctx = canvas.getContext("2d");
+        var scoreEl = overlay.querySelector(".game-score"), msg = overlay.querySelector(".game-msg");
+        var bestEl = overlay.querySelector(".game-best");
+        var W = canvas.width, H = canvas.height, R = 26, GRAVITY = 0.35;
+        var ball, score, best = 0, playing = false, running = false, frame = null;
+        try { best = parseInt(localStorage.getItem("keepyUppyBest") || "0", 10) || 0; } catch (e) {}
+
+        function reset() {
+          ball = { x: W / 2, y: H * 0.35, vx: 0, vy: 0, spin: 0 };
+          score = 0; playing = false; scoreEl.textContent = "0";
+          bestEl.textContent = best ? "Best " + best : "";
+          msg.textContent = "Tap the ball to start";
+        }
+
+        function draw() {
+          ctx.clearRect(0, 0, W, H);
+          ctx.fillStyle = "#2f9e44";                       // pitch strip
+          ctx.fillRect(0, H - 18, W, 18);
+          ctx.strokeStyle = "rgba(255,255,255,0.5)";
+          ctx.beginPath(); ctx.moveTo(0, H - 18); ctx.lineTo(W, H - 18); ctx.stroke();
+          ctx.save();
+          ctx.translate(ball.x, ball.y); ctx.rotate(ball.spin);
+          ctx.font = (R * 2) + "px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+          ctx.fillText("⚽", 0, 2);
+          ctx.restore();
+        }
+
+        function step() {
+          if (playing) {
+            ball.vy += GRAVITY; ball.x += ball.vx; ball.y += ball.vy; ball.spin += ball.vx * 0.03;
+            if (ball.x < R) { ball.x = R; ball.vx = Math.abs(ball.vx) * 0.8; }
+            if (ball.x > W - R) { ball.x = W - R; ball.vx = -Math.abs(ball.vx) * 0.8; }
+            if (ball.y > H - 18 - R) {                      // hit the floor
+              ball.y = H - 18 - R; playing = false;
+              if (score > best) { best = score; try { localStorage.setItem("keepyUppyBest", String(best)); } catch (e) {} }
+              msg.textContent = score >= best && score > 0 ? "New best! " + score + " - tap to go again" : "Dropped it! " + score + " - tap to go again";
+              bestEl.textContent = "Best " + best;
+            }
+          }
+          draw();
+          if (running) frame = requestAnimationFrame(step);
+        }
+
+        function kick(evt) {
+          evt.preventDefault();
+          var box = canvas.getBoundingClientRect();
+          var x = (evt.clientX - box.left) * (W / box.width), y = (evt.clientY - box.top) * (H / box.height);
+          if (!playing) {
+            if (ball.y >= H - 18 - R - 1) reset();          // after game over, first tap resets
+            playing = true; msg.textContent = "Keep it up!";
+          }
+          var dx = ball.x - x, dy = ball.y - y;
+          if (dx * dx + dy * dy <= (R * 1.6) * (R * 1.6)) {   // a generous hit area
+            ball.vy = -9 - Math.min(score * 0.08, 3);         // gets a little livelier as you go
+            ball.vx = dx * 0.18 + (Math.random() - 0.5) * 2;
+            score += 1; scoreEl.textContent = String(score);
+          }
+        }
+
+        function open() {
+          overlay.hidden = false; reset();
+          if (!running) { running = true; frame = requestAnimationFrame(step); }
+        }
+        function close() { overlay.hidden = true; running = false; if (frame) cancelAnimationFrame(frame); }
+
+        opener.addEventListener("click", open);
+        overlay.querySelector(".game-close").addEventListener("click", close);
+        overlay.addEventListener("click", function (e) { if (e.target === overlay) close(); });
+        canvas.addEventListener("pointerdown", kick);
+      }
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+    })();
+  </script>
 </body>
 </html>
