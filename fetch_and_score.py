@@ -632,6 +632,18 @@ def points_race_series(matches: list[dict]) -> tuple[list[str], dict[str, list[i
     return days, series
 
 
+# Chart colour slot per player (see .series-N in style.css). Keano is blue (not
+# Arsenal red, by request); 364 takes the orange.
+PLAYER_SERIES = {
+    "Player A": 2,  # 364 - orange
+    "Player B": 1,  # Keano - blue
+    "Player C": 3,  # Dookie - aqua
+    "Player D": 4,  # Rich - yellow
+    "Player E": 5,  # Robin - pink
+    "Player F": 6,  # Davey - green
+}
+
+
 def render_points_race(matches: list[dict]) -> str:
     """Inline SVG line chart; each player keeps a fixed colour (see .series-N in style.css)."""
     days, series = points_race_series(matches)
@@ -664,7 +676,8 @@ def render_points_race(matches: list[dict]) -> str:
             months += f'<text class="race-axis" x="{x(i)}" y="{height - 6}" text-anchor="middle">{label}</text>'
 
     lines, legend = "", ""
-    for n, player in enumerate(PLAYERS, 1):
+    for player in PLAYERS:
+        n = PLAYER_SERIES[player]
         points = " ".join(f"{x(i)},{y(v)}" for i, v in enumerate(series[player]))
         lines += f'<polyline class="race-line series-{n}" points="{points}"/>'
         legend += (
@@ -676,8 +689,8 @@ def render_points_race(matches: list[dict]) -> str:
         "x": [x(i) for i in range(len(days))],
         "labels": [datetime.fromisoformat(d).strftime("%a %-d %b") for d in days],
         "players": [
-            {"name": get_player_display_name(p), "cls": f"series-{n}", "points": series[p]}
-            for n, p in enumerate(PLAYERS, 1)
+            {"name": get_player_display_name(p), "cls": f"series-{PLAYER_SERIES[p]}", "points": series[p]}
+            for p in PLAYERS
         ],
     })
 
