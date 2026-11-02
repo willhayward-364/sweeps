@@ -1269,9 +1269,10 @@ def render_celebration_banner(now: datetime | None = None) -> str:
     """Slim banner for the top of every page while someone's payment is being celebrated."""
     return "".join(
         f"""
-  <a href="shame.html" class="celebrate-banner" data-expires="{expires.isoformat()}">
-    🎉 <strong>{get_player_display_name(player)} has paid his subs!</strong> What a legend. 🏆
-  </a>"""
+  <div class="celebrate-banner" data-expires="{expires.isoformat()}" data-dismiss-key="celebrate-{player}-{expires:%Y%m%d%H%M}">
+    <a href="shame.html">🎉 <strong>{get_player_display_name(player)} has paid his subs!</strong> What a legend. 🏆</a>
+    <button type="button" class="celebrate-close" aria-label="Dismiss">✕</button>
+  </div>"""
         for player, expires in active_celebrations(now)
     )
 
@@ -1281,6 +1282,7 @@ def render_celebration_cards(now: datetime | None = None) -> str:
     return "".join(
         f"""
   <div class="card celebrate-card" data-expires="{expires.isoformat()}">
+    <div class="fireworks" aria-hidden="true"><span class="firework fw-1"></span><span class="firework fw-2"></span><span class="firework fw-3"></span><span class="firework fw-4"></span></div>
     <div class="confetti" aria-hidden="true"><span>🎉</span><span>🎊</span><span>🥳</span><span>🍾</span><span>🎉</span><span>🎊</span></div>
     {avatar_img(player, "avatar celebrate-avatar")}
     <div class="celebrate-title">{get_player_display_name(player).upper()} HAS PAID!</div>
@@ -1295,13 +1297,46 @@ def render_celebration_cards(now: datetime | None = None) -> str:
 CELEBRATION_SCRIPT = """
   <script>
     // Hide celebrations once their 48 hours are up, even if the page hasn't been rebuilt yet.
+    // The banner can be dismissed (tap the cross or swipe it sideways); that's remembered on this device.
     (function () {
-      function tidy() {
-        document.querySelectorAll("[data-expires]").forEach(function (el) {
-          if (Date.now() >= Date.parse(el.getAttribute("data-expires"))) el.remove();
+      function remember(key) { try { localStorage.setItem(key, "1"); } catch (e) {} }
+      function dismissed(key) { try { return localStorage.getItem(key) === "1"; } catch (e) { return false; } }
+
+      function dismiss(banner, direction) {
+        remember(banner.getAttribute("data-dismiss-key"));
+        banner.style.transition = "transform 0.25s ease, opacity 0.25s ease";
+        banner.style.transform = "translateX(" + (direction || 1) * 110 + "%)";
+        banner.style.opacity = "0";
+        setTimeout(function () { banner.remove(); }, 250);
+      }
+
+      function setupBanner(banner) {
+        if (dismissed(banner.getAttribute("data-dismiss-key"))) { banner.remove(); return; }
+        banner.querySelector(".celebrate-close").addEventListener("click", function () { dismiss(banner, 1); });
+        var startX = null, dx = 0;
+        banner.addEventListener("touchstart", function (e) { startX = e.touches[0].clientX; dx = 0; banner.style.transition = "none"; }, { passive: true });
+        banner.addEventListener("touchmove", function (e) {
+          if (startX === null) return;
+          dx = e.touches[0].clientX - startX;
+          banner.style.transform = "translateX(" + dx + "px)";
+          banner.style.opacity = String(Math.max(0.2, 1 - Math.abs(dx) / 250));
+        }, { passive: true });
+        banner.addEventListener("touchend", function () {
+          if (startX === null) return;
+          startX = null;
+          if (Math.abs(dx) > 80) { dismiss(banner, dx > 0 ? 1 : -1); return; }
+          banner.style.transition = "transform 0.2s ease, opacity 0.2s ease";
+          banner.style.transform = ""; banner.style.opacity = "";
         });
       }
-      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", tidy); else tidy();
+
+      function init() {
+        document.querySelectorAll("[data-expires]").forEach(function (el) {
+          if (Date.now() >= Date.parse(el.getAttribute("data-expires"))) { el.remove(); return; }
+          if (el.classList.contains("celebrate-banner")) setupBanner(el);
+        });
+      }
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
     })();
   </script>"""
 

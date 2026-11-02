@@ -906,3 +906,133 @@ tr.breakdown td {
   .celebrate-banner, .celebrate-avatar, .confetti span { animation: none; }
   .confetti { display: none; }
 }
+
+/* Fireworks over the celebration card: each burst is a ring of sparks (box-shadows) that expands and fades */
+.fireworks { position: absolute; inset: 0; pointer-events: none; }
+
+.firework {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  opacity: 0;
+  animation: firework-burst 2.4s ease-out infinite;
+}
+
+.fw-1 { left: 18%; top: 22%; animation-delay: 0s;
+  box-shadow:
+    43px 0px 0 1px #ffe08a,
+    37px 14px 0 1px #ffb703,
+    37px 31px 0 1px #ffe08a,
+    19px 33px 0 1px #ffb703,
+    8px 46px 0 1px #ffe08a,
+    -8px 43px 0 1px #ffb703,
+    -19px 33px 0 1px #ffe08a,
+    -35px 30px 0 1px #ffb703,
+    -35px 13px 0 1px #ffe08a,
+    -45px 0px 0 1px #ffb703,
+    -36px -13px 0 1px #ffe08a,
+    -29px -25px 0 1px #ffb703,
+    -22px -39px 0 1px #ffe08a,
+    -9px -51px 0 1px #ffb703,
+    7px -38px 0 1px #ffe08a,
+    20px -35px 0 1px #ffb703,
+    37px -31px 0 1px #ffe08a,
+    51px -19px 0 1px #ffb703; }
+.fw-2 { left: 80%; top: 18%; animation-delay: 0.6s;
+  box-shadow:
+    47px 0px 0 1px #b5f0ff,
+    41px 15px 0 1px #48cae4,
+    42px 35px 0 1px #b5f0ff,
+    19px 33px 0 1px #48cae4,
+    9px 52px 0 1px #b5f0ff,
+    -7px 41px 0 1px #48cae4,
+    -20px 34px 0 1px #b5f0ff,
+    -30px 25px 0 1px #48cae4,
+    -40px 15px 0 1px #b5f0ff,
+    -52px 0px 0 1px #48cae4,
+    -38px -14px 0 1px #b5f0ff,
+    -36px -31px 0 1px #48cae4,
+    -24px -42px 0 1px #b5f0ff,
+    -8px -43px 0 1px #48cae4,
+    8px -46px 0 1px #b5f0ff,
+    19px -33px 0 1px #48cae4,
+    29px -24px 0 1px #b5f0ff,
+    38px -14px 0 1px #48cae4; }
+.fw-3 { left: 10%; top: 78%; animation-delay: 1.2s;
+  box-shadow:
+    41px 0px 0 1px #ffd0e1,
+    35px 13px 0 1px #e87ba4,
+    27px 23px 0 1px #ffd0e1,
+    20px 34px 0 1px #e87ba4,
+    6px 37px 0 1px #ffd0e1,
+    -6px 34px 0 1px #e87ba4,
+    -21px 37px 0 1px #ffd0e1,
+    -31px 26px 0 1px #e87ba4,
+    -32px 12px 0 1px #ffd0e1,
+    -39px 0px 0 1px #e87ba4,
+    -36px -13px 0 1px #ffd0e1,
+    -33px -28px 0 1px #e87ba4,
+    -21px -36px 0 1px #ffd0e1,
+    -6px -34px 0 1px #e87ba4,
+    8px -45px 0 1px #ffd0e1,
+    16px -28px 0 1px #e87ba4,
+    28px -24px 0 1px #ffd0e1,
+    39px -14px 0 1px #e87ba4; }
+.fw-4 { left: 90%; top: 74%; animation-delay: 1.8s;
+  box-shadow:
+    34px 0px 0 1px #ffb703,
+    37px 14px 0 1px #7ee081,
+    25px 21px 0 1px #ffb703,
+    21px 37px 0 1px #7ee081,
+    8px 44px 0 1px #ffb703,
+    -7px 41px 0 1px #7ee081,
+    -23px 40px 0 1px #ffb703,
+    -28px 24px 0 1px #7ee081,
+    -41px 15px 0 1px #ffb703,
+    -42px 0px 0 1px #7ee081,
+    -39px -14px 0 1px #ffb703,
+    -30px -25px 0 1px #7ee081,
+    -23px -39px 0 1px #ffb703,
+    -8px -46px 0 1px #7ee081,
+    7px -39px 0 1px #ffb703,
+    21px -37px 0 1px #7ee081,
+    25px -21px 0 1px #ffb703,
+    41px -15px 0 1px #7ee081; }
+
+@keyframes firework-burst {
+  0%   { transform: scale(0.1); opacity: 0; }
+  10%  { opacity: 1; }
+  70%  { transform: scale(1); opacity: 0.9; }
+  100% { transform: scale(1.15) translateY(8px); opacity: 0; }
+}
+
+/* Dismissable banner */
+.celebrate-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.celebrate-banner a { flex: 1; color: inherit; text-decoration: none; }
+
+.celebrate-close {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(11, 19, 43, 0.25);
+  color: var(--bg);
+  font-size: 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.celebrate-card > *:not(.fireworks):not(.confetti) { position: relative; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fireworks { display: none; }
+}
