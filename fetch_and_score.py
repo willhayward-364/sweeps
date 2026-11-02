@@ -606,6 +606,120 @@ def render_season_progress(matches_played: int, total: int = 380) -> str:
 
 
 # ==========================================
+# Points race chart (cumulative points over the season)
+# ==========================================
+def points_race_series(matches: list[dict]) -> tuple[list[str], dict[str, list[int]]]:
+    """Cumulative points per player at the end of each UK matchday."""
+    by_day: dict[str, list[dict]] = {}
+    for match in matches:
+        kickoff = uk_kickoff(match.get("utcDate", ""))
+        if kickoff:
+            by_day.setdefault(kickoff.strftime("%Y-%m-%d"), []).append(match)
+    days = sorted(by_day)
+    totals = {player: 0 for player in PLAYERS}
+    series = {player: [] for player in PLAYERS}
+    for day in days:
+        day_scores = calculate_scores(by_day[day])
+        for player in PLAYERS:
+            totals[player] += day_scores[player]["points"]
+            series[player].append(totals[player])
+    return days, series
+
+
+def render_points_race(matches: list[dict]) -> str:
+    """Inline SVG line chart; each player keeps a fixed colour (see .series-N in style.css)."""
+    days, series = points_race_series(matches)
+    if len(days) < 2:
+        return ""
+
+    width, height = 340, 210
+    left, right, top, bottom = 30, 8, 8, 22
+    plot_w, plot_h = width - left - right, height - top - bottom
+    start = datetime.fromisoformat(days[0]); span = max((datetime.fromisoformat(days[-1]) - start).days, 1)
+    top_value = max(max(v) for v in series.values())
+    y_max = max(10, -(-top_value // 20) * 20)  # round up to a multiple of 20
+
+    def x(i: int) -> float:
+        return round(left + plot_w * (datetime.fromisoformat(days[i]) - start).days / span, 1)
+
+    def y(v: int) -> float:
+        return round(top + plot_h * (1 - v / y_max), 1)
+
+    grid = "".join(
+        f'<line class="race-grid" x1="{left}" x2="{width - right}" y1="{y(v)}" y2="{y(v)}"/>'
+        f'<text class="race-axis" x="{left - 5}" y="{y(v) + 3}" text-anchor="end">{v}</text>'
+        for v in range(0, y_max + 1, 20)
+    )
+    months, seen = "", set()
+    for i, day in enumerate(days):
+        label = datetime.fromisoformat(day).strftime("%b")
+        if label not in seen:
+            seen.add(label)
+            months += f'<text class="race-axis" x="{x(i)}" y="{height - 6}" text-anchor="middle">{label}</text>'
+
+    lines, legend = "", ""
+    for n, player in enumerate(PLAYERS, 1):
+        points = " ".join(f"{x(i)},{y(v)}" for i, v in enumerate(series[player]))
+        lines += f'<polyline class="race-line series-{n}" points="{points}"/>'
+        legend += (
+            f'<span class="race-key"><span class="race-swatch series-{n}"></span>'
+            f'{get_player_display_name(player)}</span>'
+        )
+
+    data = json.dumps({
+        "x": [x(i) for i in range(len(days))],
+        "labels": [datetime.fromisoformat(d).strftime("%a %-d %b") for d in days],
+        "players": [
+            {"name": get_player_display_name(p), "cls": f"series-{n}", "points": series[p]}
+            for n, p in enumerate(PLAYERS, 1)
+        ],
+    })
+
+    return f"""
+  <div class="card race-card">
+    <div class="race-head"><span class="progress-label">Points race</span><span class="muted">Tap the chart to see any day</span></div>
+    <div class="race-legend">{legend}</div>
+    <div class="race-wrap">
+      <svg class="race-chart" viewBox="0 0 {width} {height}" role="img" aria-label="Cumulative points for each player over the season">
+        {grid}{months}{lines}
+        <line class="race-cursor" x1="0" x2="0" y1="{top}" y2="{top + plot_h}"/>
+        <rect class="race-hit" x="{left}" y="{top}" width="{plot_w}" height="{plot_h}"/>
+      </svg>
+      <div class="race-tip" hidden></div>
+    </div>
+    <script type="application/json" class="race-data">{data}</script>
+  </div>
+  <script>
+    (function () {{
+      var card = document.currentScript.previousElementSibling;
+      var data = JSON.parse(card.querySelector(".race-data").textContent);
+      var svg = card.querySelector(".race-chart"), hit = card.querySelector(".race-hit");
+      var cursor = card.querySelector(".race-cursor"), tip = card.querySelector(".race-tip");
+      function show(evt) {{
+        var box = svg.getBoundingClientRect();
+        var vx = (evt.clientX - box.left) * (svg.viewBox.baseVal.width / box.width);
+        var i = 0;
+        for (var k = 1; k < data.x.length; k++) if (Math.abs(data.x[k] - vx) < Math.abs(data.x[i] - vx)) i = k;
+        cursor.setAttribute("x1", data.x[i]); cursor.setAttribute("x2", data.x[i]);
+        cursor.classList.add("on");
+        var rows = data.players.slice().sort(function (a, b) {{ return b.points[i] - a.points[i]; }});
+        tip.innerHTML = "<strong>" + data.labels[i] + "</strong>" + rows.map(function (p) {{
+          return '<span class="race-tip-row"><span class="race-swatch ' + p.cls + '"></span>' + p.name + "<b>" + p.points[i] + "</b></span>";
+        }}).join("");
+        tip.hidden = false;
+        var px = data.x[i] / svg.viewBox.baseVal.width * box.width;
+        tip.style.left = Math.min(Math.max(px - tip.offsetWidth / 2, 0), box.width - tip.offsetWidth) + "px";
+      }}
+      function hide() {{ tip.hidden = true; cursor.classList.remove("on"); }}
+      hit.addEventListener("pointermove", show);
+      hit.addEventListener("pointerdown", show);
+      hit.addEventListener("pointerleave", function (e) {{ if (e.pointerType === "mouse") hide(); }});
+      document.addEventListener("pointerdown", function (e) {{ if (!card.contains(e.target)) hide(); }});
+    }})();
+  </script>"""
+
+
+# ==========================================
 # Standings & Form: points tables
 # ==========================================
 TABLE_KEY = '<div class="table-key">P played · W wins · D draws · CS clean sheets · GF goal feasts · GK giant kills</div>'
@@ -668,6 +782,7 @@ def render_html(scores: dict, matches: list[dict] | None = None, version: str | 
         title="Standings · LSB Sweepstake",
         heading="🏆 Standings 2026/27",
         body=render_points_table(scores, show_teams=True)
+        + render_points_race(matches or [])
         + render_season_progress(len(matches) if matches is not None else 0, SEASON_MATCHES),
         output_path=output_path or Path(__file__).with_name("index.html"),
         version=version,

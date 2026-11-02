@@ -701,3 +701,80 @@ td.col-pts { font-weight: 800; color: var(--cyan); }
 
 .prize-table th { padding-top: 6px; }
 .prize-table td.col-pts { color: var(--gold); }
+
+/* ---------- Points race chart ---------- */
+/* One fixed colour per player (dataviz default categorical order, dark steps,
+   validated against the card surface #1c2541). Colour follows the player, not rank. */
+.series-1 { --series: #3987e5; }
+.series-2 { --series: #d95926; }
+.series-3 { --series: #199e70; }
+.series-4 { --series: #c98500; }
+.series-5 { --series: #d55181; }
+.series-6 { --series: #008300; }
+
+.race-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.race-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-bottom: 6px;
+  font-size: var(--fs-small);
+  color: var(--text);
+}
+
+.race-key { display: inline-flex; align-items: center; gap: 5px; }
+
+.race-swatch {
+  display: inline-block;
+  width: 12px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--series);
+}
+
+.race-wrap { position: relative; }
+
+.race-chart { display: block; width: 100%; height: auto; overflow: visible; }
+
+.race-grid { stroke: var(--divider); stroke-width: 1; }
+.race-axis { fill: var(--muted); font-size: 10px; }
+
+.race-line {
+  fill: none;
+  stroke: var(--series);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.race-cursor { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 3; opacity: 0; }
+.race-cursor.on { opacity: 1; }
+
+.race-hit { fill: transparent; cursor: crosshair; touch-action: pan-y; }
+
+.race-tip {
+  position: absolute;
+  top: 4px;
+  min-width: 130px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  font-size: var(--fs-small);
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.race-tip[hidden] { display: none; }
+.race-tip strong { color: var(--muted); font-weight: 600; margin-bottom: 2px; }
+.race-tip-row { display: flex; align-items: center; gap: 6px; }
+.race-tip-row b { margin-left: auto; padding-left: 10px; color: var(--text); }
