@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hall of Shame · LSB Sweepstake</title>
-  <link rel="stylesheet" href="style.css?v=76801836">
+  <link rel="stylesheet" href="style.css?v=9fba4784">
 </head>
 <body>
   
@@ -57,9 +57,31 @@
       });
     })();
   </script>
+  <a href="shame.html" class="celebrate-banner" data-expires="2026-11-04T21:15:00+00:00">
+    🎉 <strong>Davey has paid his subs!</strong> What a legend. 🏆
+  </a>
+  <script>
+    // Hide celebrations once their 48 hours are up, even if the page hasn't been rebuilt yet.
+    (function () {
+      function tidy() {
+        document.querySelectorAll("[data-expires]").forEach(function (el) {
+          if (Date.now() >= Date.parse(el.getAttribute("data-expires"))) el.remove();
+        });
+      }
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", tidy); else tidy();
+    })();
+  </script>
   <main>
   <h1 class="page-title visually-hidden">🙈 Hall of Shame</h1>
-  <h2 class="section-heading">Subs outstanding</h2>
+
+  <div class="card celebrate-card" data-expires="2026-11-04T21:15:00+00:00">
+    <div class="confetti" aria-hidden="true"><span>🎉</span><span>🎊</span><span>🥳</span><span>🍾</span><span>🎉</span><span>🎊</span></div>
+    <img class="avatar celebrate-avatar" src="images/player_avatars/Daveylad_avatar.jpg" alt="" loading="lazy">
+    <div class="celebrate-title">DAVEY HAS PAID!</div>
+    <div class="celebrate-sub">An absolute <strong>LEGEND</strong>. Take a bow, son. 👏</div>
+    <div class="celebrate-note">Subs in, name cleared, reputation restored.<br>
+    One down, 2 to go - Keano & Robin, you're next. 👀</div>
+  </div>  <h2 class="section-heading">Subs outstanding</h2>
   <div class="card shame-card">
     <div class="shame-head">
       <img class="avatar avatar-lg shame-avatar" src="images/player_avatars/keano_avatar.jpg" alt="" loading="lazy">
@@ -82,21 +104,10 @@
     </div>
     <span class="muted">67 pts and counting</span>
   </div>
-  <div class="card shame-card">
-    <div class="shame-head">
-      <img class="avatar avatar-lg shame-avatar" src="images/player_avatars/Daveylad_avatar.jpg" alt="" loading="lazy">
-      <div class="shame-text">
-        <span class="player-name">Davey</span>
-        <span class="shame-line">Points on the board, nothing in the kitty.</span>
-      </div>
-      <span class="shame-stamp">UNPAID</span>
-    </div>
-    <span class="muted">81 pts and counting</span>
-  </div>
   <p class="table-key">Paid up? Get your name off this page by settling with the treasurer.</p>
   </main>
   <footer class="site-footer">
-    <div class="version-banner">Version <strong>v2.0.0</strong> &nbsp;•&nbsp; Run <strong>#226</strong> &nbsp;•&nbsp; Last deployed <strong>2026-11-02 17:44:40 UTC</strong> &nbsp;•&nbsp; API last fetched <strong>2026-11-02 17:44:40 UTC</strong></div>
+    <div class="version-banner">Version <strong>v2.0.0</strong> &nbsp;•&nbsp; Run <strong>#227</strong> &nbsp;•&nbsp; Last deployed <strong>2026-11-02 21:16:07 UTC</strong> &nbsp;•&nbsp; API last fetched <strong>2026-11-02 21:16:07 UTC</strong></div>
   </footer>
 </body>
 </html>
