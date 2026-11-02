@@ -725,8 +725,48 @@ def render_points_race(matches: list[dict]) -> str:
 TABLE_KEY = '<div class="table-key">P played · W wins · D draws · CS clean sheets · GF goal feasts · GK giant kills</div>'
 
 
-def render_points_table(scores: dict, show_teams: bool = True) -> str:
-    """Compact table: rank (shared on equal points), player, optional team crests, stats, points."""
+def team_points(matches: list[dict]) -> dict[str, dict]:
+    """Season stats per team (keyed by normalised name): played, W/D/L, sweepstake points."""
+    stats: dict[str, dict] = {}
+    for match in matches:
+        home = match.get("homeTeam", {}).get("name", "")
+        away = match.get("awayTeam", {}).get("name", "")
+        score = match.get("score", {}).get("fullTime", {})
+        hs, as_ = score.get("home"), score.get("away")
+        if hs is None or as_ is None:
+            continue
+        for team, opp, scored, conceded in ((home, away, hs, as_), (away, home, as_, hs)):
+            row = stats.setdefault(normalize_team_name(team), {"played": 0, "won": 0, "drawn": 0, "lost": 0, "points": 0})
+            row["played"] += 1
+            row["won" if scored > conceded else "drawn" if scored == conceded else "lost"] += 1
+            row["points"] += sum(pts for _, pts in _score_team_in_match(team, opp, scored, conceded))
+    return stats
+
+
+def render_team_breakdown(player: str, by_team: dict[str, dict], columns: int) -> str:
+    """Hidden row under a player: each of their teams with its record and points."""
+    empty = {"played": 0, "won": 0, "drawn": 0, "lost": 0, "points": 0}
+    teams = sorted(PLAYERS[player], key=lambda t: by_team.get(normalize_team_name(t), empty)["points"], reverse=True)
+    lines = "".join(
+        f"""
+            <div class="breakdown-row">{crest_img(team)}<span class="team-row-name">{escape(team)}</span>"""
+        f"""<span class="muted">P{row['played']} W{row['won']} D{row['drawn']} L{row['lost']}</span>"""
+        f"""<span class="breakdown-pts">{row['points']}</span></div>"""
+        for team in teams
+        for row in [by_team.get(normalize_team_name(team), empty)]
+    )
+    return f"""
+      <tr class="breakdown" hidden>
+        <td colspan="{columns}"><div class="breakdown-list">{lines}
+        </div></td>
+      </tr>"""
+
+
+def render_points_table(scores: dict, show_teams: bool = True, breakdown: dict[str, dict] | None = None) -> str:
+    """Compact table: rank (shared on equal points), player, optional team crests, stats, points.
+
+    With `breakdown` (from team_points), tapping a player shows their points by team.
+    """
     sorted_scores = sorted(scores.items(), key=lambda item: item[1]["points"], reverse=True)
 
     rows = []
@@ -749,6 +789,7 @@ def render_points_table(scores: dict, show_teams: bool = True) -> str:
         <td class="col-stat">{data['giant_kills']}</td>
         <td class="col-pts">{data['points']}</td>
       </tr>"""
+            + (render_team_breakdown(player, breakdown, 10 if show_teams else 9) if breakdown is not None else "")
         )
 
     teams_head = '\n          <th class="col-teams">Teams</th>' if show_teams else ""
@@ -771,8 +812,31 @@ def render_points_table(scores: dict, show_teams: bool = True) -> str:
       <tbody>{''.join(rows)}
       </tbody>
     </table>
-    {TABLE_KEY}
-  </div>"""
+    {TABLE_KEY}{BREAKDOWN_HINT if breakdown is not None else ""}
+  </div>{BREAKDOWN_SCRIPT if breakdown is not None else ""}"""
+
+
+BREAKDOWN_HINT = '\n    <div class="table-key">Tap a player to see their points by team.</div>'
+BREAKDOWN_SCRIPT = """
+  <script>
+    // Tap a player's row to show or hide their points-by-team row beneath it.
+    document.querySelectorAll("tr[data-player]").forEach(function (row) {
+      var detail = row.nextElementSibling;
+      if (!detail || !detail.classList.contains("breakdown")) return;
+      row.classList.add("expandable");
+      row.tabIndex = 0;
+      row.setAttribute("aria-expanded", "false");
+      function toggle() {
+        detail.hidden = !detail.hidden;
+        row.classList.toggle("open", !detail.hidden);
+        row.setAttribute("aria-expanded", detail.hidden ? "false" : "true");
+      }
+      row.addEventListener("click", toggle);
+      row.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); }
+      });
+    });
+  </script>"""
 
 
 def render_html(scores: dict, matches: list[dict] | None = None, version: str | None = None, output_path: str | None = None):
@@ -781,7 +845,7 @@ def render_html(scores: dict, matches: list[dict] | None = None, version: str | 
         page="index.html",
         title="Standings · LSB Sweepstake",
         heading="🏆 Standings 2026/27",
-        body=render_points_table(scores, show_teams=True)
+        body=render_points_table(scores, show_teams=True, breakdown=team_points(matches or []))
         + render_points_race(matches or [])
         + render_season_progress(len(matches) if matches is not None else 0, SEASON_MATCHES),
         output_path=output_path or Path(__file__).with_name("index.html"),

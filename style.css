@@ -778,3 +778,31 @@ td.col-pts { font-weight: 800; color: var(--cyan); }
 .race-tip strong { color: var(--muted); font-weight: 600; margin-bottom: 2px; }
 .race-tip-row { display: flex; align-items: center; gap: 6px; }
 .race-tip-row b { margin-left: auto; padding-left: 10px; color: var(--text); }
+
+/* ---------- Standings: tap a player for points by team ---------- */
+tr.expandable { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+tr.expandable:hover td,
+tr.expandable.open td { background: rgba(72, 202, 228, 0.06); }
+tr.expandable.open td { border-bottom-color: transparent; }
+
+tr.breakdown td {
+  padding: 0 6px 10px 32px;
+  background: rgba(72, 202, 228, 0.06);
+}
+
+.breakdown-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: var(--fs-small);
+}
+
+.breakdown-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.breakdown-row .crest { width: 18px; height: 18px; }
+.breakdown-row .team-row-name { flex: 1; min-width: 0; }
+.breakdown-pts { min-width: 2em; text-align: right; font-weight: 800; color: var(--cyan); }

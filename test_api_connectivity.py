@@ -307,6 +307,26 @@ def test_prizes_page_leaders():
     assert html.count('class="data-table prize-table"') == 2
 
 
+def test_standings_breakdown_by_team():
+    import tempfile
+    matches = [
+        {"utcDate": "2026-10-31T15:00:00Z", "homeTeam": {"name": "Hull City AFC"},
+         "awayTeam": {"name": "Chelsea FC"}, "score": {"fullTime": {"home": 2, "away": 1}}},
+    ]
+    by_team = module.team_points(matches)
+    assert by_team["hull-city"] == {"played": 1, "won": 1, "drawn": 0, "lost": 0, "points": 6}
+    assert by_team["chelsea"]["lost"] == 1 and by_team["chelsea"]["points"] == 0
+
+    out = Path(tempfile.mkdtemp()) / "index.html"
+    module.render_html(module.calculate_scores(matches), matches, output_path=out)
+    html = out.read_text(encoding="utf-8")
+    assert html.count('<tr class="breakdown" hidden>') == len(module.PLAYERS)
+    assert "Tap a player" in html
+    # Score-regression parser still reads every player's total
+    from test_api_connectivity import extract_scores_from_html
+    assert len(extract_scores_from_html(out)) == len(module.PLAYERS)
+
+
 def test_latest_results_page_renders_team_crests():
     from fetch_and_score import render_latest_results_page
 
