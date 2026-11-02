@@ -9,6 +9,12 @@ on:
 permissions:
   contents: write
 
+# One update at a time per branch: a run that starts while another is still going
+# waits for it, so two runs never try to save at the same moment.
+concurrency:
+  group: sweepstake-update-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -54,6 +60,9 @@ jobs:
             git commit -m "API Fetch Heartbeat: ${{ env.FETCH_TIMESTAMP }} [skip ci]"
             # Push back to the branch this run was started on (main for the
             # scheduled runs), so manual runs on other branches never touch main.
+            # If someone pushed code while this ran, put this update on top of it
+            # (this run's freshly built pages win any clash), then save.
+            git pull --rebase -X theirs origin ${{ github.ref_name }}
             git push origin HEAD:${{ github.ref_name }}
           else
             echo "ℹ️ No changes detected. Skipping push safely."

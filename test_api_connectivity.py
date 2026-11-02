@@ -210,7 +210,7 @@ def test_all_pages_share_layout_with_version_in_footer():
     import tempfile
     from fetch_and_score import (
         render_html, render_form_page, render_players_page,
-        render_latest_results_page, render_upcoming_fixtures_page, render_pots_quadrant,
+        render_latest_results_page, render_pots_quadrant,
     )
     from rules import render_rules_page
 
@@ -239,8 +239,6 @@ def test_all_pages_share_layout_with_version_in_footer():
 
 def test_upcoming_fixtures_skip_finished_matches():
     import tempfile
-    from fetch_and_score import render_upcoming_fixtures_page
-
     original = module.load_upcoming_matches
     import fetch_and_score
     fetch_and_score.load_upcoming_matches = lambda: [
@@ -251,7 +249,7 @@ def test_upcoming_fixtures_skip_finished_matches():
     ]
     try:
         out = Path(tempfile.mkdtemp()) / "upcoming.html"
-        render_upcoming_fixtures_page(output_path=out)
+        fetch_and_score.render_upcoming_fixtures_page(output_path=out)
         html = out.read_text(encoding="utf-8")
         assert "Everton" in html
         assert "Chelsea" not in html

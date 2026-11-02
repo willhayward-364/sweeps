@@ -1,5 +1,6 @@
 import json
 import os
+from html import escape
 import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -250,7 +251,7 @@ def normalize_team_name(team_name: str) -> str:
     return COMMON_ALIASES.get(slug, slug)
 
 def get_player_avatar_path(player_id: str) -> str:
-    """Resolves the relative path for a player's avatar image, falling back to placeholder.png if missing."""
+    """Resolves the relative path for a player's avatar image, falling back to a placeholder if missing."""
     avatar_rel_path = PLAYER_AVATARS.get(player_id)
 
     if avatar_rel_path:
@@ -258,7 +259,7 @@ def get_player_avatar_path(player_id: str) -> str:
         if full_path.exists():
             return avatar_rel_path
 
-    return "images/avatars/placeholder.png"
+    return "images/player_avatars/placeholder.png"
 
 def get_team_crest_path(team_name: str) -> str | None:
     slug = normalize_team_name(team_name)
@@ -542,7 +543,7 @@ def crest_img(team_name: str, css_class: str = "crest") -> str:
         return ""
     if normalize_team_name(team_name) in DARK_CRESTS:
         css_class += " crest-on-light"
-    return f'<img class="{css_class}" src="{path}" alt="{team_name}" title="{team_name}" loading="lazy">'
+    return f'<img class="{css_class}" src="{path}" alt="{escape(team_name)}" title="{escape(team_name)}" loading="lazy">'
 
 
 def avatar_img(player_id: str, css_class: str = "avatar") -> str:
@@ -568,9 +569,9 @@ def match_team_names(match: dict) -> tuple[str, str]:
 def render_match_line(home_team: str, away_team: str, badge: str, time_label: str) -> str:
     return f"""
     <div class="match-line">
-      <span class="match-team home"><span class="team-name">{home_team}</span>{crest_img(home_team, "crest crest-lg")}</span>
+      <span class="match-team home"><span class="team-name">{escape(home_team)}</span>{crest_img(home_team, "crest crest-lg")}</span>
       <span class="match-mid"><span class="match-badge">{badge}</span><span class="match-time">{time_label}</span></span>
-      <span class="match-team away">{crest_img(away_team, "crest crest-lg")}<span class="team-name">{away_team}</span></span>
+      <span class="match-team away">{crest_img(away_team, "crest crest-lg")}<span class="team-name">{escape(away_team)}</span></span>
     </div>"""
 
 
@@ -719,7 +720,7 @@ def render_players_page(version: str | None = None, output_path: str | None = No
     for player, teams in PLAYERS.items():
         team_rows = "".join(
             f"""
-        <div class="team-row">{crest_img(team)}<span class="team-row-name">{team}</span><span class="muted">{get_team_pot(team)}</span></div>"""
+        <div class="team-row">{crest_img(team)}<span class="team-row-name">{escape(team)}</span><span class="muted">{get_team_pot(team)}</span></div>"""
             for team in teams
         )
         cards.append(
@@ -1064,7 +1065,7 @@ def render_pots_quadrant() -> str:
     cards = []
     for pot_key, label in POT_LABELS.items():
         team_rows = "".join(
-            f'\n        <div class="team-row">{crest_img(team)}<span class="team-row-name">{team}</span></div>'
+            f'\n        <div class="team-row">{crest_img(team)}<span class="team-row-name">{escape(team)}</span></div>'
             for team in POTS.get(pot_key, [])
         )
         cards.append(
@@ -1088,7 +1089,13 @@ if __name__ == "__main__":
     try:
         matches = load_matches()
         check_matches_not_stale(matches)
-    except (MatchFetchError, StaleDataError) as exc:
+    except StaleDataError as exc:
+        # Not an error: the API sent an older copy of its data. Keep the published
+        # pages as they are and let the next run try again. "::warning::" shows as
+        # a yellow note on the (successful) GitHub Actions run.
+        print(f"::warning::Skipped publishing - {exc}")
+        sys.exit(0)
+    except MatchFetchError as exc:
         print(f"❌ {exc}")
         print("Aborting without updating any pages.")
         sys.exit(1)
