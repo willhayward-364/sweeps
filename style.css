@@ -806,3 +806,22 @@ tr.breakdown td {
 .breakdown-row .crest { width: 18px; height: 18px; }
 .breakdown-row .team-row-name { flex: 1; min-width: 0; }
 .breakdown-pts { min-width: 2em; text-align: right; font-weight: 800; color: var(--cyan); }
+
+/* ---------- Fixtures: highlight badges ---------- */
+.highlights {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.highlight {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: rgba(255, 183, 3, 0.12);
+  border: 1px solid rgba(255, 183, 3, 0.45);
+  color: var(--gold);
+  font-size: var(--fs-small);
+  font-weight: 600;
+}

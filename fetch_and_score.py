@@ -1006,7 +1006,51 @@ def render_fixture_owners(home_team: str, away_team: str) -> str:
     </div>"""
 
 
-def render_upcoming_fixtures_page(version: str | None = None, output_path: str | None = None):
+def _top_players(scores: dict, count: int, lowest: bool = False) -> set[str]:
+    """Players in the top (or bottom) `count` places; anyone level with the last place is included."""
+    ordered = sorted(scores.items(), key=lambda item: item[1]["points"], reverse=not lowest)
+    if not ordered:
+        return set()
+    cutoff = ordered[min(count, len(ordered)) - 1][1]["points"]
+    return {p for p, d in scores.items() if (d["points"] <= cutoff if lowest else d["points"] >= cutoff)}
+
+
+def _owners(team: str) -> set[str]:
+    return {p for p, teams in PLAYERS.items() if team_is_in_player_selection(team, teams)}
+
+
+def _names(players: set[str]) -> str:
+    return " & ".join(get_player_display_name(p) for p in PLAYERS if p in players)
+
+
+def fixture_highlights(home_team: str, away_team: str, scores: dict | None) -> list[str]:
+    """Badges for fixtures that matter: title clash, giant-kill chance, spoon battle."""
+    badges = []
+    home_owners, away_owners = _owners(home_team), _owners(away_team)
+
+    def clash(group: set[str]) -> tuple[set[str], set[str]] | None:
+        # Players from the group on opposite sides (anyone owning both teams isn't a rival)
+        h = (home_owners & group) - away_owners
+        a = (away_owners & group) - home_owners
+        return (h, a) if h and a else None
+
+    if scores:
+        top = clash(_top_players(scores, 2))
+        if top:
+            badges.append(f"⚔️ Title clash: {escape(_names(top[0]))} v {escape(_names(top[1]))}")
+
+    for team, opponent in ((home_team, away_team), (away_team, home_team)):
+        if team_is_in_player_selection(team, POTS["pot3"] + POTS["pot4"]) and team_is_in_player_selection(opponent, POTS["pot1"]):
+            badges.append(f"🗡️ Giant-kill chance: +3 extra if {escape(team)} win")
+
+    if scores:
+        bottom = clash(_top_players(scores, 2, lowest=True))
+        if bottom:
+            badges.append(f"🥄 Spoon battle: {escape(_names(bottom[0]))} v {escape(_names(bottom[1]))}")
+    return badges
+
+
+def render_upcoming_fixtures_page(version: str | None = None, output_path: str | None = None, scores: dict | None = None):
     # The API returns all of today's matches, so leave out ones already played
     finished_statuses = {"FINISHED", "AWARDED", "CANCELLED"}
     upcoming = [m for m in load_upcoming_matches() if m.get("status") not in finished_statuses]
@@ -1018,8 +1062,12 @@ def render_upcoming_fixtures_page(version: str | None = None, output_path: str |
         home_team, away_team = match_team_names(match)
         badge = kickoff.strftime("%H:%M") if kickoff else "TBC"
         time_label = kickoff.strftime("%Z") if kickoff else ""
+        highlights = "".join(
+            f'<span class="highlight">{text}</span>' for text in fixture_highlights(home_team, away_team, scores)
+        )
+        highlights_html = f'\n    <div class="highlights">{highlights}</div>' if highlights else ""
         cards.append((kickoff, f"""
-  <div class="card match-card">{render_match_line(home_team, away_team, badge, time_label)}{render_fixture_owners(home_team, away_team)}
+  <div class="card match-card">{highlights_html}{render_match_line(home_team, away_team, badge, time_label)}{render_fixture_owners(home_team, away_team)}
   </div>"""))
 
     body = render_day_grouped(cards) or '  <div class="card empty-note">No fixtures in the next 7 days.</div>'
@@ -1292,7 +1340,7 @@ if __name__ == "__main__":
     render_form_page(matches, version=next_version)
     render_players_page(version=next_version)
     render_latest_results_page(matches, version=next_version)
-    render_upcoming_fixtures_page(version=next_version)
+    render_upcoming_fixtures_page(version=next_version, scores=scores)
     render_prizes_page(matches, scores, version=next_version)
     render_shame_page(scores, version=next_version)
     render_rules_page(pots_html=render_pots_quadrant(), version=next_version)

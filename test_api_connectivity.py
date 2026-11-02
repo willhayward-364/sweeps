@@ -327,6 +327,15 @@ def test_standings_breakdown_by_team():
     assert len(extract_scores_from_html(out)) == len(module.PLAYERS)
 
 
+def test_fixture_highlights():
+    scores = {p: {"points": v} for p, v in zip(module.PLAYERS, [62, 63, 48, 60, 67, 81])}  # Davey 1st, Robin 2nd
+    assert module.fixture_highlights("Chelsea", "Arsenal", scores) == ["⚔️ Title clash: Davey v Robin"]
+    # Davey owns both Hull and Chelsea, so no title clash - but Hull (Pot 4) v Chelsea (Pot 1) is a giant-kill chance
+    assert module.fixture_highlights("Hull City", "Chelsea", scores) == ["🗡️ Giant-kill chance: +3 extra if Hull City win"]
+    assert module.fixture_highlights("Manchester United", "Tottenham Hotspur", scores) == ["🥄 Spoon battle: Dookie v Rich"]
+    assert module.fixture_highlights("Leeds United", "Brentford", scores) == []
+
+
 def test_latest_results_page_renders_team_crests():
     from fetch_and_score import render_latest_results_page
 
