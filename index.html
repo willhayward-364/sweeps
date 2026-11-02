@@ -204,7 +204,10 @@
   </div>
   <script>
     // Tap a player's row to show or hide their points-by-team row beneath it.
+    (function () {
+    function init() {
     document.querySelectorAll("tr[data-player]").forEach(function (row) {
+      if (row.classList.contains("expandable")) return;
       var detail = row.nextElementSibling;
       if (!detail || !detail.classList.contains("breakdown")) return;
       row.classList.add("expandable");
@@ -220,6 +223,9 @@
         if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); }
       });
     });
+    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+    })();
   </script>
   <div class="card race-card">
     <div class="race-head"><span class="progress-label">Points race</span><span class="muted">Tap the chart to see any day</span></div>
@@ -235,8 +241,12 @@
     <script type="application/json" class="race-data">{"x": [30.0, 34.2, 38.4, 42.6, 59.4, 63.6, 67.8, 71.9, 88.7, 92.9, 97.1, 122.3, 126.5, 130.7, 147.4, 151.6, 155.8, 239.7, 243.9, 248.1, 269.1, 273.3, 277.5, 294.2, 298.4, 302.6, 327.8, 332.0], "labels": ["Fri 21 Aug", "Sat 22 Aug", "Sun 23 Aug", "Mon 24 Aug", "Fri 28 Aug", "Sat 29 Aug", "Sun 30 Aug", "Mon 31 Aug", "Fri 4 Sep", "Sat 5 Sep", "Sun 6 Sep", "Sat 12 Sep", "Sun 13 Sep", "Mon 14 Sep", "Fri 18 Sep", "Sat 19 Sep", "Sun 20 Sep", "Sat 10 Oct", "Sun 11 Oct", "Mon 12 Oct", "Sat 17 Oct", "Sun 18 Oct", "Mon 19 Oct", "Fri 23 Oct", "Sat 24 Oct", "Sun 25 Oct", "Sat 31 Oct", "Sun 1 Nov"], "players": [{"name": "364", "cls": "series-1", "points": [0, 7, 8, 8, 8, 10, 11, 11, 15, 17, 17, 24, 24, 28, 28, 28, 34, 37, 37, 37, 40, 45, 45, 46, 46, 57, 62, 62]}, {"name": "Keano", "cls": "series-2", "points": [0, 3, 6, 6, 10, 10, 14, 14, 14, 21, 21, 25, 29, 29, 29, 33, 38, 42, 47, 47, 55, 55, 55, 56, 59, 61, 63, 63]}, {"name": "Dookie", "cls": "series-3", "points": [0, 7, 8, 8, 8, 16, 20, 20, 20, 27, 28, 29, 29, 29, 29, 32, 35, 36, 41, 41, 41, 42, 42, 42, 42, 47, 48, 48]}, {"name": "Rich", "cls": "series-4", "points": [0, 8, 8, 8, 8, 8, 9, 9, 9, 12, 12, 19, 19, 19, 24, 28, 28, 33, 33, 37, 37, 37, 41, 42, 46, 47, 60, 60]}, {"name": "Robin", "cls": "series-5", "points": [5, 12, 12, 12, 12, 17, 17, 21, 21, 25, 28, 38, 38, 38, 38, 38, 39, 42, 43, 43, 47, 51, 51, 52, 60, 61, 63, 67]}, {"name": "Davey", "cls": "series-6", "points": [0, 11, 16, 20, 20, 25, 30, 30, 30, 33, 34, 38, 43, 43, 43, 52, 52, 60, 62, 62, 66, 71, 71, 71, 71, 72, 81, 81]}]}</script>
   </div>
   <script>
+    // Finds the chart by class (not document.currentScript), so it also works in
+    // previewers like htmlpreview that re-insert page scripts.
     (function () {
-      var card = document.currentScript.previousElementSibling;
+      function setup(card) {
+      if (card.dataset.ready) return;
+      card.dataset.ready = "1";
       var data = JSON.parse(card.querySelector(".race-data").textContent);
       var svg = card.querySelector(".race-chart"), hit = card.querySelector(".race-hit");
       var cursor = card.querySelector(".race-cursor"), tip = card.querySelector(".race-tip");
@@ -260,6 +270,9 @@
       hit.addEventListener("pointerdown", show);
       hit.addEventListener("pointerleave", function (e) { if (e.pointerType === "mouse") hide(); });
       document.addEventListener("pointerdown", function (e) { if (!card.contains(e.target)) hide(); });
+      }
+      function init() { document.querySelectorAll(".race-card").forEach(setup); }
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
     })();
   </script>
   <div class="card progress-card">
@@ -271,7 +284,7 @@
   </div>
   </main>
   <footer class="site-footer">
-    <div class="version-banner">Version <strong>v2.0.0</strong> &nbsp;•&nbsp; Run <strong>#224</strong> &nbsp;•&nbsp; Last deployed <strong>2026-11-02 08:54:26 UTC</strong> &nbsp;•&nbsp; API last fetched <strong>2026-11-02 08:54:26 UTC</strong></div>
+    <div class="version-banner">Version <strong>v2.0.0</strong> &nbsp;•&nbsp; Run <strong>#225</strong> &nbsp;•&nbsp; Last deployed <strong>2026-11-02 13:14:56 UTC</strong> &nbsp;•&nbsp; API last fetched <strong>2026-11-02 13:14:56 UTC</strong></div>
   </footer>
 </body>
 </html>
