@@ -103,7 +103,15 @@ KEEPY_UPPY = """
         <span class="game-score">0</span>
         <button type="button" class="game-close" aria-label="Close game">✕</button>
       </div>
-      <canvas class="game-canvas" width="320" height="420"></canvas>
+      <div class="game-stage">
+        <canvas class="game-canvas" width="320" height="420"></canvas>
+        <div class="game-over" hidden>
+          <div class="game-over-label">Score</div>
+          <div class="game-over-score">0</div>
+          <div class="game-over-note"></div>
+          <button type="button" class="game-again">Play again</button>
+        </div>
+      </div>
       <div class="game-foot"><span class="game-msg">Tap the ball to start</span><span class="muted game-best"></span></div>
     </div>
   </div>
@@ -117,6 +125,8 @@ KEEPY_UPPY = """
         var canvas = overlay.querySelector(".game-canvas"), ctx = canvas.getContext("2d");
         var scoreEl = overlay.querySelector(".game-score"), msg = overlay.querySelector(".game-msg");
         var bestEl = overlay.querySelector(".game-best");
+        var overPanel = overlay.querySelector(".game-over");
+        var overScore = overlay.querySelector(".game-over-score"), overNote = overlay.querySelector(".game-over-note");
         var W = canvas.width, H = canvas.height, R = 26, GRAVITY = 0.35;
         // state: "ready" (ball waiting to be tapped), "playing", or "over" (dropped; next tap resets)
         var ball, score, best = 0, state = "ready", running = false, frame = null;
@@ -124,7 +134,7 @@ KEEPY_UPPY = """
 
         function reset() {
           ball = { x: W / 2, y: H * 0.35, vx: 0, vy: 0, spin: 0 };
-          score = 0; state = "ready"; scoreEl.textContent = "0";
+          score = 0; state = "ready"; scoreEl.textContent = "0"; overPanel.hidden = true;
           bestEl.textContent = best ? "Best " + best : "";
           msg.textContent = "Tap the ball to start";
         }
@@ -151,7 +161,10 @@ KEEPY_UPPY = """
               ball.y = H - 18 - R; state = "over";
               var newBest = score > best;
               if (newBest) { best = score; try { localStorage.setItem("keepyUppyBest", String(best)); } catch (e) {} }
-              msg.textContent = (newBest ? "New best! " : "Dropped it! ") + score + " - tap to go again";
+              overScore.textContent = String(score);
+              overNote.textContent = newBest ? "New best! 🎉" : "Best: " + best;
+              overPanel.hidden = false;
+              msg.textContent = "Dropped it!";
               bestEl.textContent = "Best " + best;
             }
           }
@@ -163,7 +176,7 @@ KEEPY_UPPY = """
           evt.preventDefault();
           var box = canvas.getBoundingClientRect();
           var x = (evt.clientX - box.left) * (W / box.width), y = (evt.clientY - box.top) * (H / box.height);
-          if (state === "over") { reset(); return; }        // after a drop, a tap just sets up the next go
+          if (state === "over") return;                      // use the Play again button
           var dx = ball.x - x, dy = ball.y - y;
           if (dx * dx + dy * dy <= (R * 1.6) * (R * 1.6)) {   // a generous hit area
             if (state === "ready") { state = "playing"; msg.textContent = "Keep it up!"; }
@@ -183,6 +196,7 @@ KEEPY_UPPY = """
         overlay.querySelector(".game-close").addEventListener("click", close);
         overlay.addEventListener("click", function (e) { if (e.target === overlay) close(); });
         canvas.addEventListener("pointerdown", kick);
+        overlay.querySelector(".game-again").addEventListener("click", reset);
       }
       if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
     })();
