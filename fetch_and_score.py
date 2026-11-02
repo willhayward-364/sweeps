@@ -159,7 +159,13 @@ PLAYER_NICKNAMES = {
 }
 
 # Hall of Shame: players who haven't paid their subs yet. Remove a player once they pay.
-UNPAID_SUBS = ["Player B", "Player E", "Player F"]  # Keano, Robin, Davey
+UNPAID_SUBS = ["Player B", "Player E"]  # Keano, Robin
+
+# Players who have just paid get a celebration for 48 hours (UTC time they paid).
+RECENTLY_PAID = {
+    "Player F": datetime(2026, 11, 2, 21, 15, tzinfo=timezone.utc),  # Davey - legend
+}
+CELEBRATION_HOURS = 48
 
 PLAYER_AVATARS = {
     "Player A": "images/player_avatars/364_avatar.jpg",
@@ -1252,8 +1258,57 @@ SHAME_LINES = [
 ]
 
 
+def active_celebrations(now: datetime | None = None) -> list[tuple[str, datetime]]:
+    """(player, expiry) for payments still inside their celebration window."""
+    now = now or datetime.now(timezone.utc)
+    window = timedelta(hours=CELEBRATION_HOURS)
+    return [(p, paid + window) for p, paid in RECENTLY_PAID.items() if paid <= now < paid + window]
+
+
+def render_celebration_banner(now: datetime | None = None) -> str:
+    """Slim banner for the top of every page while someone's payment is being celebrated."""
+    return "".join(
+        f"""
+  <a href="shame.html" class="celebrate-banner" data-expires="{expires.isoformat()}">
+    🎉 <strong>{get_player_display_name(player)} has paid his subs!</strong> What a legend. 🏆
+  </a>"""
+        for player, expires in active_celebrations(now)
+    )
+
+
+def render_celebration_cards(now: datetime | None = None) -> str:
+    """The full song and dance on the Hall of Shame page."""
+    return "".join(
+        f"""
+  <div class="card celebrate-card" data-expires="{expires.isoformat()}">
+    <div class="confetti" aria-hidden="true"><span>🎉</span><span>🎊</span><span>🥳</span><span>🍾</span><span>🎉</span><span>🎊</span></div>
+    {avatar_img(player, "avatar celebrate-avatar")}
+    <div class="celebrate-title">{get_player_display_name(player).upper()} HAS PAID!</div>
+    <div class="celebrate-sub">An absolute <strong>LEGEND</strong>. Take a bow, son. 👏</div>
+    <div class="celebrate-note">Subs in, name cleared, reputation restored.<br>
+    {"One down, " + str(len(UNPAID_SUBS)) + " to go - " + " & ".join(get_player_display_name(p) for p in UNPAID_SUBS) + ", you're next. 👀" if UNPAID_SUBS else "Everyone's paid. Remarkable scenes."}</div>
+  </div>"""
+        for player, expires in active_celebrations(now)
+    )
+
+
+CELEBRATION_SCRIPT = """
+  <script>
+    // Hide celebrations once their 48 hours are up, even if the page hasn't been rebuilt yet.
+    (function () {
+      function tidy() {
+        document.querySelectorAll("[data-expires]").forEach(function (el) {
+          if (Date.now() >= Date.parse(el.getAttribute("data-expires"))) el.remove();
+        });
+      }
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", tidy); else tidy();
+    })();
+  </script>"""
+
+
 def render_shame_page(scores: dict | None = None, version: str | None = None, output_path: str | None = None):
     """Light-hearted list of players who haven't paid their subs."""
+    celebrations = render_celebration_cards()
     if UNPAID_SUBS:
         cards = []
         for i, player in enumerate(UNPAID_SUBS):
@@ -1281,6 +1336,7 @@ def render_shame_page(scores: dict | None = None, version: str | None = None, ou
     else:
         body = '  <div class="card empty-note">Everyone has paid their subs. 🎉 Nothing to see here.</div>'
 
+    body = celebrations + body
     render_page(
         page="shame.html",
         title="Hall of Shame · LSB Sweepstake",
@@ -1347,6 +1403,11 @@ if __name__ == "__main__":
 
     # 3. Site version (set by hand in version.py)
     next_version = read_version()
+
+    # Celebration banner on every page while someone's payment is being celebrated
+    import layout
+    banner = render_celebration_banner()
+    layout.SITE_BANNER = banner + CELEBRATION_SCRIPT if banner else ""
 
     # 4. Scoring and page generation
     scores = calculate_scores(matches)

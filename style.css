@@ -825,3 +825,84 @@ tr.breakdown td {
   font-size: var(--fs-small);
   font-weight: 600;
 }
+
+/* ---------- Paid-up celebration ---------- */
+.celebrate-banner {
+  display: block;
+  margin-top: 8px;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  text-align: center;
+  text-decoration: none;
+  color: var(--bg);
+  font-weight: 600;
+  background: linear-gradient(90deg, #ffb703, #48cae4, #ffb703);
+  background-size: 200% 100%;
+  animation: celebrate-shine 4s linear infinite;
+}
+
+.celebrate-banner strong { font-weight: 800; }
+
+.celebrate-card {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding: 18px 14px 16px;
+  border: 2px solid var(--gold);
+  background: radial-gradient(circle at 50% 0%, rgba(255, 183, 3, 0.25), var(--card) 70%);
+}
+
+.celebrate-avatar {
+  width: 84px;
+  height: 84px;
+  border: 3px solid var(--gold);
+  box-shadow: 0 0 18px rgba(255, 183, 3, 0.6);
+  animation: celebrate-bounce 1.6s ease-in-out infinite;
+}
+
+.celebrate-title {
+  margin-top: 10px;
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: var(--gold);
+}
+
+.celebrate-sub { margin-top: 4px; font-size: 1.05rem; }
+.celebrate-sub strong { color: var(--cyan); }
+.celebrate-note { margin-top: 8px; color: var(--muted); font-size: var(--fs-small); }
+
+.confetti span {
+  position: absolute;
+  top: -30px;
+  font-size: 1.3rem;
+  animation: celebrate-fall 3.2s linear infinite;
+}
+
+.confetti span:nth-child(1) { left: 6%;  animation-delay: 0s; }
+.confetti span:nth-child(2) { left: 22%; animation-delay: 1.1s; }
+.confetti span:nth-child(3) { left: 40%; animation-delay: 2.2s; }
+.confetti span:nth-child(4) { left: 60%; animation-delay: 0.6s; }
+.confetti span:nth-child(5) { left: 77%; animation-delay: 1.7s; }
+.confetti span:nth-child(6) { left: 92%; animation-delay: 2.7s; }
+
+@keyframes celebrate-fall {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 0; }
+  10%  { opacity: 1; }
+  100% { transform: translateY(330px) rotate(360deg); opacity: 0; }
+}
+
+@keyframes celebrate-bounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-6px) scale(1.05); }
+}
+
+@keyframes celebrate-shine {
+  0%   { background-position: 0% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .celebrate-banner, .celebrate-avatar, .confetti span { animation: none; }
+  .confetti { display: none; }
+}

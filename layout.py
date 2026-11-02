@@ -94,6 +94,11 @@ def render_topbar(active_page: str = "") -> str:
   </script>"""
 
 
+# Optional extra HTML shown under the menu on every page (e.g. a celebration banner).
+# fetch_and_score.py sets this before building the pages.
+SITE_BANNER = ""
+
+
 def render_page(
     *,
     page: str,
@@ -113,7 +118,7 @@ def render_page(
   <link rel="stylesheet" href="{stylesheet_href()}">
 </head>
 <body>
-  {render_topbar(page)}
+  {render_topbar(page)}{SITE_BANNER}
   <main>
   <h1 class="page-title visually-hidden">{heading}</h1>
 {body}

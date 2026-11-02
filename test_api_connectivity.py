@@ -336,6 +336,16 @@ def test_fixture_highlights():
     assert module.fixture_highlights("Leeds United", "Brentford", scores) == []
 
 
+def test_paid_celebration_lasts_48_hours():
+    from datetime import datetime, timedelta, timezone
+    paid = module.RECENTLY_PAID["Player F"]
+    assert module.active_celebrations(paid + timedelta(hours=1))
+    assert "legend" in module.render_celebration_banner(paid + timedelta(hours=47))
+    assert not module.active_celebrations(paid + timedelta(hours=48, minutes=1))
+    assert module.render_celebration_cards(paid + timedelta(hours=49)) == ""
+    assert "Player F" not in module.UNPAID_SUBS
+
+
 def test_latest_results_page_renders_team_crests():
     from fetch_and_score import render_latest_results_page
 
