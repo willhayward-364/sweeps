@@ -1036,3 +1036,73 @@ tr.breakdown td {
 @media (prefers-reduced-motion: reduce) {
   .fireworks { display: none; }
 }
+
+/* ---------- Easter egg: keepy-uppy ---------- */
+.egg-ball {
+  display: block;
+  margin: 8px auto 0;
+  padding: 4px;
+  border: none;
+  background: none;
+  font-size: 0.9rem;
+  opacity: 0.25;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.egg-ball:hover { opacity: 0.6; }
+
+.game-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(5, 10, 24, 0.85);
+}
+
+.game-overlay[hidden] { display: none; }
+
+.game-box {
+  width: 100%;
+  max-width: 360px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px;
+}
+
+.game-head, .game-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.game-title { font-weight: 800; color: var(--gold); }
+.game-score { font-size: 1.4rem; font-weight: 900; color: var(--cyan); }
+
+.game-close {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--card-inner);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.game-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 8px 0;
+  border-radius: 8px;
+  background: linear-gradient(#0f1c33, #1c2541);
+  touch-action: none;
+  cursor: pointer;
+}
+
+.game-msg { font-size: var(--fs-small); }
