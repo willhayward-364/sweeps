@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prizes · LSB Sweepstake</title>
+  <link rel="stylesheet" href="style.css?v=1f42002e">
+</head>
+<body>
+  
+  <header class="topbar">
+    <div class="topbar-brand">
+      <img src="images/crests/LSB_crest.PNG" alt="Sweepstake Logo" class="topbar-logo" id="site-logo">
+      <strong>LSB Official Agreed Sweepstake</strong>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html" class="nav-btn">Standings</a>
+      <a href="form.html" class="nav-btn">Form</a>
+      <a href="players.html" class="nav-btn">Players</a>
+      <a href="latest_results.html" class="nav-btn">Results</a>
+      <a href="upcoming_fixtures.html" class="nav-btn">Fixtures</a>
+      <a href="prizes.html" class="nav-btn active" aria-current="page">Prizes</a>
+      <a href="rules.html" class="nav-btn">Rules</a>
+      <a href="shame.html" class="nav-btn">Hall of Shame</a>
+    </nav>
+  </header>
+  <script>
+    (function () {
+      var logo = document.getElementById("site-logo");
+      if (!logo) return;
+      var original = logo.getAttribute("src");
+      var egg = "images/crests/england_tottenham.football-logos.cc.png";
+      var taps = 0, timer = null;
+      function show(on, animate) {
+        logo.src = on ? egg : original;
+        logo.alt = on ? "Tottenham Hotspur crest" : "Sweepstake Logo";
+        logo.classList.toggle("logo-egg", on);
+        if (animate) {
+          logo.classList.remove("logo-spin");
+          void logo.offsetWidth;
+          logo.classList.add("logo-spin");
+        }
+      }
+      var active = false;
+      try { active = sessionStorage.getItem("spursLogo") === "1"; } catch (e) {}
+      if (active) show(true, false);
+      logo.addEventListener("click", function () {
+        taps += 1;
+        clearTimeout(timer);
+        timer = setTimeout(function () { taps = 0; }, 1500);
+        if (taps >= 10) {
+          taps = 0;
+          active = !active;
+          show(active, true);
+          try { sessionStorage.setItem("spursLogo", active ? "1" : "0"); } catch (e) {}
+        }
+      });
+    })();
+  </script>
+  <main>
+  <h1 class="page-title visually-hidden">💰 Prizes</h1>
+
+  <div class="card progress-card">
+    <div class="progress-head">
+      <span class="progress-label">Season progress</span>
+      <span><strong>95</strong> of 380 matches played · <span class="muted">285 to go</span></span>
+    </div>
+    <progress class="progress-bar" value="95" max="380">25%</progress>
+  </div>
+  <h2 class="section-heading">Prizes · £120 in total</h2>
+  <div class="card prizes-card">
+    <div class="prize-row">
+      <span class="prize-emoji">🥇</span>
+      <div class="prize-text">
+        <div class="prize-title">Champion <span class="muted">· Most points</span></div>
+        <div class="prize-holder"><span class="prize-status">Leading:</span><span class="owner"><img class="avatar avatar-sm" src="images/player_avatars/Daveylad_avatar.jpg" alt="" loading="lazy">Davey</span><span class="muted">89 pts</span></div>
+      </div>
+      <span class="pill">£50</span>
+    </div>
+    <div class="prize-row">
+      <span class="prize-emoji">🥈</span>
+      <div class="prize-text">
+        <div class="prize-title">Runner-up <span class="muted">· 2nd most points</span></div>
+        <div class="prize-holder"><span class="prize-status">Currently 2nd:</span><span class="owner"><img class="avatar avatar-sm" src="images/player_avatars/Robin_avatar.jpg" alt="" loading="lazy">Robin</span><span class="muted">79 pts</span></div>
+      </div>
+      <span class="pill">£30</span>
+    </div>
+    <details class="prize-details">
+      <summary class="prize-row">
+      <span class="prize-emoji">🧤</span>
+      <div class="prize-text">
+        <div class="prize-title">Golden Gloves <span class="muted">· Most clean sheets</span></div>
+        <div class="prize-holder"><span class="prize-status">Leading:</span><span class="owner"><img class="avatar avatar-sm" src="images/player_avatars/Daveylad_avatar.jpg" alt="" loading="lazy">Davey</span><span class="muted">15 clean sheets</span></div>
+      </div>
+      <span class="prize-toggle" aria-hidden="true"></span>
+      <span class="pill">£10</span>
+      </summary>
+      <table class="data-table prize-table">
+        <thead>
+          <tr>
+            <th class="col-rank">#</th>
+            <th class="col-player">Player</th>
+            <th class="col-teams">Teams</th>
+            <th class="col-pts">Clean sheets</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="col-rank">1</td>
+            <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/Daveylad_avatar.jpg" alt="" loading="lazy">Davey</span></td>
+            <td class="col-teams"><img class="crest" src="images/crests/england_chelsea.football-logos.cc.png" alt="Chelsea" title="Chelsea" loading="lazy"><img class="crest" src="images/crests/england_brighton.football-logos.cc.png" alt="Brighton &amp; Hove Albion" title="Brighton &amp; Hove Albion" loading="lazy"><img class="crest" src="images/crests/england_everton.football-logos.cc.png" alt="Everton" title="Everton" loading="lazy"><img class="crest" src="images/crests/england_hull-city.football-logos.cc.png" alt="Hull City" title="Hull City" loading="lazy"></td>
+            <td class="col-pts">15</td>
+          </tr>
+          <tr>
+            <td class="col-rank">2</td>
+            <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/Robin_avatar.jpg" alt="" loading="lazy">Robin</span></td>
+            <td class="col-teams"><img class="crest" src="images/crests/england_arsenal.football-logos.cc.png" alt="Arsenal" title="Arsenal" loading="lazy"><img class="crest" src="images/crests/england_fulham.football-logos.cc.png" alt="Fulham" title="Fulham" loading="lazy"><img class="crest" src="images/crests/england_nottingham-forest.football-logos.cc.png" alt="Nottingham Forest" title="Nottingham Forest" loading="lazy"><img class="crest" src="images/crests/england_hull-city.football-logos.cc.png" alt="Hull City" title="Hull City" loading="lazy"></td>
+            <td class="col-pts">14</td>
+          </tr>
+          <tr>
+            <td class="col-rank">3</td>
+            <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/364_avatar.jpg" alt="" loading="lazy">364</span></td>
+            <td class="col-teams"><img class="crest" src="images/crests/england_liverpool.football-logos.cc.png" alt="Liverpool" title="Liverpool" loading="lazy"><img class="crest" src="images/crests/england_bournemouth.football-logos.cc.png" alt="AFC Bournemouth" title="AFC Bournemouth" loading="lazy"><img class="crest" src="images/crests/england_leeds-united.football-logos.cc.png" alt="Leeds United" title="Leeds United" loading="lazy"><img class="crest" src="images/crests/england_ipswich.football-logos.cc.png" alt="Ipswich Town" title="Ipswich Town" loading="lazy"></td>
+            <td class="col-pts">11</td>
+          </tr>
+          <tr>
+            <td class="col-rank">4</td>
+            <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/Rich_avatar.jpg" alt="" loading="lazy">Rich</span></td>
+            <td class="col-teams"><img class="crest crest-on-light" src="images/crests/england_tottenham.football-logos.cc.png" alt="Tottenham Hotspur" title="Tottenham Hotspur" loading="lazy"><img class="crest" src="images/crests/england_brentford.football-logos.cc.png" alt="Brentford" title="Brentford" loading="lazy"><img class="crest" src="images/crests/england_coventry-city.football-logos.cc.png" alt="Coventry City" title="Coventry City" loading="lazy"><img class="crest" src="images/crests/england_ipswich.football-logos.cc.png" alt="Ipswich Town" title="Ipswich Town" loading="lazy"></td>
+            <td class="col-pts">8</td>
+          </tr>
+          <tr>
+            <td class="col-rank">5</td>
+            <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/keano_avatar.jpg" alt="" loading="lazy">Keano</span></td>
+            <td class="col-teams"><img class="crest" src="images/crests/england_manchester-city.football-logos.cc.png" alt="Manchester City" title="Manchester City" loading="lazy"><img class="crest" src="images/crests/england_aston-villa.football-logos.cc.png" alt="Aston Villa" title="Aston Villa" loading="lazy"><img class="crest" src="images/crests/england_sunderland.football-logos.cc.png" alt="Sunderland" title="Sunderland" loading="lazy"><img class="crest" src="images/crests/england_ipswich.football-logos.cc.png" alt="Ipswich Town" title="Ipswich Town" loading="lazy"></td>
+            <td class="col-pts">7</td>
+          </tr>
+          <tr>
+            <td class="col-rank">6</td>
+            <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/dookie_avatar.jpg" alt="" loading="lazy">Dookie</span></td>
+            <td class="col-teams"><img class="crest" src="images/crests/england_manchester-united.football-logos.cc.png" alt="Manchester United" title="Manchester United" loading="lazy"><img class="crest" src="images/crests/england_newcastle.football-logos.cc.png" alt="Newcastle United" title="Newcastle United" loading="lazy"><img class="crest" src="images/crests/england_crystal-palace.football-logos.cc.png" alt="Crystal Palace" title="Crystal Palace" loading="lazy"><img class="crest" src="images/crests/england_hull-city.football-logos.cc.png" alt="Hull City" title="Hull City" loading="lazy"></td>
+            <td class="col-pts">6</td>
+          </tr>
+        </tbody>
+      </table>
+    </details>
+    <details class="prize-details">
+      <summary class="prize-row">
+      <span class="prize-emoji">⚽</span>
+      <div class="prize-text">
+        <div class="prize-title">Golden Boot <span class="muted">· Most goals scored</span></div>
+        <div class="prize-holder"><span class="prize-status">Leading:</span><span class="owner"><img class="avatar avatar-sm" src="images/player_avatars/Daveylad_avatar.jpg" alt="" loading="lazy">Davey</span><span class="muted">66 goals</span></div>
+      </div>
+      <span class="prize-toggle" aria-hidden="true"></span>
+      <span class="pill">£10</span>
+      </summary>
+      <table class="data-table prize-table">
+        <thead>
+          <tr>
+            <th class="col-rank">#</th>
+            <th class="col-player">Player</th>
+            <th class="col-teams">Teams</th>
+            <th class="col-pts">Goals</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="col-rank">1</td>
+            <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/Daveylad_avatar.jpg" alt="" loading="lazy">Davey</span></td>
+            <td class="col-teams"><img class="crest" src="images/crests/england_chelsea.football-logos.cc.png" alt="Chelsea" title="Chelsea" loading="lazy"><img class="crest" src="images/crests/england_brighton.football-logos.cc.png" alt="Brighton &amp; Hove Albion" title="Brighton &amp; Hove Albion" loading="lazy"><img class="crest" src="images/crests/england_everton.football-logos.cc.png" alt="Everton" title="Everton" loading="lazy"><img class="crest" src="images/crests/england_hull-city.football-logos.cc.png" alt="Hull City" title="Hull City" loading="lazy"></td>
+            <td class="col-pts">66</td>
+          </tr>
+          <tr>
+            <td class="col-rank">2</td>
+            <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/keano_avatar.jpg" alt="" loading="lazy">Keano</span></td>
+            <td class="col-teams"><img class="crest" src="images/crests/england_manchester-city.football-logos.cc.png" alt="Manchester City" title="Manchester City" loading="lazy"><img class="crest" src="images/crests/england_aston-villa.football-logos.cc.png" alt="Aston Villa" title="Aston Villa" loading="lazy"><img class="crest" src="images/crests/england_sunderland.football-logos.cc.png" alt="Sunderland" title="Sunderland" loading="lazy"><img class="crest" src="images/crests/england_ipswich.football-logos.cc.png" alt="Ipswich Town" title="Ipswich Town" loading="lazy"></td>
+            <td class="col-pts">52</td>
+          </tr>
+          <tr>
+            <td class="col-rank">3</td>
+            <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/Rich_avatar.jpg" alt="" loading="lazy">Rich</span></td>
+            <td class="col-teams"><img class="crest crest-on-light" src="images/crests/england_tottenham.football-logos.cc.png" alt="Tottenham Hotspur" title="Tottenham Hotspur" loading="lazy"><img class="crest" src="images/crests/england_brentford.football-logos.cc.png" alt="Brentford" title="Brentford" loading="lazy"><img class="crest" src="images/crests/england_coventry-city.football-logos.cc.png" alt="Coventry City" title="Coventry City" loading="lazy"><img class="crest" src="images/crests/england_ipswich.football-logos.cc.png" alt="Ipswich Town" title="Ipswich Town" loading="lazy"></td>
+            <td class="col-pts">50</td>
+          </tr>
+          <tr>
+            <td class="col-rank">4</td>
+            <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/364_avatar.jpg" alt="" loading="lazy">364</span></td>
+            <td class="col-teams"><img class="crest" src="images/crests/england_liverpool.football-logos.cc.png" alt="Liverpool" title="Liverpool" loading="lazy"><img class="crest" src="images/crests/england_bournemouth.football-logos.cc.png" alt="AFC Bournemouth" title="AFC Bournemouth" loading="lazy"><img class="crest" src="images/crests/england_leeds-united.football-logos.cc.png" alt="Leeds United" title="Leeds United" loading="lazy"><img class="crest" src="images/crests/england_ipswich.football-logos.cc.png" alt="Ipswich Town" title="Ipswich Town" loading="lazy"></td>
+            <td class="col-pts">49</td>
+          </tr>
+          <tr>
+            <td class="col-rank">5</td>
+            <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/Robin_avatar.jpg" alt="" loading="lazy">Robin</span></td>
+            <td class="col-teams"><img class="crest" src="images/crests/england_arsenal.football-logos.cc.png" alt="Arsenal" title="Arsenal" loading="lazy"><img class="crest" src="images/crests/england_fulham.football-logos.cc.png" alt="Fulham" title="Fulham" loading="lazy"><img class="crest" src="images/crests/england_nottingham-forest.football-logos.cc.png" alt="Nottingham Forest" title="Nottingham Forest" loading="lazy"><img class="crest" src="images/crests/england_hull-city.football-logos.cc.png" alt="Hull City" title="Hull City" loading="lazy"></td>
+            <td class="col-pts">45</td>
+          </tr>
+          <tr>
+            <td class="col-rank">6</td>
+            <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/dookie_avatar.jpg" alt="" loading="lazy">Dookie</span></td>
+            <td class="col-teams"><img class="crest" src="images/crests/england_manchester-united.football-logos.cc.png" alt="Manchester United" title="Manchester United" loading="lazy"><img class="crest" src="images/crests/england_newcastle.football-logos.cc.png" alt="Newcastle United" title="Newcastle United" loading="lazy"><img class="crest" src="images/crests/england_crystal-palace.football-logos.cc.png" alt="Crystal Palace" title="Crystal Palace" loading="lazy"><img class="crest" src="images/crests/england_hull-city.football-logos.cc.png" alt="Hull City" title="Hull City" loading="lazy"></td>
+            <td class="col-pts">43</td>
+          </tr>
+        </tbody>
+      </table>
+    </details>
+    <div class="prize-row">
+      <span class="prize-emoji">🎄</span>
+      <div class="prize-text">
+        <div class="prize-title">Christmas No. 1 <span class="muted">· Most points</span></div>
+        <div class="prize-holder"><span class="prize-status">Leading:</span><span class="owner"><img class="avatar avatar-sm" src="images/player_avatars/Daveylad_avatar.jpg" alt="" loading="lazy">Davey</span><span class="muted">89 pts</span></div>
+      </div>
+      <span class="pill">£10</span>
+    </div>
+    <div class="prize-row">
+      <span class="prize-emoji">🥄</span>
+      <div class="prize-text">
+        <div class="prize-title">Wooden Spoon <span class="muted">· Fewest points</span></div>
+        <div class="prize-holder"><span class="prize-status">Currently bottom:</span><span class="owner"><img class="avatar avatar-sm" src="images/player_avatars/dookie_avatar.jpg" alt="" loading="lazy">Dookie</span><span class="muted">49 pts</span></div>
+      </div>
+      <span class="pill">£10</span>
+    </div>
+  </div>
+  <p class="table-key">Tap Golden Gloves or Golden Boot to see where everyone stands. Leaders update after every result; ties share the spot until the group decides otherwise.</p>
+  </main>
+  <footer class="site-footer">
+    <div class="version-banner">Version <strong>v2.0.0</strong> &nbsp;•&nbsp; Run <strong>#247</strong> &nbsp;•&nbsp; Last deployed <strong>2026-11-07 22:10:59 UTC</strong> &nbsp;•&nbsp; API last fetched <strong>2026-11-07 22:10:59 UTC</strong></div>
+    <button type="button" class="egg-ball" aria-label="Play keepy-uppy">⚽</button>
+  </footer>
+  <div class="game-overlay" hidden>
+    <div class="game-box">
+      <div class="game-head">
+        <span class="game-title">Keepy-Uppy</span>
+        <span class="game-score">0</span>
+        <button type="button" class="game-close" aria-label="Close game">✕</button>
+      </div>
+      <div class="game-stage">
+        <canvas class="game-canvas" width="320" height="420"></canvas>
+        <div class="game-over" hidden>
+          <div class="game-over-label">Score</div>
+          <div class="game-over-score">0</div>
+          <div class="game-over-note"></div>
+          <button type="button" class="game-again">Play again</button>
+        </div>
+      </div>
+      <div class="game-foot"><span class="game-msg">Tap the ball to start</span><span class="muted game-best"></span></div>
+    </div>
+  </div>
+  <script>
+    // Keepy-uppy: tap the ball to kick it up; score a point per touch; game over when it hits the floor.
+    (function () {
+      function init() {
+        var opener = document.querySelector(".egg-ball"), overlay = document.querySelector(".game-overlay");
+        if (!opener || !overlay || overlay.dataset.ready) return;
+        overlay.dataset.ready = "1";
+        var canvas = overlay.querySelector(".game-canvas"), ctx = canvas.getContext("2d");
+        var scoreEl = overlay.querySelector(".game-score"), msg = overlay.querySelector(".game-msg");
+        var bestEl = overlay.querySelector(".game-best");
+        var overPanel = overlay.querySelector(".game-over");
+        var overScore = overlay.querySelector(".game-over-score"), overNote = overlay.querySelector(".game-over-note");
+        var W = canvas.width, H = canvas.height, R = 26, GRAVITY = 0.35;
+        // state: "ready" (ball waiting to be tapped), "playing", or "over" (dropped; next tap resets)
+        var ball, score, best = 0, state = "ready", running = false, frame = null;
+        try { best = parseInt(localStorage.getItem("keepyUppyBest") || "0", 10) || 0; } catch (e) {}
+
+        function reset() {
+          ball = { x: W / 2, y: H * 0.35, vx: 0, vy: 0, spin: 0 };
+          score = 0; state = "ready"; scoreEl.textContent = "0"; overPanel.hidden = true;
+          bestEl.textContent = best ? "Best " + best : "";
+          msg.textContent = "Tap the ball to start";
+        }
+
+        function draw() {
+          ctx.clearRect(0, 0, W, H);
+          ctx.fillStyle = "#2f9e44";                       // pitch strip
+          ctx.fillRect(0, H - 18, W, 18);
+          ctx.strokeStyle = "rgba(255,255,255,0.5)";
+          ctx.beginPath(); ctx.moveTo(0, H - 18); ctx.lineTo(W, H - 18); ctx.stroke();
+          ctx.save();
+          ctx.translate(ball.x, ball.y); ctx.rotate(ball.spin);
+          ctx.font = (R * 2) + "px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+          ctx.fillText("⚽", 0, 2);
+          ctx.restore();
+        }
+
+        function step() {
+          if (state === "playing") {
+            ball.vy += GRAVITY; ball.x += ball.vx; ball.y += ball.vy; ball.spin += ball.vx * 0.03;
+            if (ball.x < R) { ball.x = R; ball.vx = Math.abs(ball.vx) * 0.8; }
+            if (ball.x > W - R) { ball.x = W - R; ball.vx = -Math.abs(ball.vx) * 0.8; }
+            if (ball.y > H - 18 - R) {                      // hit the floor
+              ball.y = H - 18 - R; state = "over";
+              var newBest = score > best;
+              if (newBest) { best = score; try { localStorage.setItem("keepyUppyBest", String(best)); } catch (e) {} }
+              overScore.textContent = String(score);
+              overNote.textContent = newBest ? "New best! 🎉" : "Best: " + best;
+              overPanel.hidden = false;
+              msg.textContent = "Dropped it!";
+              bestEl.textContent = "Best " + best;
+            }
+          }
+          draw();
+          if (running) frame = requestAnimationFrame(step);
+        }
+
+        function kick(evt) {
+          evt.preventDefault();
+          var box = canvas.getBoundingClientRect();
+          var x = (evt.clientX - box.left) * (W / box.width), y = (evt.clientY - box.top) * (H / box.height);
+          if (state === "over") return;                      // use the Play again button
+          var dx = ball.x - x, dy = ball.y - y;
+          if (dx * dx + dy * dy <= (R * 1.6) * (R * 1.6)) {   // a generous hit area
+            if (state === "ready") { state = "playing"; msg.textContent = "Keep it up!"; }
+            ball.vy = -9 - Math.min(score * 0.08, 3);         // gets a little livelier as you go
+            ball.vx = dx * 0.18 + (Math.random() - 0.5) * 2;
+            score += 1; scoreEl.textContent = String(score);
+          }
+        }
+
+        function open() {
+          overlay.hidden = false; reset();
+          if (!running) { running = true; frame = requestAnimationFrame(step); }
+        }
+        function close() { overlay.hidden = true; running = false; if (frame) cancelAnimationFrame(frame); }
+
+        opener.addEventListener("click", open);
+        overlay.querySelector(".game-close").addEventListener("click", close);
+        overlay.addEventListener("click", function (e) { if (e.target === overlay) close(); });
+        canvas.addEventListener("pointerdown", kick);
+        overlay.querySelector(".game-again").addEventListener("click", reset);
+      }
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+    })();
+  </script>
+</body>
+</html>

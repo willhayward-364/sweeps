@@ -3,144 +3,394 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>2026/27 Premier League Sweepstake</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Standings · LSB Sweepstake</title>
+  <link rel="stylesheet" href="style.css?v=1f42002e">
 </head>
 <body>
   
-  <div class="topbar">
+  <header class="topbar">
     <div class="topbar-brand">
-      <img src="images/crests/LSB_crest.PNG" alt="Sweepstake Logo" class="topbar-logo">
+      <img src="images/crests/LSB_crest.PNG" alt="Sweepstake Logo" class="topbar-logo" id="site-logo">
       <strong>LSB Official Agreed Sweepstake</strong>
     </div>
-    <div class="nav-links">
-      <a href="index.html" class="nav-btn">Standings</a>
+    <nav class="nav-links">
+      <a href="index.html" class="nav-btn active" aria-current="page">Standings</a>
+      <a href="form.html" class="nav-btn">Form</a>
       <a href="players.html" class="nav-btn">Players</a>
-      <a href="latest_results.html" class="nav-btn">Latest Results</a>
-      <a href="upcoming_fixtures.html" class="nav-btn">Upcoming Fixtures</a>
+      <a href="latest_results.html" class="nav-btn">Results</a>
+      <a href="upcoming_fixtures.html" class="nav-btn">Fixtures</a>
+      <a href="prizes.html" class="nav-btn">Prizes</a>
       <a href="rules.html" class="nav-btn">Rules</a>
+      <a href="shame.html" class="nav-btn">Hall of Shame</a>
+    </nav>
+  </header>
+  <script>
+    (function () {
+      var logo = document.getElementById("site-logo");
+      if (!logo) return;
+      var original = logo.getAttribute("src");
+      var egg = "images/crests/england_tottenham.football-logos.cc.png";
+      var taps = 0, timer = null;
+      function show(on, animate) {
+        logo.src = on ? egg : original;
+        logo.alt = on ? "Tottenham Hotspur crest" : "Sweepstake Logo";
+        logo.classList.toggle("logo-egg", on);
+        if (animate) {
+          logo.classList.remove("logo-spin");
+          void logo.offsetWidth;
+          logo.classList.add("logo-spin");
+        }
+      }
+      var active = false;
+      try { active = sessionStorage.getItem("spursLogo") === "1"; } catch (e) {}
+      if (active) show(true, false);
+      logo.addEventListener("click", function () {
+        taps += 1;
+        clearTimeout(timer);
+        timer = setTimeout(function () { taps = 0; }, 1500);
+        if (taps >= 10) {
+          taps = 0;
+          active = !active;
+          show(active, true);
+          try { sessionStorage.setItem("spursLogo", active ? "1" : "0"); } catch (e) {}
+        }
+      });
+    })();
+  </script>
+  <main>
+  <h1 class="page-title visually-hidden">🏆 Standings 2026/27</h1>
+
+  <div class="card table-card">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th class="col-rank">#</th>
+          <th class="col-player">Player</th>
+          <th class="col-teams">Teams</th>
+          <th class="col-stat" title="Games played">P</th>
+          <th class="col-stat" title="Wins">W</th>
+          <th class="col-stat" title="Draws">D</th>
+          <th class="col-stat" title="Clean sheets">CS</th>
+          <th class="col-stat" title="Goal feasts">GF</th>
+          <th class="col-stat" title="Giant kills">GK</th>
+          <th class="col-pts">Pts</th>
+        </tr>
+      </thead>
+      <tbody>
+      <tr data-player="Player F">
+        <td class="col-rank">1</td>
+        <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/Daveylad_avatar.jpg" alt="" loading="lazy">Davey</span></td>
+        <td class="col-teams"><img class="crest" src="images/crests/england_chelsea.football-logos.cc.png" alt="Chelsea" title="Chelsea" loading="lazy"><img class="crest" src="images/crests/england_brighton.football-logos.cc.png" alt="Brighton &amp; Hove Albion" title="Brighton &amp; Hove Albion" loading="lazy"><img class="crest" src="images/crests/england_everton.football-logos.cc.png" alt="Everton" title="Everton" loading="lazy"><img class="crest" src="images/crests/england_hull-city.football-logos.cc.png" alt="Hull City" title="Hull City" loading="lazy"></td>
+        <td class="col-stat">38</td>
+        <td class="col-stat">17</td>
+        <td class="col-stat">11</td>
+        <td class="col-stat">15</td>
+        <td class="col-stat">9</td>
+        <td class="col-stat">1</td>
+        <td class="col-pts">89</td>
+      </tr>
+      <tr class="breakdown" hidden>
+        <td colspan="10"><div class="breakdown-list">
+            <div class="breakdown-row"><img class="crest" src="images/crests/england_brighton.football-logos.cc.png" alt="Brighton &amp; Hove Albion" title="Brighton &amp; Hove Albion" loading="lazy"><span class="team-row-name">Brighton &amp; Hove Albion</span><span class="muted">P9 W6 D1 L2</span><span class="breakdown-pts">30</span></div>
+            <div class="breakdown-row"><img class="crest" src="images/crests/england_chelsea.football-logos.cc.png" alt="Chelsea" title="Chelsea" loading="lazy"><span class="team-row-name">Chelsea</span><span class="muted">P9 W5 D1 L3</span><span class="breakdown-pts">21</span></div>
+            <div class="breakdown-row"><img class="crest" src="images/crests/england_everton.football-logos.cc.png" alt="Everton" title="Everton" loading="lazy"><span class="team-row-name">Everton</span><span class="muted">P10 W4 D4 L2</span><span class="breakdown-pts">21</span></div>
+            <div class="breakdown-row"><img class="crest" src="images/crests/england_hull-city.football-logos.cc.png" alt="Hull City" title="Hull City" loading="lazy"><span class="team-row-name">Hull City</span><span class="muted">P10 W2 D5 L3</span><span class="breakdown-pts">17</span></div>
+        </div></td>
+      </tr>
+      <tr data-player="Player E">
+        <td class="col-rank">2</td>
+        <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/Robin_avatar.jpg" alt="" loading="lazy">Robin</span></td>
+        <td class="col-teams"><img class="crest" src="images/crests/england_arsenal.football-logos.cc.png" alt="Arsenal" title="Arsenal" loading="lazy"><img class="crest" src="images/crests/england_fulham.football-logos.cc.png" alt="Fulham" title="Fulham" loading="lazy"><img class="crest" src="images/crests/england_nottingham-forest.football-logos.cc.png" alt="Nottingham Forest" title="Nottingham Forest" loading="lazy"><img class="crest" src="images/crests/england_hull-city.football-logos.cc.png" alt="Hull City" title="Hull City" loading="lazy"></td>
+        <td class="col-stat">40</td>
+        <td class="col-stat">15</td>
+        <td class="col-stat">12</td>
+        <td class="col-stat">14</td>
+        <td class="col-stat">2</td>
+        <td class="col-stat">2</td>
+        <td class="col-pts">79</td>
+      </tr>
+      <tr class="breakdown" hidden>
+        <td colspan="10"><div class="breakdown-list">
+            <div class="breakdown-row"><img class="crest" src="images/crests/england_arsenal.football-logos.cc.png" alt="Arsenal" title="Arsenal" loading="lazy"><span class="team-row-name">Arsenal</span><span class="muted">P10 W9 D0 L1</span><span class="breakdown-pts">35</span></div>
+            <div class="breakdown-row"><img class="crest" src="images/crests/england_hull-city.football-logos.cc.png" alt="Hull City" title="Hull City" loading="lazy"><span class="team-row-name">Hull City</span><span class="muted">P10 W2 D5 L3</span><span class="breakdown-pts">17</span></div>
+            <div class="breakdown-row"><img class="crest" src="images/crests/england_nottingham-forest.football-logos.cc.png" alt="Nottingham Forest" title="Nottingham Forest" loading="lazy"><span class="team-row-name">Nottingham Forest</span><span class="muted">P10 W2 D3 L5</span><span class="breakdown-pts">14</span></div>
+            <div class="breakdown-row"><img class="crest" src="images/crests/england_fulham.football-logos.cc.png" alt="Fulham" title="Fulham" loading="lazy"><span class="team-row-name">Fulham</span><span class="muted">P10 W2 D4 L4</span><span class="breakdown-pts">13</span></div>
+        </div></td>
+      </tr>
+      <tr data-player="Player A">
+        <td class="col-rank">3</td>
+        <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/364_avatar.jpg" alt="" loading="lazy">364</span></td>
+        <td class="col-teams"><img class="crest" src="images/crests/england_liverpool.football-logos.cc.png" alt="Liverpool" title="Liverpool" loading="lazy"><img class="crest" src="images/crests/england_bournemouth.football-logos.cc.png" alt="AFC Bournemouth" title="AFC Bournemouth" loading="lazy"><img class="crest" src="images/crests/england_leeds-united.football-logos.cc.png" alt="Leeds United" title="Leeds United" loading="lazy"><img class="crest" src="images/crests/england_ipswich.football-logos.cc.png" alt="Ipswich Town" title="Ipswich Town" loading="lazy"></td>
+        <td class="col-stat">37</td>
+        <td class="col-stat">13</td>
+        <td class="col-stat">13</td>
+        <td class="col-stat">11</td>
+        <td class="col-stat">3</td>
+        <td class="col-stat">1</td>
+        <td class="col-pts">69</td>
+      </tr>
+      <tr class="breakdown" hidden>
+        <td colspan="10"><div class="breakdown-list">
+            <div class="breakdown-row"><img class="crest" src="images/crests/england_leeds-united.football-logos.cc.png" alt="Leeds United" title="Leeds United" loading="lazy"><span class="team-row-name">Leeds United</span><span class="muted">P10 W3 D5 L2</span><span class="breakdown-pts">22</span></div>
+            <div class="breakdown-row"><img class="crest" src="images/crests/england_liverpool.football-logos.cc.png" alt="Liverpool" title="Liverpool" loading="lazy"><span class="team-row-name">Liverpool</span><span class="muted">P9 W4 D3 L2</span><span class="breakdown-pts">19</span></div>
+            <div class="breakdown-row"><img class="crest" src="images/crests/england_bournemouth.football-logos.cc.png" alt="AFC Bournemouth" title="AFC Bournemouth" loading="lazy"><span class="team-row-name">AFC Bournemouth</span><span class="muted">P9 W3 D3 L3</span><span class="breakdown-pts">16</span></div>
+            <div class="breakdown-row"><img class="crest" src="images/crests/england_ipswich.football-logos.cc.png" alt="Ipswich Town" title="Ipswich Town" loading="lazy"><span class="team-row-name">Ipswich Town</span><span class="muted">P9 W3 D2 L4</span><span class="breakdown-pts">12</span></div>
+        </div></td>
+      </tr>
+      <tr data-player="Player B">
+        <td class="col-rank">4</td>
+        <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/keano_avatar.jpg" alt="" loading="lazy">Keano</span></td>
+        <td class="col-teams"><img class="crest" src="images/crests/england_manchester-city.football-logos.cc.png" alt="Manchester City" title="Manchester City" loading="lazy"><img class="crest" src="images/crests/england_aston-villa.football-logos.cc.png" alt="Aston Villa" title="Aston Villa" loading="lazy"><img class="crest" src="images/crests/england_sunderland.football-logos.cc.png" alt="Sunderland" title="Sunderland" loading="lazy"><img class="crest" src="images/crests/england_ipswich.football-logos.cc.png" alt="Ipswich Town" title="Ipswich Town" loading="lazy"></td>
+        <td class="col-stat">37</td>
+        <td class="col-stat">14</td>
+        <td class="col-stat">7</td>
+        <td class="col-stat">7</td>
+        <td class="col-stat">7</td>
+        <td class="col-stat">0</td>
+        <td class="col-pts">63</td>
+      </tr>
+      <tr class="breakdown" hidden>
+        <td colspan="10"><div class="breakdown-list">
+            <div class="breakdown-row"><img class="crest" src="images/crests/england_manchester-city.football-logos.cc.png" alt="Manchester City" title="Manchester City" loading="lazy"><span class="team-row-name">Manchester City</span><span class="muted">P10 W7 D0 L3</span><span class="breakdown-pts">28</span></div>
+            <div class="breakdown-row"><img class="crest" src="images/crests/england_aston-villa.football-logos.cc.png" alt="Aston Villa" title="Aston Villa" loading="lazy"><span class="team-row-name">Aston Villa</span><span class="muted">P9 W3 D3 L3</span><span class="breakdown-pts">15</span></div>
+            <div class="breakdown-row"><img class="crest" src="images/crests/england_ipswich.football-logos.cc.png" alt="Ipswich Town" title="Ipswich Town" loading="lazy"><span class="team-row-name">Ipswich Town</span><span class="muted">P9 W3 D2 L4</span><span class="breakdown-pts">12</span></div>
+            <div class="breakdown-row"><img class="crest" src="images/crests/england_sunderland.football-logos.cc.png" alt="Sunderland" title="Sunderland" loading="lazy"><span class="team-row-name">Sunderland</span><span class="muted">P9 W1 D2 L6</span><span class="breakdown-pts">8</span></div>
+        </div></td>
+      </tr>
+      <tr data-player="Player D">
+        <td class="col-rank">5</td>
+        <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/Rich_avatar.jpg" alt="" loading="lazy">Rich</span></td>
+        <td class="col-teams"><img class="crest crest-on-light" src="images/crests/england_tottenham.football-logos.cc.png" alt="Tottenham Hotspur" title="Tottenham Hotspur" loading="lazy"><img class="crest" src="images/crests/england_brentford.football-logos.cc.png" alt="Brentford" title="Brentford" loading="lazy"><img class="crest" src="images/crests/england_coventry-city.football-logos.cc.png" alt="Coventry City" title="Coventry City" loading="lazy"><img class="crest" src="images/crests/england_ipswich.football-logos.cc.png" alt="Ipswich Town" title="Ipswich Town" loading="lazy"></td>
+        <td class="col-stat">38</td>
+        <td class="col-stat">12</td>
+        <td class="col-stat">10</td>
+        <td class="col-stat">8</td>
+        <td class="col-stat">6</td>
+        <td class="col-stat">0</td>
+        <td class="col-pts">60</td>
+      </tr>
+      <tr class="breakdown" hidden>
+        <td colspan="10"><div class="breakdown-list">
+            <div class="breakdown-row"><img class="crest" src="images/crests/england_brentford.football-logos.cc.png" alt="Brentford" title="Brentford" loading="lazy"><span class="team-row-name">Brentford</span><span class="muted">P9 W3 D5 L1</span><span class="breakdown-pts">19</span></div>
+            <div class="breakdown-row"><img class="crest crest-on-light" src="images/crests/england_tottenham.football-logos.cc.png" alt="Tottenham Hotspur" title="Tottenham Hotspur" loading="lazy"><span class="team-row-name">Tottenham Hotspur</span><span class="muted">P10 W3 D3 L4</span><span class="breakdown-pts">17</span></div>
+            <div class="breakdown-row"><img class="crest" src="images/crests/england_coventry-city.football-logos.cc.png" alt="Coventry City" title="Coventry City" loading="lazy"><span class="team-row-name">Coventry City</span><span class="muted">P10 W3 D0 L7</span><span class="breakdown-pts">12</span></div>
+            <div class="breakdown-row"><img class="crest" src="images/crests/england_ipswich.football-logos.cc.png" alt="Ipswich Town" title="Ipswich Town" loading="lazy"><span class="team-row-name">Ipswich Town</span><span class="muted">P9 W3 D2 L4</span><span class="breakdown-pts">12</span></div>
+        </div></td>
+      </tr>
+      <tr data-player="Player C">
+        <td class="col-rank">6</td>
+        <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/dookie_avatar.jpg" alt="" loading="lazy">Dookie</span></td>
+        <td class="col-teams"><img class="crest" src="images/crests/england_manchester-united.football-logos.cc.png" alt="Manchester United" title="Manchester United" loading="lazy"><img class="crest" src="images/crests/england_newcastle.football-logos.cc.png" alt="Newcastle United" title="Newcastle United" loading="lazy"><img class="crest" src="images/crests/england_crystal-palace.football-logos.cc.png" alt="Crystal Palace" title="Crystal Palace" loading="lazy"><img class="crest" src="images/crests/england_hull-city.football-logos.cc.png" alt="Hull City" title="Hull City" loading="lazy"></td>
+        <td class="col-stat">38</td>
+        <td class="col-stat">8</td>
+        <td class="col-stat">13</td>
+        <td class="col-stat">6</td>
+        <td class="col-stat">3</td>
+        <td class="col-stat">1</td>
+        <td class="col-pts">49</td>
+      </tr>
+      <tr class="breakdown" hidden>
+        <td colspan="10"><div class="breakdown-list">
+            <div class="breakdown-row"><img class="crest" src="images/crests/england_hull-city.football-logos.cc.png" alt="Hull City" title="Hull City" loading="lazy"><span class="team-row-name">Hull City</span><span class="muted">P10 W2 D5 L3</span><span class="breakdown-pts">17</span></div>
+            <div class="breakdown-row"><img class="crest" src="images/crests/england_newcastle.football-logos.cc.png" alt="Newcastle United" title="Newcastle United" loading="lazy"><span class="team-row-name">Newcastle United</span><span class="muted">P10 W3 D3 L4</span><span class="breakdown-pts">14</span></div>
+            <div class="breakdown-row"><img class="crest" src="images/crests/england_crystal-palace.football-logos.cc.png" alt="Crystal Palace" title="Crystal Palace" loading="lazy"><span class="team-row-name">Crystal Palace</span><span class="muted">P9 W2 D1 L6</span><span class="breakdown-pts">10</span></div>
+            <div class="breakdown-row"><img class="crest" src="images/crests/england_manchester-united.football-logos.cc.png" alt="Manchester United" title="Manchester United" loading="lazy"><span class="team-row-name">Manchester United</span><span class="muted">P9 W1 D4 L4</span><span class="breakdown-pts">8</span></div>
+        </div></td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="table-key">P played · W wins · D draws · CS clean sheets · GF goal feasts · GK giant kills</div>
+    <div class="table-key">Tap a player to see their points by team.</div>
+  </div>
+  <script>
+    // Tap a player's row to show or hide their points-by-team row beneath it.
+    (function () {
+    function init() {
+    document.querySelectorAll("tr[data-player]").forEach(function (row) {
+      if (row.classList.contains("expandable")) return;
+      var detail = row.nextElementSibling;
+      if (!detail || !detail.classList.contains("breakdown")) return;
+      row.classList.add("expandable");
+      row.tabIndex = 0;
+      row.setAttribute("aria-expanded", "false");
+      function toggle() {
+        detail.hidden = !detail.hidden;
+        row.classList.toggle("open", !detail.hidden);
+        row.setAttribute("aria-expanded", detail.hidden ? "false" : "true");
+      }
+      row.addEventListener("click", toggle);
+      row.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); }
+      });
+    });
+    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+    })();
+  </script>
+  <div class="card race-card">
+    <div class="race-head"><span class="progress-label">Points race</span><span class="muted">Tap the chart to see any day</span></div>
+    <div class="race-legend"><span class="race-key"><span class="race-swatch series-2"></span>364</span><span class="race-key"><span class="race-swatch series-1"></span>Keano</span><span class="race-key"><span class="race-swatch series-3"></span>Dookie</span><span class="race-key"><span class="race-swatch series-4"></span>Rich</span><span class="race-key"><span class="race-swatch series-5"></span>Robin</span><span class="race-key"><span class="race-swatch series-6"></span>Davey</span></div>
+    <div class="race-wrap">
+      <svg class="race-chart" viewBox="0 0 340 210" role="img" aria-label="Cumulative points for each player over the season">
+        <line class="race-grid" x1="30" x2="332" y1="188.0" y2="188.0"/><text class="race-axis" x="25" y="191.0" text-anchor="end">0</text><line class="race-grid" x1="30" x2="332" y1="152.0" y2="152.0"/><text class="race-axis" x="25" y="155.0" text-anchor="end">20</text><line class="race-grid" x1="30" x2="332" y1="116.0" y2="116.0"/><text class="race-axis" x="25" y="119.0" text-anchor="end">40</text><line class="race-grid" x1="30" x2="332" y1="80.0" y2="80.0"/><text class="race-axis" x="25" y="83.0" text-anchor="end">60</text><line class="race-grid" x1="30" x2="332" y1="44.0" y2="44.0"/><text class="race-axis" x="25" y="47.0" text-anchor="end">80</text><line class="race-grid" x1="30" x2="332" y1="8.0" y2="8.0"/><text class="race-axis" x="25" y="11.0" text-anchor="end">100</text><text class="race-axis" x="30.0" y="204" text-anchor="middle">Aug</text><text class="race-axis" x="84.2" y="204" text-anchor="middle">Sep</text><text class="race-axis" x="223.6" y="204" text-anchor="middle">Oct</text><text class="race-axis" x="308.8" y="204" text-anchor="middle">Nov</text><polyline class="race-line series-2" points="30.0,188.0 33.9,175.4 37.7,173.6 41.6,173.6 57.1,173.6 61.0,170.0 64.8,168.2 68.7,168.2 84.2,161.0 88.1,157.4 91.9,157.4 115.2,144.8 119.1,144.8 122.9,137.6 138.4,137.6 142.3,137.6 146.2,126.8 223.6,121.4 227.5,121.4 231.3,121.4 250.7,116.0 254.6,107.0 258.4,107.0 273.9,105.2 277.8,105.2 281.7,85.4 304.9,76.4 308.8,76.4 312.6,76.4 328.1,76.4 332.0,63.8"/><polyline class="race-line series-1" points="30.0,188.0 33.9,182.6 37.7,177.2 41.6,177.2 57.1,170.0 61.0,170.0 64.8,162.8 68.7,162.8 84.2,162.8 88.1,150.2 91.9,150.2 115.2,143.0 119.1,135.8 122.9,135.8 138.4,135.8 142.3,128.6 146.2,119.6 223.6,112.4 227.5,103.4 231.3,103.4 250.7,89.0 254.6,89.0 258.4,89.0 273.9,87.2 277.8,81.8 281.7,78.2 304.9,74.6 308.8,74.6 312.6,74.6 328.1,74.6 332.0,74.6"/><polyline class="race-line series-3" points="30.0,188.0 33.9,175.4 37.7,173.6 41.6,173.6 57.1,173.6 61.0,159.2 64.8,152.0 68.7,152.0 84.2,152.0 88.1,139.4 91.9,137.6 115.2,135.8 119.1,135.8 122.9,135.8 138.4,135.8 142.3,130.4 146.2,125.0 223.6,123.2 227.5,114.2 231.3,114.2 250.7,114.2 254.6,112.4 258.4,112.4 273.9,112.4 277.8,112.4 281.7,103.4 304.9,101.6 308.8,101.6 312.6,101.6 328.1,101.6 332.0,99.8"/><polyline class="race-line series-4" points="30.0,188.0 33.9,173.6 37.7,173.6 41.6,173.6 57.1,173.6 61.0,173.6 64.8,171.8 68.7,171.8 84.2,171.8 88.1,166.4 91.9,166.4 115.2,153.8 119.1,153.8 122.9,153.8 138.4,144.8 142.3,137.6 146.2,137.6 223.6,128.6 227.5,128.6 231.3,121.4 250.7,121.4 254.6,121.4 258.4,114.2 273.9,112.4 277.8,105.2 281.7,103.4 304.9,80.0 308.8,80.0 312.6,80.0 328.1,80.0 332.0,80.0"/><polyline class="race-line series-5" points="30.0,179.0 33.9,166.4 37.7,166.4 41.6,166.4 57.1,166.4 61.0,157.4 64.8,157.4 68.7,150.2 84.2,150.2 88.1,143.0 91.9,137.6 115.2,119.6 119.1,119.6 122.9,119.6 138.4,119.6 142.3,119.6 146.2,117.8 223.6,112.4 227.5,110.6 231.3,110.6 250.7,103.4 254.6,96.2 258.4,96.2 273.9,94.4 277.8,80.0 281.7,78.2 304.9,74.6 308.8,67.4 312.6,67.4 328.1,67.4 332.0,45.8"/><polyline class="race-line series-6" points="30.0,188.0 33.9,168.2 37.7,159.2 41.6,152.0 57.1,152.0 61.0,143.0 64.8,134.0 68.7,134.0 84.2,134.0 88.1,128.6 91.9,126.8 115.2,119.6 119.1,110.6 122.9,110.6 138.4,110.6 142.3,94.4 146.2,94.4 223.6,80.0 227.5,76.4 231.3,76.4 250.7,69.2 254.6,60.2 258.4,60.2 273.9,60.2 277.8,60.2 281.7,58.4 304.9,42.2 308.8,42.2 312.6,35.0 328.1,27.8 332.0,27.8"/>
+        <line class="race-cursor" x1="0" x2="0" y1="8" y2="188"/>
+        <rect class="race-hit" x="30" y="8" width="302" height="180"/>
+      </svg>
+      <div class="race-tip" hidden></div>
+    </div>
+    <script type="application/json" class="race-data">{"x": [30.0, 33.9, 37.7, 41.6, 57.1, 61.0, 64.8, 68.7, 84.2, 88.1, 91.9, 115.2, 119.1, 122.9, 138.4, 142.3, 146.2, 223.6, 227.5, 231.3, 250.7, 254.6, 258.4, 273.9, 277.8, 281.7, 304.9, 308.8, 312.6, 328.1, 332.0], "labels": ["Fri 21 Aug", "Sat 22 Aug", "Sun 23 Aug", "Mon 24 Aug", "Fri 28 Aug", "Sat 29 Aug", "Sun 30 Aug", "Mon 31 Aug", "Fri 4 Sep", "Sat 5 Sep", "Sun 6 Sep", "Sat 12 Sep", "Sun 13 Sep", "Mon 14 Sep", "Fri 18 Sep", "Sat 19 Sep", "Sun 20 Sep", "Sat 10 Oct", "Sun 11 Oct", "Mon 12 Oct", "Sat 17 Oct", "Sun 18 Oct", "Mon 19 Oct", "Fri 23 Oct", "Sat 24 Oct", "Sun 25 Oct", "Sat 31 Oct", "Sun 1 Nov", "Mon 2 Nov", "Fri 6 Nov", "Sat 7 Nov"], "players": [{"name": "364", "cls": "series-2", "points": [0, 7, 8, 8, 8, 10, 11, 11, 15, 17, 17, 24, 24, 28, 28, 28, 34, 37, 37, 37, 40, 45, 45, 46, 46, 57, 62, 62, 62, 62, 69]}, {"name": "Keano", "cls": "series-1", "points": [0, 3, 6, 6, 10, 10, 14, 14, 14, 21, 21, 25, 29, 29, 29, 33, 38, 42, 47, 47, 55, 55, 55, 56, 59, 61, 63, 63, 63, 63, 63]}, {"name": "Dookie", "cls": "series-3", "points": [0, 7, 8, 8, 8, 16, 20, 20, 20, 27, 28, 29, 29, 29, 29, 32, 35, 36, 41, 41, 41, 42, 42, 42, 42, 47, 48, 48, 48, 48, 49]}, {"name": "Rich", "cls": "series-4", "points": [0, 8, 8, 8, 8, 8, 9, 9, 9, 12, 12, 19, 19, 19, 24, 28, 28, 33, 33, 37, 37, 37, 41, 42, 46, 47, 60, 60, 60, 60, 60]}, {"name": "Robin", "cls": "series-5", "points": [5, 12, 12, 12, 12, 17, 17, 21, 21, 25, 28, 38, 38, 38, 38, 38, 39, 42, 43, 43, 47, 51, 51, 52, 60, 61, 63, 67, 67, 67, 79]}, {"name": "Davey", "cls": "series-6", "points": [0, 11, 16, 20, 20, 25, 30, 30, 30, 33, 34, 38, 43, 43, 43, 52, 52, 60, 62, 62, 66, 71, 71, 71, 71, 72, 81, 81, 85, 89, 89]}]}</script>
+  </div>
+  <script>
+    // Finds the chart by class (not document.currentScript), so it also works in
+    // previewers like htmlpreview that re-insert page scripts.
+    (function () {
+      function setup(card) {
+      if (card.dataset.ready) return;
+      card.dataset.ready = "1";
+      var data = JSON.parse(card.querySelector(".race-data").textContent);
+      var svg = card.querySelector(".race-chart"), hit = card.querySelector(".race-hit");
+      var cursor = card.querySelector(".race-cursor"), tip = card.querySelector(".race-tip");
+      function show(evt) {
+        var box = svg.getBoundingClientRect();
+        var vx = (evt.clientX - box.left) * (svg.viewBox.baseVal.width / box.width);
+        var i = 0;
+        for (var k = 1; k < data.x.length; k++) if (Math.abs(data.x[k] - vx) < Math.abs(data.x[i] - vx)) i = k;
+        cursor.setAttribute("x1", data.x[i]); cursor.setAttribute("x2", data.x[i]);
+        cursor.classList.add("on");
+        var rows = data.players.slice().sort(function (a, b) { return b.points[i] - a.points[i]; });
+        tip.innerHTML = "<strong>" + data.labels[i] + "</strong>" + rows.map(function (p) {
+          return '<span class="race-tip-row"><span class="race-swatch ' + p.cls + '"></span>' + p.name + "<b>" + p.points[i] + "</b></span>";
+        }).join("");
+        tip.hidden = false;
+        var px = data.x[i] / svg.viewBox.baseVal.width * box.width;
+        tip.style.left = Math.min(Math.max(px - tip.offsetWidth / 2, 0), box.width - tip.offsetWidth) + "px";
+      }
+      function hide() { tip.hidden = true; cursor.classList.remove("on"); }
+      hit.addEventListener("pointermove", show);
+      hit.addEventListener("pointerdown", show);
+      hit.addEventListener("pointerleave", function (e) { if (e.pointerType === "mouse") hide(); });
+      document.addEventListener("pointerdown", function (e) { if (!card.contains(e.target)) hide(); });
+      }
+      function init() { document.querySelectorAll(".race-card").forEach(setup); }
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+    })();
+  </script>
+  <div class="card progress-card">
+    <div class="progress-head">
+      <span class="progress-label">Season progress</span>
+      <span><strong>95</strong> of 380 matches played · <span class="muted">285 to go</span></span>
+    </div>
+    <progress class="progress-bar" value="95" max="380">25%</progress>
+  </div>
+  </main>
+  <footer class="site-footer">
+    <div class="version-banner">Version <strong>v2.0.0</strong> &nbsp;•&nbsp; Run <strong>#247</strong> &nbsp;•&nbsp; Last deployed <strong>2026-11-07 22:10:59 UTC</strong> &nbsp;•&nbsp; API last fetched <strong>2026-11-07 22:10:59 UTC</strong></div>
+    <button type="button" class="egg-ball" aria-label="Play keepy-uppy">⚽</button>
+  </footer>
+  <div class="game-overlay" hidden>
+    <div class="game-box">
+      <div class="game-head">
+        <span class="game-title">Keepy-Uppy</span>
+        <span class="game-score">0</span>
+        <button type="button" class="game-close" aria-label="Close game">✕</button>
+      </div>
+      <div class="game-stage">
+        <canvas class="game-canvas" width="320" height="420"></canvas>
+        <div class="game-over" hidden>
+          <div class="game-over-label">Score</div>
+          <div class="game-over-score">0</div>
+          <div class="game-over-note"></div>
+          <button type="button" class="game-again">Play again</button>
+        </div>
+      </div>
+      <div class="game-foot"><span class="game-msg">Tap the ball to start</span><span class="muted game-best"></span></div>
     </div>
   </div>
-  <h1>🏆 2026/27 Sweepstake Standings</h1>
-  <div class="version-banner">Version <strong>v0.247</strong> &nbsp;•&nbsp; Last deployed <strong>2026-11-07 20:35:38 UTC</strong> &nbsp;•&nbsp; API last fetched <strong>2026-11-07 20:35:38 UTC</strong></div>
-  
-  
-    <div class="card">
-        <h2 style="color: #ffb703; font-size: 1.1rem; margin-top: 0; margin-bottom: 12px; border-bottom: 1px solid #3a506b; padding-bottom: 8px;">
-            ⚡ Weekly Form Guide (Last 7 Days)
-        </h2>
-        
-        <div class="points-row">
-            <span style="display: flex; align-items: center; gap: 8px;">
-                <img class="player-avatar" src="images/player_avatars/Robin_avatar.jpg" alt="Robin" width="22" height="22" loading="lazy"> <strong>#1 Robin</strong>
-            </span>
-            <strong>16 pts</strong>
-        </div>
-        
-        <div class="points-row">
-            <span style="display: flex; align-items: center; gap: 8px;">
-                <img class="player-avatar" src="images/player_avatars/Daveylad_avatar.jpg" alt="Daveylad" width="22" height="22" loading="lazy"> <strong>#2 Daveylad</strong>
-            </span>
-            <strong>8 pts</strong>
-        </div>
-        
-        <div class="points-row">
-            <span style="display: flex; align-items: center; gap: 8px;">
-                <img class="player-avatar" src="images/player_avatars/364_avatar.jpg" alt="364" width="22" height="22" loading="lazy"> <strong>#3 364</strong>
-            </span>
-            <strong>7 pts</strong>
-        </div>
-        
-        <div class="points-row">
-            <span style="display: flex; align-items: center; gap: 8px;">
-                <img class="player-avatar" src="images/player_avatars/dookie_avatar.jpg" alt="Dookie" width="22" height="22" loading="lazy"> <strong>#4 Dookie</strong>
-            </span>
-            <strong>1 pts</strong>
-        </div>
-        
-        <div class="points-row">
-            <span style="display: flex; align-items: center; gap: 8px;">
-                <img class="player-avatar" src="images/player_avatars/keano_avatar.jpg" alt="Keano" width="22" height="22" loading="lazy"> <strong>#5 Keano</strong>
-            </span>
-            <strong>0 pts</strong>
-        </div>
-        
-        <div class="points-row">
-            <span style="display: flex; align-items: center; gap: 8px;">
-                <img class="player-avatar" src="images/player_avatars/Rich_avatar.jpg" alt="Rich" width="22" height="22" loading="lazy"> <strong>#6 Rich</strong>
-            </span>
-            <strong>0 pts</strong>
-        </div>
-        
-    </div>
-    
+  <script>
+    // Keepy-uppy: tap the ball to kick it up; score a point per touch; game over when it hits the floor.
+    (function () {
+      function init() {
+        var opener = document.querySelector(".egg-ball"), overlay = document.querySelector(".game-overlay");
+        if (!opener || !overlay || overlay.dataset.ready) return;
+        overlay.dataset.ready = "1";
+        var canvas = overlay.querySelector(".game-canvas"), ctx = canvas.getContext("2d");
+        var scoreEl = overlay.querySelector(".game-score"), msg = overlay.querySelector(".game-msg");
+        var bestEl = overlay.querySelector(".game-best");
+        var overPanel = overlay.querySelector(".game-over");
+        var overScore = overlay.querySelector(".game-over-score"), overNote = overlay.querySelector(".game-over-note");
+        var W = canvas.width, H = canvas.height, R = 26, GRAVITY = 0.35;
+        // state: "ready" (ball waiting to be tapped), "playing", or "over" (dropped; next tap resets)
+        var ball, score, best = 0, state = "ready", running = false, frame = null;
+        try { best = parseInt(localStorage.getItem("keepyUppyBest") || "0", 10) || 0; } catch (e) {}
 
-  
-        <div class="card">
-            <span class="score">89 pts</span>
-            <div class="player-name-wrapper">
-                <img class="player-avatar" src="images/player_avatars/Daveylad_avatar.jpg" alt="Daveylad avatar" loading="lazy">
-                <span class="player-name">#1 Daveylad</span>
-            </div>
-            <div class="player-id">Player F</div>
-            <div class="teams"><span class="team-chip"><img class="team-crest" src="images/crests/england_chelsea.football-logos.cc.svg" alt="Chelsea crest" loading="lazy"><span class="team-name-text">Chelsea</span></span> <span class="team-chip"><img class="team-crest" src="images/crests/england_brighton.football-logos.cc.svg" alt="Brighton & Hove Albion crest" loading="lazy"><span class="team-name-text">Brighton & Hove Albion</span></span> <span class="team-chip"><img class="team-crest" src="images/crests/england_everton.football-logos.cc.svg" alt="Everton crest" loading="lazy"><span class="team-name-text">Everton</span></span> <span class="team-chip"><img class="team-crest" src="images/crests/england_hull-city.football-logos.cc.svg" alt="Hull City crest" loading="lazy"><span class="team-name-text">Hull City</span></span></div>
-            <div class="stats">Wins: 17 | Draws: 11 | Clean Sheets: 15| Goal Feasts: 9| Giant Kills: 1</div>
-        </div>
-        
-        <div class="card">
-            <span class="score">79 pts</span>
-            <div class="player-name-wrapper">
-                <img class="player-avatar" src="images/player_avatars/Robin_avatar.jpg" alt="Robin avatar" loading="lazy">
-                <span class="player-name">#2 Robin</span>
-            </div>
-            <div class="player-id">Player E</div>
-            <div class="teams"><span class="team-chip"><img class="team-crest" src="images/crests/england_arsenal.football-logos.cc.svg" alt="Arsenal crest" loading="lazy"><span class="team-name-text">Arsenal</span></span> <span class="team-chip"><img class="team-crest" src="images/crests/england_fulham.football-logos.cc.svg" alt="Fulham crest" loading="lazy"><span class="team-name-text">Fulham</span></span> <span class="team-chip"><img class="team-crest" src="images/crests/england_nottingham-forest.football-logos.cc.svg" alt="Nottingham Forest crest" loading="lazy"><span class="team-name-text">Nottingham Forest</span></span> <span class="team-chip"><img class="team-crest" src="images/crests/england_hull-city.football-logos.cc.svg" alt="Hull City crest" loading="lazy"><span class="team-name-text">Hull City</span></span></div>
-            <div class="stats">Wins: 15 | Draws: 12 | Clean Sheets: 14| Goal Feasts: 2| Giant Kills: 2</div>
-        </div>
-        
-        <div class="card">
-            <span class="score">69 pts</span>
-            <div class="player-name-wrapper">
-                <img class="player-avatar" src="images/player_avatars/364_avatar.jpg" alt="364 avatar" loading="lazy">
-                <span class="player-name">#3 364</span>
-            </div>
-            <div class="player-id">Player A</div>
-            <div class="teams"><span class="team-chip"><img class="team-crest" src="images/crests/england_liverpool.football-logos.cc.svg" alt="Liverpool crest" loading="lazy"><span class="team-name-text">Liverpool</span></span> <span class="team-chip"><img class="team-crest" src="images/crests/england_bournemouth.football-logos.cc.svg" alt="AFC Bournemouth crest" loading="lazy"><span class="team-name-text">AFC Bournemouth</span></span> <span class="team-chip"><img class="team-crest" src="images/crests/england_leeds-united.football-logos.cc.svg" alt="Leeds United crest" loading="lazy"><span class="team-name-text">Leeds United</span></span> <span class="team-chip"><img class="team-crest" src="images/crests/england_ipswich.football-logos.cc.svg" alt="Ipswich Town crest" loading="lazy"><span class="team-name-text">Ipswich Town</span></span></div>
-            <div class="stats">Wins: 13 | Draws: 13 | Clean Sheets: 11| Goal Feasts: 3| Giant Kills: 1</div>
-        </div>
-        
-        <div class="card">
-            <span class="score">63 pts</span>
-            <div class="player-name-wrapper">
-                <img class="player-avatar" src="images/player_avatars/keano_avatar.jpg" alt="Keano avatar" loading="lazy">
-                <span class="player-name">#4 Keano</span>
-            </div>
-            <div class="player-id">Player B</div>
-            <div class="teams"><span class="team-chip"><img class="team-crest" src="images/crests/england_manchester-city.football-logos.cc.svg" alt="Manchester City crest" loading="lazy"><span class="team-name-text">Manchester City</span></span> <span class="team-chip"><img class="team-crest" src="images/crests/england_aston-villa.football-logos.cc.svg" alt="Aston Villa crest" loading="lazy"><span class="team-name-text">Aston Villa</span></span> <span class="team-chip"><img class="team-crest" src="images/crests/england_sunderland.football-logos.cc.svg" alt="Sunderland crest" loading="lazy"><span class="team-name-text">Sunderland</span></span> <span class="team-chip"><img class="team-crest" src="images/crests/england_ipswich.football-logos.cc.svg" alt="Ipswich Town crest" loading="lazy"><span class="team-name-text">Ipswich Town</span></span></div>
-            <div class="stats">Wins: 14 | Draws: 7 | Clean Sheets: 7| Goal Feasts: 7| Giant Kills: 0</div>
-        </div>
-        
-        <div class="card">
-            <span class="score">60 pts</span>
-            <div class="player-name-wrapper">
-                <img class="player-avatar" src="images/player_avatars/Rich_avatar.jpg" alt="Rich avatar" loading="lazy">
-                <span class="player-name">#5 Rich</span>
-            </div>
-            <div class="player-id">Player D</div>
-            <div class="teams"><span class="team-chip"><img class="team-crest" src="images/crests/england_tottenham.football-logos.cc.svg" alt="Tottenham Hotspur crest" loading="lazy"><span class="team-name-text">Tottenham Hotspur</span></span> <span class="team-chip"><img class="team-crest" src="images/crests/england_brentford.football-logos.cc.svg" alt="Brentford crest" loading="lazy"><span class="team-name-text">Brentford</span></span> <span class="team-chip"><img class="team-crest" src="images/crests/england_coventry-city.football-logos.cc.svg" alt="Coventry City crest" loading="lazy"><span class="team-name-text">Coventry City</span></span> <span class="team-chip"><img class="team-crest" src="images/crests/england_ipswich.football-logos.cc.svg" alt="Ipswich Town crest" loading="lazy"><span class="team-name-text">Ipswich Town</span></span></div>
-            <div class="stats">Wins: 12 | Draws: 10 | Clean Sheets: 8| Goal Feasts: 6| Giant Kills: 0</div>
-        </div>
-        
-        <div class="card">
-            <span class="score">49 pts</span>
-            <div class="player-name-wrapper">
-                <img class="player-avatar" src="images/player_avatars/dookie_avatar.jpg" alt="Dookie avatar" loading="lazy">
-                <span class="player-name">#6 Dookie</span>
-            </div>
-            <div class="player-id">Player C</div>
-            <div class="teams"><span class="team-chip"><img class="team-crest" src="images/crests/england_manchester-united.football-logos.cc.svg" alt="Manchester United crest" loading="lazy"><span class="team-name-text">Manchester United</span></span> <span class="team-chip"><img class="team-crest" src="images/crests/england_newcastle.football-logos.cc.svg" alt="Newcastle United crest" loading="lazy"><span class="team-name-text">Newcastle United</span></span> <span class="team-chip"><img class="team-crest" src="images/crests/england_crystal-palace.football-logos.cc.svg" alt="Crystal Palace crest" loading="lazy"><span class="team-name-text">Crystal Palace</span></span> <span class="team-chip"><img class="team-crest" src="images/crests/england_hull-city.football-logos.cc.svg" alt="Hull City crest" loading="lazy"><span class="team-name-text">Hull City</span></span></div>
-            <div class="stats">Wins: 8 | Draws: 13 | Clean Sheets: 6| Goal Feasts: 3| Giant Kills: 1</div>
-        </div>
-        
+        function reset() {
+          ball = { x: W / 2, y: H * 0.35, vx: 0, vy: 0, spin: 0 };
+          score = 0; state = "ready"; scoreEl.textContent = "0"; overPanel.hidden = true;
+          bestEl.textContent = best ? "Best " + best : "";
+          msg.textContent = "Tap the ball to start";
+        }
+
+        function draw() {
+          ctx.clearRect(0, 0, W, H);
+          ctx.fillStyle = "#2f9e44";                       // pitch strip
+          ctx.fillRect(0, H - 18, W, 18);
+          ctx.strokeStyle = "rgba(255,255,255,0.5)";
+          ctx.beginPath(); ctx.moveTo(0, H - 18); ctx.lineTo(W, H - 18); ctx.stroke();
+          ctx.save();
+          ctx.translate(ball.x, ball.y); ctx.rotate(ball.spin);
+          ctx.font = (R * 2) + "px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+          ctx.fillText("⚽", 0, 2);
+          ctx.restore();
+        }
+
+        function step() {
+          if (state === "playing") {
+            ball.vy += GRAVITY; ball.x += ball.vx; ball.y += ball.vy; ball.spin += ball.vx * 0.03;
+            if (ball.x < R) { ball.x = R; ball.vx = Math.abs(ball.vx) * 0.8; }
+            if (ball.x > W - R) { ball.x = W - R; ball.vx = -Math.abs(ball.vx) * 0.8; }
+            if (ball.y > H - 18 - R) {                      // hit the floor
+              ball.y = H - 18 - R; state = "over";
+              var newBest = score > best;
+              if (newBest) { best = score; try { localStorage.setItem("keepyUppyBest", String(best)); } catch (e) {} }
+              overScore.textContent = String(score);
+              overNote.textContent = newBest ? "New best! 🎉" : "Best: " + best;
+              overPanel.hidden = false;
+              msg.textContent = "Dropped it!";
+              bestEl.textContent = "Best " + best;
+            }
+          }
+          draw();
+          if (running) frame = requestAnimationFrame(step);
+        }
+
+        function kick(evt) {
+          evt.preventDefault();
+          var box = canvas.getBoundingClientRect();
+          var x = (evt.clientX - box.left) * (W / box.width), y = (evt.clientY - box.top) * (H / box.height);
+          if (state === "over") return;                      // use the Play again button
+          var dx = ball.x - x, dy = ball.y - y;
+          if (dx * dx + dy * dy <= (R * 1.6) * (R * 1.6)) {   // a generous hit area
+            if (state === "ready") { state = "playing"; msg.textContent = "Keep it up!"; }
+            ball.vy = -9 - Math.min(score * 0.08, 3);         // gets a little livelier as you go
+            ball.vx = dx * 0.18 + (Math.random() - 0.5) * 2;
+            score += 1; scoreEl.textContent = String(score);
+          }
+        }
+
+        function open() {
+          overlay.hidden = false; reset();
+          if (!running) { running = true; frame = requestAnimationFrame(step); }
+        }
+        function close() { overlay.hidden = true; running = false; if (frame) cancelAnimationFrame(frame); }
+
+        opener.addEventListener("click", open);
+        overlay.querySelector(".game-close").addEventListener("click", close);
+        overlay.addEventListener("click", function (e) { if (e.target === overlay) close(); });
+        canvas.addEventListener("pointerdown", kick);
+        overlay.querySelector(".game-again").addEventListener("click", reset);
+      }
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+    })();
+  </script>
 </body>
 </html>

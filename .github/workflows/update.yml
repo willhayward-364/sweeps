@@ -9,18 +9,24 @@ on:
 permissions:
   contents: write
 
+# One update at a time per branch: a run that starts while another is still going
+# waits for it, so two runs never try to save at the same moment.
+concurrency:
+  group: sweepstake-update-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   update:
     runs-on: ubuntu-latest
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.10'
 
@@ -42,10 +48,6 @@ jobs:
           DEPLOYMENT_TIMESTAMP: ${{ env.FETCH_TIMESTAMP }}
         run: python fetch_and_score.py
 
-      - name: Write Version Metadata File
-        run: |
-          echo "${{ env.FETCH_TIMESTAMP }}" > .version
-
       - name: Commit and Push Updated Site safely
         run: |
           git config user.name 'github-actions[bot]'
@@ -56,7 +58,12 @@ jobs:
           if ! git diff --staged --quiet; then
             echo "Changes detected. Committing and pushing..."
             git commit -m "API Fetch Heartbeat: ${{ env.FETCH_TIMESTAMP }} [skip ci]"
-            git push origin main
+            # Push back to the branch this run was started on (main for the
+            # scheduled runs), so manual runs on other branches never touch main.
+            # If someone pushed code while this ran, put this update on top of it
+            # (this run's freshly built pages win any clash), then save.
+            git pull --rebase -X theirs origin ${{ github.ref_name }}
+            git push origin HEAD:${{ github.ref_name }}
           else
             echo "ℹ️ No changes detected. Skipping push safely."
           fi

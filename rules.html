@@ -3,94 +3,271 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sweepstake Rules</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Rules · LSB Sweepstake</title>
+  <link rel="stylesheet" href="style.css?v=1f42002e">
 </head>
 <body>
-  <div class="topbar">
-    <strong>🏆 Sweepstake</strong>
-    <div class="nav-links">
+  
+  <header class="topbar">
+    <div class="topbar-brand">
+      <img src="images/crests/LSB_crest.PNG" alt="Sweepstake Logo" class="topbar-logo" id="site-logo">
+      <strong>LSB Official Agreed Sweepstake</strong>
+    </div>
+    <nav class="nav-links">
       <a href="index.html" class="nav-btn">Standings</a>
+      <a href="form.html" class="nav-btn">Form</a>
       <a href="players.html" class="nav-btn">Players</a>
-      <a href="latest_results.html" class="nav-btn">Latest Results</a>
-      <a href="rules.html" class="nav-btn">Rules</a>
+      <a href="latest_results.html" class="nav-btn">Results</a>
+      <a href="upcoming_fixtures.html" class="nav-btn">Fixtures</a>
+      <a href="prizes.html" class="nav-btn">Prizes</a>
+      <a href="rules.html" class="nav-btn active" aria-current="page">Rules</a>
+      <a href="shame.html" class="nav-btn">Hall of Shame</a>
+    </nav>
+  </header>
+  <script>
+    (function () {
+      var logo = document.getElementById("site-logo");
+      if (!logo) return;
+      var original = logo.getAttribute("src");
+      var egg = "images/crests/england_tottenham.football-logos.cc.png";
+      var taps = 0, timer = null;
+      function show(on, animate) {
+        logo.src = on ? egg : original;
+        logo.alt = on ? "Tottenham Hotspur crest" : "Sweepstake Logo";
+        logo.classList.toggle("logo-egg", on);
+        if (animate) {
+          logo.classList.remove("logo-spin");
+          void logo.offsetWidth;
+          logo.classList.add("logo-spin");
+        }
+      }
+      var active = false;
+      try { active = sessionStorage.getItem("spursLogo") === "1"; } catch (e) {}
+      if (active) show(true, false);
+      logo.addEventListener("click", function () {
+        taps += 1;
+        clearTimeout(timer);
+        timer = setTimeout(function () { taps = 0; }, 1500);
+        if (taps >= 10) {
+          taps = 0;
+          active = !active;
+          show(active, true);
+          try { sessionStorage.setItem("spursLogo", active ? "1" : "0"); } catch (e) {}
+        }
+      });
+    })();
+  </script>
+  <main>
+  <h1 class="page-title visually-hidden">📜 Rules</h1>
+
+  <div class="card">
+    <p class="card-text">Points are awarded to each player based on the outcomes of the matches involving their selected teams.</p>
+  </div>
+
+  <h2 class="section-heading">How the teams were drawn</h2>
+  <div class="card quote-card">
+    <div class="card-heading">💡 Christopher F Keane</div>
+    <p class="card-text">"I literally don’t know how many times I have to step in and up here…"</p>
+    <ul class="card-list">
+      <li>20 PL Teams ranked in order of odds</li>
+      <li>Top 18 split into 3 pots</li>
+      <li>3 teams each drawn by a fucking wheel which will probably give me Italy again</li>
+      <li>bottom 2 split 3 and 3</li>
+    </ul>
+  </div>
+
+  <h2 class="section-heading">Scoring</h2>
+  <div class="card rules-card">
+    <div class="rule-row">
+      <div class="rule-text">
+        <div class="rule-title">Win bonus</div>
+        <div class="rule-desc">A selected team that wins a match earns 3 points for the player.</div>
+      </div>
+      <span class="pill">+3</span>
+    </div>
+    <div class="rule-row">
+      <div class="rule-text">
+        <div class="rule-title">Draw bonus</div>
+        <div class="rule-desc">A selected team that draws a match earns 1 point for the player.</div>
+      </div>
+      <span class="pill">+1</span>
+    </div>
+    <div class="rule-row">
+      <div class="rule-text">
+        <div class="rule-title">Clean sheet bonus</div>
+        <div class="rule-desc">If a selected team keeps a clean sheet, the player earns 1 extra point.</div>
+      </div>
+      <span class="pill">+1</span>
+    </div>
+    <div class="rule-row">
+      <div class="rule-text">
+        <div class="rule-title">Goal feast bonus</div>
+        <div class="rule-desc">If a selected team scores 3 or more goals, the player earns 1 extra point.</div>
+      </div>
+      <span class="pill">+1</span>
+    </div>
+    <div class="rule-row">
+      <div class="rule-text">
+        <div class="rule-title">Giant-killer bonus</div>
+        <div class="rule-desc">If a selected team from Pot 3 or Pot 4 beats a Pot 1 team, the player earns 3 extra points.</div>
+      </div>
+      <span class="pill">+3</span>
     </div>
   </div>
-  <h1>Rules</h1>
-  <div class="version-banner">Version <strong>v0.246</strong> &nbsp;•&nbsp; Last deployed <strong>2026-11-07 20:35:38 UTC</strong> &nbsp;•&nbsp; API last fetched <strong>2026-11-07 20:35:38 UTC</strong></div>
-  <p>Points are awarded to each player based on the outcomes of the matches involving their selected teams.</p>
-  <p><strong>💡 Christopher F Keane:</strong> "I literally don’t know how many times I have to step in and up here…"<br>
-        - 20 PL Teams ranked in order of odds<br>
-        - Top 18 split into 3 pots<br>
-        - 3 teams each drawn by a fucking wheel which will probably give me Italy again<br>
-        - bottom 2 split 3 and 3</p>
-  <div class="rule-card">
-    <div class="rule-ref">R1</div>
-    <div class="rule-title">Win bonus (3 points)</div>
-    <div class="rule-desc">A selected team that wins a match earns 3 points for the player.</div>
-  </div>
-  <div class="rule-card">
-    <div class="rule-ref">R2</div>
-    <div class="rule-title">Draw bonus (1 point)</div>
-    <div class="rule-desc">A selected team that draws a match earns 1 point for the player.</div>
-  </div>
-  <div class="rule-card">
-    <div class="rule-ref">R3</div>
-    <div class="rule-title">Clean sheet bonus (1 point)</div>
-    <div class="rule-desc">If a selected team keeps a clean sheet, the player earns 1 extra point.</div>
-  </div>
-  <div class="rule-card">
-    <div class="rule-ref">R4</div>
-    <div class="rule-title">Goal feast bonus (1 point)</div>
-    <div class="rule-desc">If a selected team scores 3 or more goals, the player earns 1 extra point.</div>
-  </div>
-  <div class="rule-card">
-    <div class="rule-ref">R5</div>
-    <div class="rule-title">Giant-killer bonus (3 points)</div>
-    <div class="rule-desc">If a selected team from Pot 3 or Pot 4 beats a Pot 1 team, the player earns 3 extra points.</div>
-  </div>
-  <h2>🏆 Competition Pots</h2>
+
+  <h2 class="section-heading">Pots</h2>
   <div class="pots-grid">
-      <div class="card pot-card">
-        <h3>Pot 1 (Top Tier)</h3>
-        <div class="pot-team-list">
-          <div class="pot-team-item"><span class="team-label"><img class="team-crest" src="images/crests/england_arsenal.football-logos.cc.svg" alt="Arsenal crest" loading="lazy"><span class="team-name-text">Arsenal</span></span></div>
-          <div class="pot-team-item"><span class="team-label"><img class="team-crest" src="images/crests/england_manchester-city.football-logos.cc.svg" alt="Manchester City crest" loading="lazy"><span class="team-name-text">Manchester City</span></span></div>
-          <div class="pot-team-item"><span class="team-label"><img class="team-crest" src="images/crests/england_manchester-united.football-logos.cc.svg" alt="Manchester United crest" loading="lazy"><span class="team-name-text">Manchester United</span></span></div>
-          <div class="pot-team-item"><span class="team-label"><img class="team-crest" src="images/crests/england_tottenham.football-logos.cc.svg" alt="Tottenham Hotspur crest" loading="lazy"><span class="team-name-text">Tottenham Hotspur</span></span></div>
-          <div class="pot-team-item"><span class="team-label"><img class="team-crest" src="images/crests/england_liverpool.football-logos.cc.svg" alt="Liverpool crest" loading="lazy"><span class="team-name-text">Liverpool</span></span></div>
-          <div class="pot-team-item"><span class="team-label"><img class="team-crest" src="images/crests/england_chelsea.football-logos.cc.svg" alt="Chelsea crest" loading="lazy"><span class="team-name-text">Chelsea</span></span></div>
+    <div class="card pot-card">
+      <div class="card-heading">Pot 1 · Top tier</div>
+      <div class="team-list">
+        <div class="team-row"><img class="crest" src="images/crests/england_arsenal.football-logos.cc.png" alt="Arsenal" title="Arsenal" loading="lazy"><span class="team-row-name">Arsenal</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_manchester-city.football-logos.cc.png" alt="Manchester City" title="Manchester City" loading="lazy"><span class="team-row-name">Manchester City</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_manchester-united.football-logos.cc.png" alt="Manchester United" title="Manchester United" loading="lazy"><span class="team-row-name">Manchester United</span></div>
+        <div class="team-row"><img class="crest crest-on-light" src="images/crests/england_tottenham.football-logos.cc.png" alt="Tottenham Hotspur" title="Tottenham Hotspur" loading="lazy"><span class="team-row-name">Tottenham Hotspur</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_liverpool.football-logos.cc.png" alt="Liverpool" title="Liverpool" loading="lazy"><span class="team-row-name">Liverpool</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_chelsea.football-logos.cc.png" alt="Chelsea" title="Chelsea" loading="lazy"><span class="team-row-name">Chelsea</span></div>
+      </div>
+    </div>
+    <div class="card pot-card">
+      <div class="card-heading">Pot 2 · Upper tier</div>
+      <div class="team-list">
+        <div class="team-row"><img class="crest" src="images/crests/england_bournemouth.football-logos.cc.png" alt="AFC Bournemouth" title="AFC Bournemouth" loading="lazy"><span class="team-row-name">AFC Bournemouth</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_newcastle.football-logos.cc.png" alt="Newcastle United" title="Newcastle United" loading="lazy"><span class="team-row-name">Newcastle United</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_brighton.football-logos.cc.png" alt="Brighton &amp; Hove Albion" title="Brighton &amp; Hove Albion" loading="lazy"><span class="team-row-name">Brighton &amp; Hove Albion</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_fulham.football-logos.cc.png" alt="Fulham" title="Fulham" loading="lazy"><span class="team-row-name">Fulham</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_brentford.football-logos.cc.png" alt="Brentford" title="Brentford" loading="lazy"><span class="team-row-name">Brentford</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_aston-villa.football-logos.cc.png" alt="Aston Villa" title="Aston Villa" loading="lazy"><span class="team-row-name">Aston Villa</span></div>
+      </div>
+    </div>
+    <div class="card pot-card">
+      <div class="card-heading">Pot 3 · Mid tier</div>
+      <div class="team-list">
+        <div class="team-row"><img class="crest" src="images/crests/england_everton.football-logos.cc.png" alt="Everton" title="Everton" loading="lazy"><span class="team-row-name">Everton</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_leeds-united.football-logos.cc.png" alt="Leeds United" title="Leeds United" loading="lazy"><span class="team-row-name">Leeds United</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_crystal-palace.football-logos.cc.png" alt="Crystal Palace" title="Crystal Palace" loading="lazy"><span class="team-row-name">Crystal Palace</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_nottingham-forest.football-logos.cc.png" alt="Nottingham Forest" title="Nottingham Forest" loading="lazy"><span class="team-row-name">Nottingham Forest</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_sunderland.football-logos.cc.png" alt="Sunderland" title="Sunderland" loading="lazy"><span class="team-row-name">Sunderland</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_coventry-city.football-logos.cc.png" alt="Coventry" title="Coventry" loading="lazy"><span class="team-row-name">Coventry</span></div>
+      </div>
+    </div>
+    <div class="card pot-card">
+      <div class="card-heading">Pot 4 · Challengers</div>
+      <div class="team-list">
+        <div class="team-row"><img class="crest" src="images/crests/england_hull-city.football-logos.cc.png" alt="Hull City" title="Hull City" loading="lazy"><span class="team-row-name">Hull City</span></div>
+        <div class="team-row"><img class="crest" src="images/crests/england_ipswich.football-logos.cc.png" alt="Ipswich Town" title="Ipswich Town" loading="lazy"><span class="team-row-name">Ipswich Town</span></div>
+      </div>
+    </div>
+  </div>
+
+  </main>
+  <footer class="site-footer">
+    <div class="version-banner">Version <strong>v2.0.0</strong> &nbsp;•&nbsp; Run <strong>#247</strong> &nbsp;•&nbsp; Last deployed <strong>2026-11-07 22:10:59 UTC</strong> &nbsp;•&nbsp; API last fetched <strong>2026-11-07 22:10:59 UTC</strong></div>
+    <button type="button" class="egg-ball" aria-label="Play keepy-uppy">⚽</button>
+  </footer>
+  <div class="game-overlay" hidden>
+    <div class="game-box">
+      <div class="game-head">
+        <span class="game-title">Keepy-Uppy</span>
+        <span class="game-score">0</span>
+        <button type="button" class="game-close" aria-label="Close game">✕</button>
+      </div>
+      <div class="game-stage">
+        <canvas class="game-canvas" width="320" height="420"></canvas>
+        <div class="game-over" hidden>
+          <div class="game-over-label">Score</div>
+          <div class="game-over-score">0</div>
+          <div class="game-over-note"></div>
+          <button type="button" class="game-again">Play again</button>
         </div>
       </div>
-      <div class="card pot-card">
-        <h3>Pot 2 (Upper Tier)</h3>
-        <div class="pot-team-list">
-          <div class="pot-team-item"><span class="team-label"><img class="team-crest" src="images/crests/england_bournemouth.football-logos.cc.svg" alt="AFC Bournemouth crest" loading="lazy"><span class="team-name-text">AFC Bournemouth</span></span></div>
-          <div class="pot-team-item"><span class="team-label"><img class="team-crest" src="images/crests/england_newcastle.football-logos.cc.svg" alt="Newcastle United crest" loading="lazy"><span class="team-name-text">Newcastle United</span></span></div>
-          <div class="pot-team-item"><span class="team-label"><img class="team-crest" src="images/crests/england_brighton.football-logos.cc.svg" alt="Brighton & Hove Albion crest" loading="lazy"><span class="team-name-text">Brighton & Hove Albion</span></span></div>
-          <div class="pot-team-item"><span class="team-label"><img class="team-crest" src="images/crests/england_fulham.football-logos.cc.svg" alt="Fulham crest" loading="lazy"><span class="team-name-text">Fulham</span></span></div>
-          <div class="pot-team-item"><span class="team-label"><img class="team-crest" src="images/crests/england_brentford.football-logos.cc.svg" alt="Brentford crest" loading="lazy"><span class="team-name-text">Brentford</span></span></div>
-          <div class="pot-team-item"><span class="team-label"><img class="team-crest" src="images/crests/england_aston-villa.football-logos.cc.svg" alt="Aston Villa crest" loading="lazy"><span class="team-name-text">Aston Villa</span></span></div>
-        </div>
-      </div>
-      <div class="card pot-card">
-        <h3>Pot 3 (Mid Tier)</h3>
-        <div class="pot-team-list">
-          <div class="pot-team-item"><span class="team-label"><img class="team-crest" src="images/crests/england_everton.football-logos.cc.svg" alt="Everton crest" loading="lazy"><span class="team-name-text">Everton</span></span></div>
-          <div class="pot-team-item"><span class="team-label"><img class="team-crest" src="images/crests/england_leeds-united.football-logos.cc.svg" alt="Leeds United crest" loading="lazy"><span class="team-name-text">Leeds United</span></span></div>
-          <div class="pot-team-item"><span class="team-label"><img class="team-crest" src="images/crests/england_crystal-palace.football-logos.cc.svg" alt="Crystal Palace crest" loading="lazy"><span class="team-name-text">Crystal Palace</span></span></div>
-          <div class="pot-team-item"><span class="team-label"><img class="team-crest" src="images/crests/england_nottingham-forest.football-logos.cc.svg" alt="Nottingham Forest crest" loading="lazy"><span class="team-name-text">Nottingham Forest</span></span></div>
-          <div class="pot-team-item"><span class="team-label"><img class="team-crest" src="images/crests/england_sunderland.football-logos.cc.svg" alt="Sunderland crest" loading="lazy"><span class="team-name-text">Sunderland</span></span></div>
-          <div class="pot-team-item"><span class="team-label"><img class="team-crest" src="images/crests/england_coventry-city.football-logos.cc.svg" alt="Coventry crest" loading="lazy"><span class="team-name-text">Coventry</span></span></div>
-        </div>
-      </div>
-      <div class="card pot-card">
-        <h3>Pot 4 (Challengers)</h3>
-        <div class="pot-team-list">
-          <div class="pot-team-item"><span class="team-label"><img class="team-crest" src="images/crests/england_hull-city.football-logos.cc.svg" alt="Hull City crest" loading="lazy"><span class="team-name-text">Hull City</span></span></div>
-          <div class="pot-team-item"><span class="team-label"><img class="team-crest" src="images/crests/england_ipswich.football-logos.cc.svg" alt="Ipswich Town crest" loading="lazy"><span class="team-name-text">Ipswich Town</span></span></div>
-        </div>
-      </div>
-</div>
+      <div class="game-foot"><span class="game-msg">Tap the ball to start</span><span class="muted game-best"></span></div>
+    </div>
+  </div>
+  <script>
+    // Keepy-uppy: tap the ball to kick it up; score a point per touch; game over when it hits the floor.
+    (function () {
+      function init() {
+        var opener = document.querySelector(".egg-ball"), overlay = document.querySelector(".game-overlay");
+        if (!opener || !overlay || overlay.dataset.ready) return;
+        overlay.dataset.ready = "1";
+        var canvas = overlay.querySelector(".game-canvas"), ctx = canvas.getContext("2d");
+        var scoreEl = overlay.querySelector(".game-score"), msg = overlay.querySelector(".game-msg");
+        var bestEl = overlay.querySelector(".game-best");
+        var overPanel = overlay.querySelector(".game-over");
+        var overScore = overlay.querySelector(".game-over-score"), overNote = overlay.querySelector(".game-over-note");
+        var W = canvas.width, H = canvas.height, R = 26, GRAVITY = 0.35;
+        // state: "ready" (ball waiting to be tapped), "playing", or "over" (dropped; next tap resets)
+        var ball, score, best = 0, state = "ready", running = false, frame = null;
+        try { best = parseInt(localStorage.getItem("keepyUppyBest") || "0", 10) || 0; } catch (e) {}
+
+        function reset() {
+          ball = { x: W / 2, y: H * 0.35, vx: 0, vy: 0, spin: 0 };
+          score = 0; state = "ready"; scoreEl.textContent = "0"; overPanel.hidden = true;
+          bestEl.textContent = best ? "Best " + best : "";
+          msg.textContent = "Tap the ball to start";
+        }
+
+        function draw() {
+          ctx.clearRect(0, 0, W, H);
+          ctx.fillStyle = "#2f9e44";                       // pitch strip
+          ctx.fillRect(0, H - 18, W, 18);
+          ctx.strokeStyle = "rgba(255,255,255,0.5)";
+          ctx.beginPath(); ctx.moveTo(0, H - 18); ctx.lineTo(W, H - 18); ctx.stroke();
+          ctx.save();
+          ctx.translate(ball.x, ball.y); ctx.rotate(ball.spin);
+          ctx.font = (R * 2) + "px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+          ctx.fillText("⚽", 0, 2);
+          ctx.restore();
+        }
+
+        function step() {
+          if (state === "playing") {
+            ball.vy += GRAVITY; ball.x += ball.vx; ball.y += ball.vy; ball.spin += ball.vx * 0.03;
+            if (ball.x < R) { ball.x = R; ball.vx = Math.abs(ball.vx) * 0.8; }
+            if (ball.x > W - R) { ball.x = W - R; ball.vx = -Math.abs(ball.vx) * 0.8; }
+            if (ball.y > H - 18 - R) {                      // hit the floor
+              ball.y = H - 18 - R; state = "over";
+              var newBest = score > best;
+              if (newBest) { best = score; try { localStorage.setItem("keepyUppyBest", String(best)); } catch (e) {} }
+              overScore.textContent = String(score);
+              overNote.textContent = newBest ? "New best! 🎉" : "Best: " + best;
+              overPanel.hidden = false;
+              msg.textContent = "Dropped it!";
+              bestEl.textContent = "Best " + best;
+            }
+          }
+          draw();
+          if (running) frame = requestAnimationFrame(step);
+        }
+
+        function kick(evt) {
+          evt.preventDefault();
+          var box = canvas.getBoundingClientRect();
+          var x = (evt.clientX - box.left) * (W / box.width), y = (evt.clientY - box.top) * (H / box.height);
+          if (state === "over") return;                      // use the Play again button
+          var dx = ball.x - x, dy = ball.y - y;
+          if (dx * dx + dy * dy <= (R * 1.6) * (R * 1.6)) {   // a generous hit area
+            if (state === "ready") { state = "playing"; msg.textContent = "Keep it up!"; }
+            ball.vy = -9 - Math.min(score * 0.08, 3);         // gets a little livelier as you go
+            ball.vx = dx * 0.18 + (Math.random() - 0.5) * 2;
+            score += 1; scoreEl.textContent = String(score);
+          }
+        }
+
+        function open() {
+          overlay.hidden = false; reset();
+          if (!running) { running = true; frame = requestAnimationFrame(step); }
+        }
+        function close() { overlay.hidden = true; running = false; if (frame) cancelAnimationFrame(frame); }
+
+        opener.addEventListener("click", open);
+        overlay.querySelector(".game-close").addEventListener("click", close);
+        overlay.addEventListener("click", function (e) { if (e.target === overlay) close(); });
+        canvas.addEventListener("pointerdown", kick);
+        overlay.querySelector(".game-again").addEventListener("click", reset);
+      }
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+    })();
+  </script>
 </body>
 </html>

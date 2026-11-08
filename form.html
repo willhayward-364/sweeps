@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form · LSB Sweepstake</title>
+  <link rel="stylesheet" href="style.css?v=1f42002e">
+</head>
+<body>
+  
+  <header class="topbar">
+    <div class="topbar-brand">
+      <img src="images/crests/LSB_crest.PNG" alt="Sweepstake Logo" class="topbar-logo" id="site-logo">
+      <strong>LSB Official Agreed Sweepstake</strong>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html" class="nav-btn">Standings</a>
+      <a href="form.html" class="nav-btn active" aria-current="page">Form</a>
+      <a href="players.html" class="nav-btn">Players</a>
+      <a href="latest_results.html" class="nav-btn">Results</a>
+      <a href="upcoming_fixtures.html" class="nav-btn">Fixtures</a>
+      <a href="prizes.html" class="nav-btn">Prizes</a>
+      <a href="rules.html" class="nav-btn">Rules</a>
+      <a href="shame.html" class="nav-btn">Hall of Shame</a>
+    </nav>
+  </header>
+  <script>
+    (function () {
+      var logo = document.getElementById("site-logo");
+      if (!logo) return;
+      var original = logo.getAttribute("src");
+      var egg = "images/crests/england_tottenham.football-logos.cc.png";
+      var taps = 0, timer = null;
+      function show(on, animate) {
+        logo.src = on ? egg : original;
+        logo.alt = on ? "Tottenham Hotspur crest" : "Sweepstake Logo";
+        logo.classList.toggle("logo-egg", on);
+        if (animate) {
+          logo.classList.remove("logo-spin");
+          void logo.offsetWidth;
+          logo.classList.add("logo-spin");
+        }
+      }
+      var active = false;
+      try { active = sessionStorage.getItem("spursLogo") === "1"; } catch (e) {}
+      if (active) show(true, false);
+      logo.addEventListener("click", function () {
+        taps += 1;
+        clearTimeout(timer);
+        timer = setTimeout(function () { taps = 0; }, 1500);
+        if (taps >= 10) {
+          taps = 0;
+          active = !active;
+          show(active, true);
+          try { sessionStorage.setItem("spursLogo", active ? "1" : "0"); } catch (e) {}
+        }
+      });
+    })();
+  </script>
+  <main>
+  <h1 class="page-title visually-hidden">⚡ Form</h1>
+  <h2 class="section-heading">Last 7 days</h2>
+  <div class="card table-card">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th class="col-rank">#</th>
+          <th class="col-player">Player</th>
+          <th class="col-stat" title="Games played">P</th>
+          <th class="col-stat" title="Wins">W</th>
+          <th class="col-stat" title="Draws">D</th>
+          <th class="col-stat" title="Clean sheets">CS</th>
+          <th class="col-stat" title="Goal feasts">GF</th>
+          <th class="col-stat" title="Giant kills">GK</th>
+          <th class="col-pts">Pts</th>
+        </tr>
+      </thead>
+      <tbody>
+      <tr data-player="Player E">
+        <td class="col-rank">1</td>
+        <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/Robin_avatar.jpg" alt="" loading="lazy">Robin</span></td>
+        <td class="col-stat">5</td>
+        <td class="col-stat">3</td>
+        <td class="col-stat">1</td>
+        <td class="col-stat">2</td>
+        <td class="col-stat">1</td>
+        <td class="col-stat">1</td>
+        <td class="col-pts">16</td>
+      </tr>
+      <tr data-player="Player F">
+        <td class="col-rank">2</td>
+        <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/Daveylad_avatar.jpg" alt="" loading="lazy">Davey</span></td>
+        <td class="col-stat">3</td>
+        <td class="col-stat">2</td>
+        <td class="col-stat">0</td>
+        <td class="col-stat">1</td>
+        <td class="col-stat">1</td>
+        <td class="col-stat">0</td>
+        <td class="col-pts">8</td>
+      </tr>
+      <tr data-player="Player A">
+        <td class="col-rank">3</td>
+        <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/364_avatar.jpg" alt="" loading="lazy">364</span></td>
+        <td class="col-stat">2</td>
+        <td class="col-stat">1</td>
+        <td class="col-stat">0</td>
+        <td class="col-stat">1</td>
+        <td class="col-stat">0</td>
+        <td class="col-stat">1</td>
+        <td class="col-pts">7</td>
+      </tr>
+      <tr data-player="Player C">
+        <td class="col-rank">4</td>
+        <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/dookie_avatar.jpg" alt="" loading="lazy">Dookie</span></td>
+        <td class="col-stat">3</td>
+        <td class="col-stat">0</td>
+        <td class="col-stat">1</td>
+        <td class="col-stat">0</td>
+        <td class="col-stat">0</td>
+        <td class="col-stat">0</td>
+        <td class="col-pts">1</td>
+      </tr>
+      <tr data-player="Player B">
+        <td class="col-rank">5</td>
+        <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/keano_avatar.jpg" alt="" loading="lazy">Keano</span></td>
+        <td class="col-stat">1</td>
+        <td class="col-stat">0</td>
+        <td class="col-stat">0</td>
+        <td class="col-stat">0</td>
+        <td class="col-stat">0</td>
+        <td class="col-stat">0</td>
+        <td class="col-pts">0</td>
+      </tr>
+      <tr data-player="Player D">
+        <td class="col-rank">5</td>
+        <td class="col-player"><span class="player-name"><img class="avatar" src="images/player_avatars/Rich_avatar.jpg" alt="" loading="lazy">Rich</span></td>
+        <td class="col-stat">2</td>
+        <td class="col-stat">0</td>
+        <td class="col-stat">0</td>
+        <td class="col-stat">0</td>
+        <td class="col-stat">0</td>
+        <td class="col-stat">0</td>
+        <td class="col-pts">0</td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="table-key">P played · W wins · D draws · CS clean sheets · GF goal feasts · GK giant kills</div>
+  </div>
+  </main>
+  <footer class="site-footer">
+    <div class="version-banner">Version <strong>v2.0.0</strong> &nbsp;•&nbsp; Run <strong>#247</strong> &nbsp;•&nbsp; Last deployed <strong>2026-11-07 22:10:59 UTC</strong> &nbsp;•&nbsp; API last fetched <strong>2026-11-07 22:10:59 UTC</strong></div>
+    <button type="button" class="egg-ball" aria-label="Play keepy-uppy">⚽</button>
+  </footer>
+  <div class="game-overlay" hidden>
+    <div class="game-box">
+      <div class="game-head">
+        <span class="game-title">Keepy-Uppy</span>
+        <span class="game-score">0</span>
+        <button type="button" class="game-close" aria-label="Close game">✕</button>
+      </div>
+      <div class="game-stage">
+        <canvas class="game-canvas" width="320" height="420"></canvas>
+        <div class="game-over" hidden>
+          <div class="game-over-label">Score</div>
+          <div class="game-over-score">0</div>
+          <div class="game-over-note"></div>
+          <button type="button" class="game-again">Play again</button>
+        </div>
+      </div>
+      <div class="game-foot"><span class="game-msg">Tap the ball to start</span><span class="muted game-best"></span></div>
+    </div>
+  </div>
+  <script>
+    // Keepy-uppy: tap the ball to kick it up; score a point per touch; game over when it hits the floor.
+    (function () {
+      function init() {
+        var opener = document.querySelector(".egg-ball"), overlay = document.querySelector(".game-overlay");
+        if (!opener || !overlay || overlay.dataset.ready) return;
+        overlay.dataset.ready = "1";
+        var canvas = overlay.querySelector(".game-canvas"), ctx = canvas.getContext("2d");
+        var scoreEl = overlay.querySelector(".game-score"), msg = overlay.querySelector(".game-msg");
+        var bestEl = overlay.querySelector(".game-best");
+        var overPanel = overlay.querySelector(".game-over");
+        var overScore = overlay.querySelector(".game-over-score"), overNote = overlay.querySelector(".game-over-note");
+        var W = canvas.width, H = canvas.height, R = 26, GRAVITY = 0.35;
+        // state: "ready" (ball waiting to be tapped), "playing", or "over" (dropped; next tap resets)
+        var ball, score, best = 0, state = "ready", running = false, frame = null;
+        try { best = parseInt(localStorage.getItem("keepyUppyBest") || "0", 10) || 0; } catch (e) {}
+
+        function reset() {
+          ball = { x: W / 2, y: H * 0.35, vx: 0, vy: 0, spin: 0 };
+          score = 0; state = "ready"; scoreEl.textContent = "0"; overPanel.hidden = true;
+          bestEl.textContent = best ? "Best " + best : "";
+          msg.textContent = "Tap the ball to start";
+        }
+
+        function draw() {
+          ctx.clearRect(0, 0, W, H);
+          ctx.fillStyle = "#2f9e44";                       // pitch strip
+          ctx.fillRect(0, H - 18, W, 18);
+          ctx.strokeStyle = "rgba(255,255,255,0.5)";
+          ctx.beginPath(); ctx.moveTo(0, H - 18); ctx.lineTo(W, H - 18); ctx.stroke();
+          ctx.save();
+          ctx.translate(ball.x, ball.y); ctx.rotate(ball.spin);
+          ctx.font = (R * 2) + "px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+          ctx.fillText("⚽", 0, 2);
+          ctx.restore();
+        }
+
+        function step() {
+          if (state === "playing") {
+            ball.vy += GRAVITY; ball.x += ball.vx; ball.y += ball.vy; ball.spin += ball.vx * 0.03;
+            if (ball.x < R) { ball.x = R; ball.vx = Math.abs(ball.vx) * 0.8; }
+            if (ball.x > W - R) { ball.x = W - R; ball.vx = -Math.abs(ball.vx) * 0.8; }
+            if (ball.y > H - 18 - R) {                      // hit the floor
+              ball.y = H - 18 - R; state = "over";
+              var newBest = score > best;
+              if (newBest) { best = score; try { localStorage.setItem("keepyUppyBest", String(best)); } catch (e) {} }
+              overScore.textContent = String(score);
+              overNote.textContent = newBest ? "New best! 🎉" : "Best: " + best;
+              overPanel.hidden = false;
+              msg.textContent = "Dropped it!";
+              bestEl.textContent = "Best " + best;
+            }
+          }
+          draw();
+          if (running) frame = requestAnimationFrame(step);
+        }
+
+        function kick(evt) {
+          evt.preventDefault();
+          var box = canvas.getBoundingClientRect();
+          var x = (evt.clientX - box.left) * (W / box.width), y = (evt.clientY - box.top) * (H / box.height);
+          if (state === "over") return;                      // use the Play again button
+          var dx = ball.x - x, dy = ball.y - y;
+          if (dx * dx + dy * dy <= (R * 1.6) * (R * 1.6)) {   // a generous hit area
+            if (state === "ready") { state = "playing"; msg.textContent = "Keep it up!"; }
+            ball.vy = -9 - Math.min(score * 0.08, 3);         // gets a little livelier as you go
+            ball.vx = dx * 0.18 + (Math.random() - 0.5) * 2;
+            score += 1; scoreEl.textContent = String(score);
+          }
+        }
+
+        function open() {
+          overlay.hidden = false; reset();
+          if (!running) { running = true; frame = requestAnimationFrame(step); }
+        }
+        function close() { overlay.hidden = true; running = false; if (frame) cancelAnimationFrame(frame); }
+
+        opener.addEventListener("click", open);
+        overlay.querySelector(".game-close").addEventListener("click", close);
+        overlay.addEventListener("click", function (e) { if (e.target === overlay) close(); });
+        canvas.addEventListener("pointerdown", kick);
+        overlay.querySelector(".game-again").addEventListener("click", reset);
+      }
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+    })();
+  </script>
+</body>
+</html>

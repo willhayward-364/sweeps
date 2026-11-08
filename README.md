@@ -1,112 +1,118 @@
 # Sweeps
 
-This project fetches finished football matches from the Football Data API, calculates sweepstake scores for a set of selected teams, and publishes a simple HTML site with standings, player selections, latest results, and rules.
+A small static website for the LSB Premier League sweepstake. A Python script
+fetches finished Premier League matches from the [football-data.org](https://www.football-data.org/)
+API, scores them against each player's teams, and writes plain HTML pages that
+are published with GitHub Pages.
 
-## What it does
+## Pages
 
-- Fetches live match results from the Football Data API
-- Applies the sweepstake scoring rules to each player selection
-- Generates four pages:
-  - standings page at [index.html](index.html)
-  - players page at [players.html](players.html)
-  - latest results page at [latest_results.html](latest_results.html)
-  - rules page at [rules.html](rules.html)
-- Shows a version banner on every page with:
-  - current deployment version
-  - last deployment timestamp
-  - last successful API fetch timestamp
-- Renders a per-match points breakdown on the latest results page, including a clear fallback when no sweepstake players are affected
-- Displays local team crests using SVG assets from [images/crests](images/crests) with graceful text fallback if an asset is missing
-- Supports mock match data for scoring tests
-- Includes a helper script to verify official team names from the API
+| Menu | File | What it shows |
+|---|---|---|
+| Standings | `index.html` | League table (rank, player, team crests, P / W / D / CS / GF / GK, points). Tap a player to see their points by team. Below it, a **points race** chart (tap any day for everyone's total) and a season progress bar |
+| Form | `form.html` | The same table for points scored in the last 7 days |
+| Players | `players.html` | Each player's four teams and their pots |
+| Results | `latest_results.html` | Results grouped by day (UK time), with each involved player's points per team (Win +3, Clean sheet +1, Loss…) |
+| Fixtures | `upcoming_fixtures.html` | Matches in the next 7 days (UK time) with each team's owners underneath |
+| Prizes | `prizes.html` | The agreed prizes (£120) and who is leading each; Golden Gloves and Golden Boot expand to a full ranking |
+| Rules | `rules.html` | Scoring rules, how the teams were drawn, and the four pots |
+| Hall of Shame | `shame.html` | Players who haven't paid their subs |
+
+Every page shares one header/menu (the current page is highlighted) and a footer
+with the site version, the update run number, when the pages were built and when the
+API was last fetched (UTC). Match times are shown in UK time (GMT/BST).
+
+Hidden extra: tap the LSB logo 10 times quickly.
+
+## Scoring
+
+Defined in `rules.py`. For each match, every player who owns one of the teams gets:
+
+| Rule | Points |
+|---|---|
+| Win | 3 |
+| Draw | 1 |
+| Clean sheet | +1 |
+| Goal feast (3+ goals) | +1 |
+| Giant kill (a Pot 3/4 team beats a Pot 1 team) | +3 |
+
+Players, their nicknames, avatars and the pots are set at the top of `fetch_and_score.py`.
+
+## Things to update by hand
+
+All in `fetch_and_score.py` unless noted:
+
+- `UNPAID_SUBS` - who appears on the Hall of Shame (remove players once they pay).
+- `PLAYERS`, `PLAYER_NICKNAMES`, `PLAYER_AVATARS`, `POTS` - for a new season's draw.
+- `XMAS_CUTOFF` - the Christmas prize cut-off (currently the end of 25 Dec 2026).
+- The Standings page title "Standings 2026/27" in `render_html`.
+- Prize amounts and names in `render_prizes_page`.
+- `SITE_VERSION` in `version.py` - see Versioning below.
 
 ## Files
 
-- [fetch_and_score.py](fetch_and_score.py) - Main generator script that fetches data, calculates scores, and renders HTML pages
-- [rules.py](rules.py) - Defines the scoring rules and renders the rules page
-- [version.py](version.py) - Tracks the current version, deployment timestamp, and API fetch timestamp
-- [fetch_official_team_names.py](fetch_official_team_names.py) - Helper script to fetch official team names and compare them against local selections
-- [test_api_connectivity.py](test_api_connectivity.py) - Regression tests for scoring and rendering
-- [github/workflows/update.yml](github/workflows/update.yml) - GitHub Actions workflow that regenerates pages and commits updated outputs
+- `fetch_and_score.py` - fetches matches, calculates scores and writes all the pages
+- `layout.py` - the shared page layout: header, menu, footer and the logo Easter egg
+- `rules.py` - scoring rules and the rules page
+- `version.py` - site version and the footer banner
+- `style.css` - all styling (shared sizes and colours at the top)
+- `images/` - team crests (small PNGs, with the original SVGs kept alongside) and player photos
+- `test_api_connectivity.py` - tests for scoring and page rendering
+- `fetch_official_team_names.py` - helper to compare official API team names with local selections
+- `.github/workflows/update.yml` - the scheduled update job
 
-## Requirements
+## How updates work
 
-- Python 3.10+
-- The `requests` package
+The **Automated Sweepstake Update** GitHub Actions job runs at 17:00 and 22:00 UTC
+on `main`. It runs `fetch_and_score.py` with the `FOOTBALL_DATA_API_KEY` repository
+secret and commits the rebuilt pages, which GitHub Pages then publishes.
 
-Install dependencies with:
+It can also be run by hand from **Actions → Automated Sweepstake Update → Run workflow**
+on any branch; it commits back to the branch it was run on, so test runs on other
+branches never touch `main` or the live site.
+
+Only one update runs at a time per branch, and each run picks up any newer commits
+before saving, so overlapping runs don't clash.
+
+Safety checks - nothing is published when:
+
+- the API request fails (outage, bad key, rate limit) - the run fails (red), or
+- the API returns fewer finished matches than were last published for the season
+  (a stale copy of the data) - the run succeeds with a yellow "skipped" warning and
+  the next run tries again. The count is kept in `.published_matches.json`; delete
+  that file to force a publish.
+
+Note: GitHub often starts scheduled runs late (by up to a few hours) when busy.
+
+## Versioning
+
+The site version is set by hand in `version.py` (`SITE_VERSION`) and bumped once
+per release to the live site (a merge to `main`), not for every change while work
+is in progress:
+
+- `v2.0.1` - a release of small tweaks and fixes
+- `v2.1.0` - a release with noticeable new features
+- `v3.0.0` - big overhauls
+
+The run number in the banner is GitHub's count of update runs, which goes up with
+every results refresh.
+
+## Running locally
 
 ```bash
 pip install requests
-```
-
-## Usage
-
-Set your API key and run the main generator:
-
-```bash
 export FOOTBALL_DATA_API_KEY="your-api-key"
 python3 fetch_and_score.py
 ```
 
-This will regenerate:
+Set `USE_MOCK_DATA = True` in `fetch_and_score.py` to build the pages from built-in
+sample matches without calling the API.
 
-- [index.html](index.html)
-- [players.html](players.html)
-- [rules.html](rules.html)
-
-When fetching live API data, the script first queries the competition endpoint to determine the current season dates, then requests finished matches for that season.
-
-It also updates the version tracking files:
-
-- [.version](.version)
-- [.api_fetch_timestamp](.api_fetch_timestamp)
-
-## Helper script
-
-To verify official team names from the API and identify mismatches with local selections:
+## Tests
 
 ```bash
-export FOOTBALL_DATA_API_KEY="your-api-key"
-python3 fetch_official_team_names.py
+python3 -m pytest test_api_connectivity.py
 ```
 
-By default this queries the Premier League (`PL`) and EFL Championship (`ELC`). Use `--competitions` to customize the competitions.
-
-Example:
-
-```bash
-python3 fetch_official_team_names.py --competitions PL ELC
-```
-
-To save the official names to a file:
-
-```bash
-python3 fetch_official_team_names.py --output-file official_names.txt
-```
-
-## Testing
-
-Run the test script with:
-
-```bash
-python3 test_api_connectivity.py
-```
-
-## GitHub Actions
-
-See yaml file update.yml
-
-- cron: '0 17,22 * * *'
-#        │  │     │ │ └── Day of week (0 - 6)  -> * = Every day
-#        │  │     │ └──── Month (1 - 12)       -> * = Every month
-#        │  │     └────── Day of month (1 - 31)-> * = Every day
-#        │  └──────────── Hour (0 - 23)        -> 17 and 22 (5 PM & 10 PM)
-#        └─────────────── Minute (0 - 59)      -> 0 (top of the hour)
-
-The workflow is configured to:
-
-- run on a schedule at 17:00 and 22:00 UTC
-- allow manual triggering from the Actions tab
-- use the `FOOTBALL_DATA_API_KEY` repository secret
-- increment the deployment version and commit generated output on success
+`test_api_connectivity` and `test_player_points_do_not_decrease` need network access
+and an API key; the rest run offline.
