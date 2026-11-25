@@ -305,12 +305,24 @@ def check_matches_not_stale(matches: list[dict], state_file: Path = PUBLISHED_ST
     response. A new season resets the count. Delete the state file to force
     a publish.
     """
-    season = next((m.get("seasonStartDate") for m in matches if m.get("seasonStartDate")), None)
-    if not season or not state_file.exists():
+    if not state_file.exists():
         return
     try:
         previous = json.loads(state_file.read_text(encoding="utf-8"))
     except (OSError, ValueError):
+        return
+
+    # No finished matches at all when some were already published is never right
+    # mid-season (it published a site full of zeros on 25 Nov 2026). At the start of
+    # a new season this just keeps last season's pages until the first result.
+    if not matches and previous.get("finished_matches", 0) > 0:
+        raise StaleDataError(
+            f"API returned no finished matches but {previous['finished_matches']} "
+            "are already published - looks like a bad response."
+        )
+
+    season = next((m.get("seasonStartDate") for m in matches if m.get("seasonStartDate")), None)
+    if not season:
         return
     if previous.get("season") == season and len(matches) < previous.get("finished_matches", 0):
         raise StaleDataError(
@@ -353,6 +365,8 @@ def fetch_matches(comp_code: str):
         response.raise_for_status()
 
         matches = response.json().get("matches", [])
+        # Logged so a bad API response is easy to spot in the GitHub Actions run log
+        print(f"Fetched {len(matches)} finished {comp_code} matches ({start_date} to {end_date})")
         for match in matches:
             match["competitionCode"] = comp_code
             match["seasonStartDate"] = start_date
