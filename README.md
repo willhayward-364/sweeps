@@ -63,8 +63,9 @@ All in `fetch_and_score.py` unless noted:
 
 ## How updates work
 
-The **Automated Sweepstake Update** GitHub Actions job runs at 17:00 and 22:00 UTC
-on `main`. It runs `fetch_and_score.py` with the `FOOTBALL_DATA_API_KEY` repository
+The **Automated Sweepstake Update** GitHub Actions job runs on `main` shortly after
+matches usually finish: Saturdays and Sundays at 14:35, 17:05 and 19:35 UTC, and every
+day at 22:35 UTC. It runs `fetch_and_score.py` with the `FOOTBALL_DATA_API_KEY` repository
 secret and commits the rebuilt pages, which GitHub Pages then publishes.
 
 It can also be run by hand from **Actions → Automated Sweepstake Update → Run workflow**
