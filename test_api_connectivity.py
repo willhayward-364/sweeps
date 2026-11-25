@@ -70,6 +70,13 @@ def test_stale_api_data_is_not_published(tmp_path=None):
     # A new season resets the count
     module.check_matches_not_stale([{"seasonStartDate": "2027-08-14"}], state_file)
 
+    # No matches at all after some were published is treated as a bad response
+    try:
+        module.check_matches_not_stale([], state_file)
+        assert False, "expected StaleDataError for an empty response"
+    except module.StaleDataError:
+        pass
+
 
 def test_rules_page_can_render():
     from rules import render_rules_page
